@@ -1,9 +1,9 @@
 import Link from "next/link";
 
 import { Container } from "@/components/common/Container";
-import { footerNav } from "@/constants/navigation";
 import { siteConfig } from "@/constants/site";
 import { transitionClass } from "@/constants/theme";
+import { footerGroups } from "@/data/footer";
 import { cn } from "@/lib/utils";
 
 /**
@@ -19,7 +19,7 @@ export function Footer() {
     <footer className="mt-auto border-t">
       <Container as="div" className="flex flex-col gap-10 py-12">
         <div className="flex flex-wrap gap-12">
-          {footerNav.map((group) => (
+          {footerGroups.map((group) => (
             <nav key={group.title} aria-label={group.title}>
               <h2 className="text-sm font-semibold">{group.title}</h2>
               <ul className="mt-3 flex flex-col gap-2">

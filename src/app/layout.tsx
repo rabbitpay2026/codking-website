@@ -1,6 +1,6 @@
 import "./globals.css";
 
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist_Mono, Poppins } from "next/font/google";
 
 import { Footer } from "@/components/layout/Footer";
 import { Navbar } from "@/components/layout/Navbar";
@@ -8,9 +8,10 @@ import { siteConfig } from "@/constants/site";
 
 import type { Metadata, Viewport } from "next";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const poppins = Poppins({
+  variable: "--font-poppins",
   subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700", "800"],
   display: "swap",
 });
 
@@ -49,7 +50,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang={siteConfig.lang}
-      className={`${geistSans.variable} ${geistMono.variable} h-full`}
+      className={`${poppins.variable} ${geistMono.variable} h-full`}
     >
       <body className="flex min-h-full flex-col">
         <Navbar />
