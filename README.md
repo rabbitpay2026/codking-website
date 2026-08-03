@@ -52,14 +52,17 @@ src/
     theme/        Design system tokens
     routes.ts     Route registry
     site.ts       Site-wide config
-    navigation.ts Navigation data
+  data/           Content datasets (navigation.ts, footer.ts)
   hooks/          Reusable React hooks
   lib/            Integrations and app-level helpers (cn, metadata)
   utils/          Pure, framework-agnostic functions
-  data/           Static content datasets
   types/          Shared TypeScript types
   assets/         Imported media
 ```
+
+`constants/` holds configuration that rarely changes and is referenced by code
+(routes, tokens). `data/` holds content that a CMS could later supply — it is
+the seam where static arrays become fetched data.
 
 `src/app/` contains **routing only**. Anything reusable lives outside it.
 
@@ -94,7 +97,15 @@ npx shadcn@latest add button
 npx shadcn@latest add "https://magicui.design/r/shimmer-button.json"
 ```
 
-Both write into `src/components/ui/` and import `cn` from `@/lib/utils`.
+Both write into `src/components/ui/` and import `cn` from `@/lib/utils`. Run
+`npm run format` afterwards — generated files ship in the registry's own style,
+not this project's.
+
+Magic UI is compatible: its components import `motion/react`, which is the
+package already installed.
+
+> Lucide v1 no longer ships brand icons (`Github`, `Twitter`, `Linkedin` were
+> removed). Use a dedicated brand-icon set if those are needed.
 
 ## Environment variables
 
