@@ -3,9 +3,19 @@ import type { Integration } from "@/types";
 /**
  * Supported SMS gateways and platforms (§3.1).
  *
- * Empty until the supported list is confirmed. §6.2 names MSG91, Gupshup,
- * Semaphore and Twilio as examples, but an integrations page that claims
- * support is a compatibility promise — it is populated from the product, not
- * from the architecture document.
+ * Routing through a regional provider is what cuts the per-message cost
+ * (§6.2 Messaging Gateways), so the gateway list is a commercial argument as
+ * much as a compatibility answer. Only the providers codking.tech names are
+ * listed — an integrations claim is a promise, and an unverified one is worse
+ * than an absent one.
  */
-export const integrations: readonly Integration[] = [];
+export const integrations: readonly Integration[] = [
+  { slug: "shopify", name: "Shopify", category: "platform" },
+  { slug: "msg91", name: "MSG91", category: "sms-gateway" },
+  { slug: "textlocal", name: "Textlocal", category: "sms-gateway" },
+  { slug: "gupshup", name: "Gupshup", category: "sms-gateway" },
+  { slug: "semaphore", name: "Semaphore", category: "sms-gateway" },
+  { slug: "twilio", name: "Twilio", category: "sms-gateway" },
+  { slug: "wavecell", name: "Wavecell", category: "sms-gateway" },
+  { slug: "whatsapp", name: "WhatsApp", category: "platform" },
+];

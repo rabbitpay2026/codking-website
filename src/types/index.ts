@@ -4,6 +4,7 @@ export * from "./common";
 export * from "./controls";
 export * from "./customer";
 export * from "./faq";
+export * from "./homepage";
 export * from "./integration";
 export * from "./legal";
 export * from "./navigation";

@@ -1,6 +1,10 @@
+import Link from "next/link";
+
 import { Button, type ButtonProps } from "@/components/ui/button";
 
 import type { UtilityAction, UtilityActionVariant } from "@/types";
+
+import type { Route } from "next";
 
 /**
  * Maps the architecture's action hierarchy onto button variants.
@@ -25,9 +29,10 @@ interface ActionLinkProps {
 /**
  * Renders one utility action.
  *
- * Every action here leaves the site — the App Store, the app, the demo
- * booker, WhatsApp — so each opens in a new tab and says so to assistive
- * technology rather than silently replacing the page.
+ * Most of these leave the site — the App Store, the app, WhatsApp — so they
+ * open in a new tab and say so to assistive technology rather than silently
+ * replacing the page. An action pointing at one of our own routes is client
+ * navigated instead, and never announces a new tab it does not open.
  *
  * When a destination is not yet configured the action renders disabled rather
  * than as a dead link. `aria-disabled` is used instead of `disabled` on
@@ -58,6 +63,8 @@ export function ActionLink({
     );
   }
 
+  const isInternal = action.href.startsWith("/");
+
   return (
     <Button
       asChild
@@ -66,10 +73,17 @@ export function ActionLink({
       block={block}
       className={className}
     >
-      <a href={action.href} target="_blank" rel="noopener noreferrer">
-        {action.label}
-        <span className="sr-only"> (opens in a new tab)</span>
-      </a>
+      {isInternal ? (
+        // Asserted rather than widened: `UtilityAction.href` also carries
+        // absolute URLs, so it cannot be typed as `Route`, and the branch
+        // above has already established this is one of our own paths.
+        <Link href={action.href as Route}>{action.label}</Link>
+      ) : (
+        <a href={action.href} target="_blank" rel="noopener noreferrer">
+          {action.label}
+          <span className="sr-only"> (opens in a new tab)</span>
+        </a>
+      )}
     </Button>
   );
 }

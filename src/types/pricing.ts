@@ -36,6 +36,17 @@ export interface PricingPlan {
    * "which plan it needs") so the two can never disagree.
    */
   readonly controlSlugs: readonly ControlSlug[];
+  /**
+   * What the plan adds, in the merchant's terms.
+   *
+   * Held on the plan rather than in a keyed map beside it, so a plan cannot
+   * be added without its selling points and the two cannot fall out of step.
+   */
+  readonly highlights: readonly string[];
+  /** The per-message rate this plan pays, pre-formatted with its currency. */
+  readonly messageRate: string;
+  /** Leads the pricing preview and carries the emphasis treatment (§5.1 #9). */
+  readonly recommended: boolean;
 }
 
 export type MessageChannel = "sms" | "whatsapp";

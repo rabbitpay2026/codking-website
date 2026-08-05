@@ -17,6 +17,7 @@ export * from "./calculator";
 export * from "./controls";
 export * from "./customers";
 export * from "./faq";
+export * from "./homepage";
 export * from "./integrations";
 export * from "./legal";
 export * from "./navigation";

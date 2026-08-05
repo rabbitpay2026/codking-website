@@ -37,10 +37,10 @@ export const orderStages: readonly OrderStage[] = [
 /**
  * The ten controls (§6.2), in stage order.
  *
- * `outcome` is a one-line compression of the architecture's own description of
- * each control, sized for the mega-menu (§4.1) and control cards (§12). Final
- * marketing copy — the problem narrative, how-it-works detail, setup notes and
- * proof — is a content-phase deliverable and is not modelled here.
+ * Where the product markets a control today, its `outcome` and `benefits` are
+ * taken from codking.tech so the site says what the product says. The four
+ * that are not yet marketed keep the architecture's own description and carry
+ * no benefits rather than invented ones.
  *
  * `featured` marks the four controls the homepage highlights (§5.1 #6).
  */
@@ -49,9 +49,14 @@ export const controls: readonly Control[] = [
     slug: "cod-rules",
     name: "COD Rules",
     stage: "before-the-order",
-    outcome:
-      "Turn COD on or off by pincode, cart value, product, or customer tag.",
+    outcome: "Restrict COD based on zip codes, cart value, or customer risk.",
     featured: true,
+    benefits: [
+      "Hide COD for high-risk pin codes or regions",
+      "Show COD only above or below a cart value",
+      "Enable or disable COD per product or collection",
+      "Segment rules by customer tag or order history",
+    ],
   },
   {
     slug: "cod-fees",
@@ -62,40 +67,70 @@ export const controls: readonly Control[] = [
   },
   {
     slug: "prepaid-nudge",
-    name: "Prepaid Nudge",
+    name: "COD to Prepaid",
     stage: "before-the-order",
-    outcome: "Offer a checkout discount to move the buyer to paying online.",
+    outcome: "Convert COD users with smart discounts during the checkout flow.",
     featured: true,
+    benefits: [
+      "Offer an exclusive prepaid discount at checkout",
+      "Show the nudge at checkout or after the order is placed",
+      "Track COD-to-prepaid conversion in real time",
+      "Customise messaging and discount conditions",
+    ],
   },
   {
     slug: "otp-verification",
     name: "OTP Verification",
     stage: "at-the-order",
     outcome:
-      "Confirm the buyer's phone by SMS or WhatsApp before the order is accepted.",
+      "Authenticate orders via SMS or WhatsApp to block fake buyers instantly.",
     featured: true,
+    benefits: [
+      "Block fake and fraudulent orders instantly",
+      "Send the OTP over SMS or WhatsApp",
+      "Works on Shopify checkout without code changes",
+      "See verified against unverified order reports",
+    ],
   },
   {
     slug: "partial-cod-payment",
     name: "Partial COD Payment",
     stage: "at-the-order",
-    outcome: "Collect a small advance so the buyer has a stake in the order.",
+    outcome:
+      "Collect a fixed or percentage deposit upfront to secure buyer commitment.",
     featured: true,
+    benefits: [
+      "Set the deposit as a fixed amount or a percentage",
+      "Collect it through Shopify Payments or any gateway",
+      "Show the prepaid option alongside COD at checkout",
+      "Reduce cancellations and improve delivery rates",
+    ],
   },
   {
     slug: "address-validation",
-    name: "Address Validation",
+    name: "Prefilled Address",
     stage: "at-the-order",
-    outcome: "Check and pre-fill delivery addresses so parcels are not lost.",
+    outcome:
+      "Speed up checkout by fetching customer details from their phone number or past orders.",
     featured: false,
+    benefits: [
+      "Fetch customer details automatically",
+      "Cut typing errors that send parcels to the wrong address",
+    ],
   },
   {
     slug: "abandoned-cart-recovery",
     name: "Abandoned Cart Recovery",
     stage: "after-the-order",
     outcome:
-      "Recover left-behind carts with SMS and WhatsApp reminders that link straight to checkout.",
+      "Win back lost revenue with automated reminders on WhatsApp and SMS.",
     featured: false,
+    benefits: [
+      "Automated multi-step reminder sequences",
+      "Send over SMS or WhatsApp, whichever the buyer prefers",
+      "Include a direct checkout link for a one-tap return",
+      "Recover lost COD revenue on autopilot",
+    ],
   },
   {
     slug: "order-verification",
@@ -108,8 +143,14 @@ export const controls: readonly Control[] = [
     slug: "messaging-gateways",
     name: "Messaging Gateways",
     stage: "across-the-store",
-    outcome: "Route SMS through local providers to cut the per-message cost.",
+    outcome:
+      "Connect a local SMS provider and cut messaging costs by up to 70%.",
     featured: false,
+    benefits: [
+      "Route messages through regional providers",
+      "Pay your provider directly in local currency",
+      "Reach customers in their preferred language and number format",
+    ],
   },
   {
     slug: "analytics",

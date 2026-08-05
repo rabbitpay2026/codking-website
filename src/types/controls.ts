@@ -58,4 +58,13 @@ export interface Control {
   readonly outcome: string;
   /** Highlighted in the homepage "Key controls in focus" section (§5.1 #6). */
   readonly featured: boolean;
+  /**
+   * What the merchant actually gets, as published on the product site.
+   *
+   * Optional because only the controls the product markets today have
+   * documented benefits; the remainder carry their outcome line alone until
+   * copy exists. Reused by the homepage feature showcase and, later, by the
+   * control page template (§6.3).
+   */
+  readonly benefits?: readonly string[];
 }
