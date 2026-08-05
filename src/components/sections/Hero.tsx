@@ -1,13 +1,14 @@
-import { ShieldCheck, Star } from "lucide-react";
+import { Star } from "lucide-react";
 
 import { ActionLink } from "@/components/layout/ActionLink";
-import { OtpScreen } from "@/components/sections/hero/OtpScreen";
-import { Container } from "@/components/shared/Container";
+import { HeroDevices } from "@/components/sections/hero/HeroDevices";
+import { SectionShell } from "@/components/sections/SectionShell";
 import { AnimatedShinyText } from "@/components/ui/animated-shiny-text";
+import { Aurora } from "@/components/ui/aurora";
 import { BlurFade } from "@/components/ui/blur-fade";
 import { Button } from "@/components/ui/button";
-import { DotPattern } from "@/components/ui/dot-pattern";
-import { Iphone } from "@/components/ui/iphone";
+import { GridPattern } from "@/components/ui/grid-pattern";
+import { Noise } from "@/components/ui/noise";
 import { cn } from "@/lib/utils";
 import { getProofMetrics, getUtilityActions } from "@/lib/content";
 
@@ -20,7 +21,13 @@ const numberFormat = new Intl.NumberFormat("en");
  * specifies, and offers exactly two actions: install, or see how it works.
  * Nothing else competes — every additional choice here costs conversions.
  *
- * The trust figures come from the proof repository, never from copy (§11.1).
+ * The backdrop is layered rather than flat: a drifting colour field for
+ * warmth, a grid for structure, and grain over the top to stop the gradient
+ * banding. Each layer is masked so it fades before it reaches the content,
+ * which is what keeps the type crisp on top of it — and every one of them is
+ * CSS, so the whole scene costs nothing after first paint.
+ *
+ * Trust figures come from the proof repository, never from copy (§11.1).
  */
 export async function Hero() {
   const proof = await getProofMetrics();
@@ -29,126 +36,122 @@ export async function Hero() {
   );
 
   return (
-    <section className="relative overflow-hidden">
-      <DotPattern
-        width={28}
-        height={28}
-        cr={1}
-        className={cn(
-          "absolute inset-0 h-full fill-brand/25",
-          "[mask-image:radial-gradient(560px_circle_at_35%_25%,white,transparent)]",
-        )}
-      />
-
-      <Container className="relative py-14 lg:py-20">
-        <div className="grid items-center gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16">
-          <div>
-            <BlurFade delay={0.05}>
-              <span className="inline-flex items-center gap-2 rounded-full border border-border bg-background/80 py-1 pr-3 pl-1 shadow-card backdrop-blur">
-                <span className="inline-flex items-center gap-1 rounded-full bg-brand-soft px-2 py-0.5 text-[11px] font-semibold text-brand">
-                  <Star aria-hidden className="size-3 fill-brand" />
-                  {proof.rating}
-                </span>
-                <AnimatedShinyText className="text-xs font-medium">
-                  {numberFormat.format(proof.reviewCount)}+ reviews on the
-                  Shopify App Store
-                </AnimatedShinyText>
+    <SectionShell
+      size="spacious"
+      containerClassName="pt-14 md:pt-20 lg:pt-24"
+      backdrop={
+        <>
+          <Aurora />
+          <GridPattern
+            width={56}
+            height={56}
+            className={cn(
+              "absolute inset-0 h-full stroke-brand/[0.07]",
+              "[mask-image:radial-gradient(80%_60%_at_50%_0%,white,transparent)]",
+            )}
+          />
+          <Noise />
+          {/* Settles the section into the one below it. */}
+          <div
+            aria-hidden
+            className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent to-background"
+          />
+        </>
+      }
+    >
+      <div className="grid items-center gap-16 lg:grid-cols-[1.02fr_0.98fr] lg:gap-12">
+        <div>
+          <BlurFade delay={0.05}>
+            <span className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-background/70 py-1 pr-3.5 pl-1 shadow-card backdrop-blur-md">
+              <span className="inline-flex items-center gap-1 rounded-full bg-brand px-2 py-0.5 text-[11px] font-semibold text-white">
+                <Star aria-hidden className="size-3 fill-white" />
+                {proof.rating}
               </span>
-            </BlurFade>
+              <AnimatedShinyText className="text-xs font-medium">
+                {numberFormat.format(proof.reviewCount)}+ reviews on the Shopify
+                App Store
+              </AnimatedShinyText>
+            </span>
+          </BlurFade>
 
-            <BlurFade delay={0.12}>
-              <h1 className="mt-6 text-4xl leading-[1.05] font-semibold tracking-tight text-balance sm:text-5xl lg:text-[3.5rem]">
-                Stop losing money on{" "}
-                <span className="text-brand">fake COD orders</span>
-              </h1>
-            </BlurFade>
+          <BlurFade delay={0.12}>
+            <h1 className="mt-7 text-[2.5rem] leading-[1.02] font-semibold tracking-[-0.03em] text-balance sm:text-6xl lg:text-[4rem]">
+              Stop losing money on{" "}
+              <span className="bg-gradient-to-br from-brand via-brand to-brand-accent bg-clip-text text-transparent">
+                fake COD orders
+              </span>
+            </h1>
+          </BlurFade>
 
-            <BlurFade delay={0.18}>
-              <p className="mt-6 max-w-xl text-lg leading-relaxed text-pretty text-muted-foreground">
-                COD King helps Shopify merchants verify orders, collect advance
-                payments, and turn Cash on Delivery into a profitable, low-risk
-                growth channel.
-              </p>
-            </BlurFade>
+          <BlurFade delay={0.18}>
+            <p className="mt-7 max-w-xl text-lg leading-relaxed text-pretty text-muted-foreground">
+              COD King helps Shopify merchants verify orders, collect advance
+              payments, and turn Cash on Delivery into a profitable, low-risk
+              growth channel.
+            </p>
+          </BlurFade>
 
-            <BlurFade delay={0.24}>
-              <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
-                {installAction ? (
-                  <ActionLink
-                    action={{
-                      ...installAction,
-                      label: "Install free on Shopify",
-                    }}
-                    size="lg"
-                  />
-                ) : null}
+          <BlurFade delay={0.24}>
+            <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center">
+              {installAction ? (
+                <ActionLink
+                  action={{
+                    ...installAction,
+                    label: "Install free on Shopify",
+                  }}
+                  size="lg"
+                  className="shadow-[0_10px_30px_-10px_var(--brand)]"
+                />
+              ) : null}
 
-                <Button asChild variant="secondary" size="lg">
-                  <a href="#how-it-works">See how it works</a>
-                </Button>
-              </div>
-            </BlurFade>
-
-            <BlurFade delay={0.3}>
-              <dl className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-muted-foreground">
-                <div className="flex items-baseline gap-1.5">
-                  <dt className="sr-only">Merchants</dt>
-                  <dd className="font-semibold text-foreground">
-                    {numberFormat.format(proof.merchantCount)}+
-                  </dd>
-                  <span>merchants</span>
-                </div>
-                <span aria-hidden className="text-border">
-                  ·
-                </span>
-                <div className="flex items-baseline gap-1.5">
-                  <dt className="sr-only">App Store rating</dt>
-                  <dd className="font-semibold text-foreground">
-                    {proof.rating}★
-                  </dd>
-                  <span>rating</span>
-                </div>
-                {proof.countriesServed ? (
-                  <>
-                    <span aria-hidden className="text-border">
-                      ·
-                    </span>
-                    <div className="flex items-baseline gap-1.5">
-                      <dt className="sr-only">Countries</dt>
-                      <dd className="font-semibold text-foreground">
-                        {proof.countriesServed}+
-                      </dd>
-                      <span>countries</span>
-                    </div>
-                  </>
-                ) : null}
-              </dl>
-            </BlurFade>
-          </div>
-
-          <BlurFade delay={0.2} className="justify-self-center">
-            <div className="relative w-[clamp(15rem,70vw,20rem)]">
-              {/* Soft brand light behind the device, so it reads as lit rather
-                  than pasted onto the page. */}
-              <div
-                aria-hidden
-                className="absolute -inset-10 -z-10 rounded-full bg-brand/18 blur-3xl"
-              />
-
-              <Iphone className="drop-shadow-2xl">
-                <OtpScreen />
-              </Iphone>
-
-              <div className="absolute -right-4 bottom-24 hidden items-center gap-2 rounded-xl border border-border bg-background/95 px-3 py-2 shadow-overlay backdrop-blur sm:flex">
-                <span className="grid size-6 place-items-center rounded-full bg-brand-check/15">
-                  <ShieldCheck aria-hidden className="size-3.5 text-ink" />
-                </span>
-                <span className="text-xs font-medium">Fake order blocked</span>
-              </div>
+              <Button
+                asChild
+                variant="secondary"
+                size="lg"
+                className="bg-background/70 backdrop-blur-md"
+              >
+                <a href="#how-it-works">See how it works</a>
+              </Button>
             </div>
           </BlurFade>
+
+          <BlurFade delay={0.3}>
+            <dl className="mt-10 flex flex-wrap items-center gap-x-7 gap-y-3 text-sm text-muted-foreground">
+              <div className="flex items-baseline gap-1.5">
+                <dt className="sr-only">Merchants</dt>
+                <dd className="text-base font-semibold text-foreground">
+                  {numberFormat.format(proof.merchantCount)}+
+                </dd>
+                <span>merchants</span>
+              </div>
+              <span aria-hidden className="h-4 w-px bg-border" />
+              <div className="flex items-baseline gap-1.5">
+                <dt className="sr-only">App Store rating</dt>
+                <dd className="text-base font-semibold text-foreground">
+                  {proof.rating}★
+                </dd>
+                <span>rating</span>
+              </div>
+              {proof.countriesServed ? (
+                <>
+                  <span aria-hidden className="h-4 w-px bg-border" />
+                  <div className="flex items-baseline gap-1.5">
+                    <dt className="sr-only">Countries</dt>
+                    <dd className="text-base font-semibold text-foreground">
+                      {proof.countriesServed}+
+                    </dd>
+                    <span>countries</span>
+                  </div>
+                </>
+              ) : null}
+            </dl>
+          </BlurFade>
         </div>
-      </Container>
-    </section>
+
+        <BlurFade delay={0.2} className="lg:pl-4">
+          <HeroDevices />
+        </BlurFade>
+      </div>
+    </SectionShell>
   );
 }

@@ -38,23 +38,32 @@ export function SectionHeading({
   return (
     <div
       className={cn(
-        "flex flex-col gap-4",
-        centered ? "mx-auto max-w-2xl text-center" : "max-w-2xl",
+        "flex flex-col",
+        centered ? "mx-auto max-w-3xl text-center" : "max-w-2xl",
         className,
       )}
     >
       {eyebrow ? (
-        <p className="text-xs font-semibold tracking-[0.12em] text-brand uppercase">
+        <p
+          className={cn(
+            "inline-flex items-center gap-2 text-xs font-semibold tracking-[0.14em] text-brand uppercase",
+            centered && "justify-center",
+          )}
+        >
+          <span aria-hidden className="h-px w-6 bg-brand/40" />
           {eyebrow}
+          {centered ? (
+            <span aria-hidden className="h-px w-6 bg-brand/40" />
+          ) : null}
         </p>
       ) : null}
 
-      <Heading className="text-3xl leading-[1.1] font-semibold tracking-tight text-balance sm:text-4xl lg:text-[2.75rem]">
+      <Heading className="mt-5 text-[2rem] leading-[1.06] font-semibold tracking-[-0.025em] text-balance sm:text-[2.5rem] lg:text-[3rem]">
         {title}
       </Heading>
 
       {description ? (
-        <p className="text-base leading-relaxed text-pretty text-muted-foreground sm:text-lg">
+        <p className="mt-5 text-base leading-relaxed text-pretty text-muted-foreground sm:text-lg">
           {description}
         </p>
       ) : null}

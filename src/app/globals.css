@@ -160,6 +160,31 @@
         rotate(calc((var(--angle) * -1deg) - 360deg));
     }
   }
+  --animate-meteor: meteor 5s linear infinite;
+  --animate-ripple: ripple var(--duration, 2s) ease calc(var(--i, 0) * 0.2s)
+    infinite;
+  @keyframes meteor {
+    0% {
+      transform: rotate(var(--angle)) translateX(0);
+      opacity: 1;
+    }
+    70% {
+      opacity: 1;
+    }
+    100% {
+      transform: rotate(var(--angle)) translateX(-500px);
+      opacity: 0;
+    }
+  }
+  @keyframes ripple {
+    0%,
+    100% {
+      transform: translate(-50%, -50%) scale(1);
+    }
+    50% {
+      transform: translate(-50%, -50%) scale(0.9);
+    }
+  }
 }
 
 @theme {
@@ -169,8 +194,19 @@
   --container-prose: 45rem;
 
   /* Vertical rhythm for page sections. */
-  --spacing-section: 6rem;
+  /*
+   * Vertical rhythm.
+   *
+   * Deliberately generous. The single biggest difference between a page that
+   * reads as a premium product and one that reads as a template is the amount
+   * of quiet between its sections — content that is allowed to end before the
+   * next thing begins. These three steps are the whole scale; `SectionShell`
+   * is the only place they are applied, so the rhythm cannot drift section by
+   * section.
+   */
   --spacing-section-sm: 4rem;
+  --spacing-section: 7rem;
+  --spacing-section-lg: 10rem;
 
   /* Shell metrics. Owned here so the header, the scroll-margin that keeps
      anchored headings clear of it, and the spacer that stops the mobile
@@ -197,6 +233,39 @@
   --animate-accordion-down: accordion-down 220ms var(--ease-emphasized);
   --animate-accordion-up: accordion-up 180ms var(--ease-emphasized);
 
+  /*
+   * Ambient motion.
+   *
+   * Long, slow and looping. Background movement should be something a visitor
+   * notices only if they stop and look for it — anything faster reads as a
+   * page that will not sit still, which is the opposite of confident.
+   */
+  --animate-aurora: aurora-drift 26s ease-in-out infinite;
+  --animate-float: float-y 7s ease-in-out infinite;
+
+  @keyframes aurora-drift {
+    0%,
+    100% {
+      transform: translate3d(0, 0, 0) scale(1);
+    }
+    33% {
+      transform: translate3d(4%, -6%, 0) scale(1.09);
+    }
+    66% {
+      transform: translate3d(-5%, 4%, 0) scale(0.95);
+    }
+  }
+
+  @keyframes float-y {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-9px);
+    }
+  }
+
   @keyframes accordion-down {
     from {
       height: 0;
@@ -217,6 +286,47 @@
       height: 0;
       opacity: 0;
     }
+  }
+}
+
+/*
+ * Film grain.
+ *
+ * A single tiling SVG turbulence, applied at very low opacity over gradient
+ * surfaces. Large flat gradients band visibly on 8-bit displays; a little
+ * noise breaks the banding up and is most of why an expensive-looking
+ * background looks expensive. It costs no network request.
+ */
+@utility bg-noise {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/*
+ * The standard raised surface.
+ *
+ * Defined once so every card on the site lifts by the same amount, on the
+ * same curve, and warms its border by the same degree. Inconsistent hover
+ * behaviour between sections is one of the clearest tells that a page was
+ * assembled by more than one hand.
+ */
+@utility surface-card {
+  @apply rounded-2xl border border-border bg-card shadow-card;
+  @apply transition-[transform,box-shadow,border-color] duration-300;
+  transition-timing-function: var(--ease-emphasized);
+
+  &:hover {
+    @apply -translate-y-1 border-brand/25 shadow-overlay;
+  }
+}
+
+/** The same surface, as glass — for cards sitting over a colour field. */
+@utility surface-glass {
+  @apply rounded-2xl border border-white/60 bg-card/70 shadow-card backdrop-blur-xl;
+  @apply transition-[transform,box-shadow,border-color] duration-300;
+  transition-timing-function: var(--ease-emphasized);
+
+  &:hover {
+    @apply -translate-y-1 border-brand/30 shadow-overlay;
   }
 }
 

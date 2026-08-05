@@ -9,6 +9,7 @@ export * from "./PainPoints";
 export * from "./PricingPreview";
 export * from "./ProductPreview";
 export * from "./SectionHeading";
+export * from "./SectionShell";
 export * from "./Solution";
 export * from "./Testimonials";
 export * from "./TrustBar";

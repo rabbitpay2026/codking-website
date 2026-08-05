@@ -2,7 +2,7 @@ import { ArrowRight, PackageX, TrendingDown, Wallet } from "lucide-react";
 import Link from "next/link";
 
 import { SectionHeading } from "@/components/sections/SectionHeading";
-import { Container } from "@/components/shared/Container";
+import { SectionShell } from "@/components/sections/SectionShell";
 import { BlurFade } from "@/components/ui/blur-fade";
 import { Button } from "@/components/ui/button";
 import { routeFor, routes } from "@/constants/routes";
@@ -24,84 +24,112 @@ const iconFor: Record<string, LucideIcon> = {
 /**
  * The COD loss, made visible (§5.1 #4).
  *
- * This is the emotional centre of the page. The loss is invisible because it
- * is spread across small line items that no single bill totals (§2), so the
- * section names each one and then hands the merchant the tool that turns it
- * into their own number.
+ * The emotional centre of the page. The loss is invisible because it is
+ * spread across small line items no single bill totals (§2), so the section
+ * names each one and then hands the merchant the tool that turns it into
+ * their own number.
  *
- * The primary action is the calculator, not the install: §5.2 forbids asking
+ * The cards carry a warm severity rule and lift on hover, and the treatment
+ * stops there: this is the one section where the copy has to do the work, and
+ * decorating a problem undercuts it.
+ *
+ * The primary action is the calculator, not the install — §5.2 forbids asking
  * for the install before the merchant has seen the value.
  */
 export function PainPoints() {
   const painPoints = getPainPoints();
 
   return (
-    <section className="bg-background py-20 lg:py-28">
-      <Container>
-        <SectionHeading
-          eyebrow="The COD loss"
-          title="COD is costing you more than you think"
-          description="The loss is spread across returned freight, fake orders, and cash tied up in parcels that never arrive. No single bill shows the total, so the problem stays invisible."
+    <SectionShell
+      backdrop={
+        <div
+          aria-hidden
+          className="absolute inset-0"
+          style={{
+            backgroundImage:
+              "radial-gradient(70% 50% at 50% 12%, color-mix(in oklab, var(--destructive) 7%, transparent), transparent 65%)",
+          }}
         />
+      }
+    >
+      <SectionHeading
+        eyebrow="The COD loss"
+        title="COD is costing you more than you think"
+        description="The loss is spread across returned freight, fake orders, and cash tied up in parcels that never arrive. No single bill shows the total, so the problem stays invisible."
+      />
 
-        <div className="mt-14 grid gap-6 md:grid-cols-3">
-          {painPoints.map((painPoint, index) => {
-            const Icon = iconFor[painPoint.id] ?? PackageX;
-            const control = getControlBySlug(painPoint.controlSlug);
+      <div className="mt-16 grid gap-6 md:grid-cols-3 lg:mt-20">
+        {painPoints.map((painPoint, index) => {
+          const Icon = iconFor[painPoint.id] ?? PackageX;
+          const control = getControlBySlug(painPoint.controlSlug);
 
-            return (
-              <BlurFade
-                key={painPoint.id}
-                delay={0.05 * index}
-                inView
-                className="h-full"
-              >
-                <article className="flex h-full flex-col rounded-2xl border border-border bg-card p-6 shadow-card">
-                  <span className="grid size-10 place-items-center rounded-xl bg-destructive/8 text-destructive">
-                    <Icon aria-hidden className="size-5" />
-                  </span>
+          return (
+            <BlurFade
+              key={painPoint.id}
+              delay={0.06 * index}
+              inView
+              className="h-full"
+            >
+              <article className="group relative flex h-full surface-card flex-col overflow-hidden p-7">
+                <span
+                  aria-hidden
+                  className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-destructive/45 to-transparent"
+                />
 
-                  <h3 className="mt-5 text-lg font-semibold">
-                    {painPoint.title}
-                  </h3>
-                  <p className="mt-2 flex-1 text-sm leading-relaxed text-muted-foreground">
-                    {painPoint.body}
-                  </p>
+                <span className="grid size-11 place-items-center rounded-xl bg-destructive/8 text-destructive transition-transform duration-300 group-hover:scale-105">
+                  <Icon aria-hidden className="size-5" />
+                </span>
 
-                  {control ? (
-                    <Link
-                      href={routeFor.control(control.slug)}
-                      className="mt-5 inline-flex items-center gap-1.5 rounded-md text-sm font-medium text-brand transition-colors outline-none hover:text-brand-deep focus-visible:ring-2 focus-visible:ring-ring/60"
-                    >
-                      Fixed by {control.name}
-                      <ArrowRight aria-hidden className="size-3.5" />
-                    </Link>
-                  ) : null}
-                </article>
-              </BlurFade>
-            );
-          })}
-        </div>
+                <h3 className="mt-6 text-lg font-semibold">
+                  {painPoint.title}
+                </h3>
+                <p className="mt-3 flex-1 text-sm leading-relaxed text-muted-foreground">
+                  {painPoint.body}
+                </p>
 
-        <div className="mt-12 flex flex-col items-center gap-3 rounded-2xl border border-brand/20 bg-brand-soft px-6 py-8 text-center sm:flex-row sm:justify-between sm:text-left">
-          <div>
-            <p className="text-lg font-semibold text-ink">
+                {control ? (
+                  <Link
+                    href={routeFor.control(control.slug)}
+                    className="mt-7 inline-flex items-center gap-1.5 rounded-md text-sm font-medium text-brand transition-colors outline-none hover:text-brand-deep focus-visible:ring-2 focus-visible:ring-ring/60"
+                  >
+                    Fixed by {control.name}
+                    <ArrowRight
+                      aria-hidden
+                      className="size-3.5 transition-transform duration-300 group-hover:translate-x-0.5"
+                    />
+                  </Link>
+                ) : null}
+              </article>
+            </BlurFade>
+          );
+        })}
+      </div>
+
+      <BlurFade inView delay={0.15}>
+        <div className="relative mt-16 flex flex-col items-center gap-5 overflow-hidden rounded-3xl border border-brand/20 bg-brand-soft px-8 py-10 text-center sm:flex-row sm:justify-between sm:text-left lg:mt-20">
+          <div
+            aria-hidden
+            className="absolute -top-24 -right-16 size-64 rounded-full bg-brand/15 blur-3xl"
+          />
+
+          <div className="relative">
+            <p className="text-xl font-semibold text-ink sm:text-2xl">
               What is COD costing your store?
             </p>
-            <p className="mt-1 text-sm text-ink/70">
+            <p className="mt-2 text-sm leading-relaxed text-ink/65">
               Answer three questions and see your own annual number. Free, no
               signup.
             </p>
           </div>
 
-          <Button asChild size="lg" className="shrink-0">
+          <Button asChild size="lg" className="relative shrink-0">
             <Link href={routes.codCalculator}>
               Open the COD Calculator
               <ArrowRight aria-hidden className="size-4" />
             </Link>
           </Button>
         </div>
-      </Container>
-    </section>
+      </BlurFade>
+    </SectionShell>
   );
 }

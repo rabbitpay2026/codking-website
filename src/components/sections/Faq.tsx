@@ -1,14 +1,15 @@
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, MessageCircleQuestion } from "lucide-react";
 import Link from "next/link";
 
 import { SectionHeading } from "@/components/sections/SectionHeading";
-import { Container } from "@/components/shared/Container";
+import { SectionShell } from "@/components/sections/SectionShell";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { BlurFade } from "@/components/ui/blur-fade";
 import { routes } from "@/constants/routes";
 import { getFaqsByTag } from "@/lib/content";
 
@@ -19,8 +20,12 @@ import { getFaqsByTag } from "@/lib/content";
  * on the homepage, the pricing page and the relevant control page without
  * being retyped (§11).
  *
- * The answers stay in the DOM when collapsed, which is what makes them
- * crawlable and searchable in-page rather than hidden behind a click.
+ * Answers stay in the DOM when collapsed, which is what makes them crawlable
+ * and findable with in-page search rather than hidden behind a click.
+ *
+ * The two-column split puts the heading beside the list rather than above it:
+ * this is the last thing before the close, and a merchant scanning for their
+ * own objection should see the questions immediately, not after a title.
  */
 export function Faq() {
   const faqs = getFaqsByTag("home");
@@ -28,42 +33,57 @@ export function Faq() {
   if (faqs.length === 0) return null;
 
   return (
-    <section className="border-t border-border bg-cloud py-20 lg:py-28">
-      <Container>
-        <div className="grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20">
-          <div>
-            <SectionHeading
-              align="left"
-              eyebrow="Questions"
-              title="The things merchants ask before installing"
-            />
+    <SectionShell>
+      <div className="grid gap-14 lg:grid-cols-[0.8fr_1.2fr] lg:gap-24">
+        <div className="lg:sticky lg:top-[calc(var(--spacing-header)+3rem)] lg:self-start">
+          <SectionHeading
+            align="left"
+            eyebrow="Questions"
+            title="The things merchants ask before installing"
+          />
 
-            <p className="mt-6 text-sm leading-relaxed text-muted-foreground">
-              Still unsure about something?
-            </p>
-            <Link
-              href={routes.help}
-              className="mt-1 inline-flex items-center gap-1.5 rounded-md text-sm font-medium text-brand transition-colors outline-none hover:text-brand-deep focus-visible:ring-2 focus-visible:ring-ring/60"
-            >
-              Visit the Help Center
-              <ArrowRight aria-hidden className="size-3.5" />
-            </Link>
+          <div className="mt-10 flex items-start gap-3 rounded-2xl border border-border bg-cloud p-5">
+            <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-brand-soft">
+              <MessageCircleQuestion
+                aria-hidden
+                className="size-4 text-brand"
+              />
+            </span>
+            <div>
+              <p className="text-sm leading-relaxed text-muted-foreground">
+                Still unsure about something?
+              </p>
+              <Link
+                href={routes.help}
+                className="group mt-1 inline-flex items-center gap-1.5 rounded-md text-sm font-medium text-brand transition-colors outline-none hover:text-brand-deep focus-visible:ring-2 focus-visible:ring-ring/60"
+              >
+                Visit the Help Center
+                <ArrowRight
+                  aria-hidden
+                  className="size-3.5 transition-transform duration-300 group-hover:translate-x-0.5"
+                />
+              </Link>
+            </div>
           </div>
+        </div>
 
+        <BlurFade inView>
           <Accordion type="single" collapsible defaultValue={faqs[0]?.id}>
             {faqs.map((faq) => (
               <AccordionItem key={faq.id} value={faq.id}>
-                <AccordionTrigger>{faq.question}</AccordionTrigger>
-                <AccordionContent>
-                  <p className="text-sm leading-relaxed text-muted-foreground">
+                <AccordionTrigger className="py-5 text-base">
+                  {faq.question}
+                </AccordionTrigger>
+                <AccordionContent className="pb-5">
+                  <p className="max-w-xl text-sm leading-relaxed text-muted-foreground">
                     {faq.answer}
                   </p>
                 </AccordionContent>
               </AccordionItem>
             ))}
           </Accordion>
-        </div>
-      </Container>
-    </section>
+        </BlurFade>
+      </div>
+    </SectionShell>
   );
 }
