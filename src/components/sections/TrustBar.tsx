@@ -25,15 +25,9 @@ export async function TrustBar() {
 
   return (
     <SectionShell
+      tone="muted"
       size="compact"
       ariaLabel="Merchants using COD King"
-      className="border-y border-border/60"
-      backdrop={
-        <div
-          aria-hidden
-          className="absolute inset-0 bg-gradient-to-b from-background via-cloud to-background"
-        />
-      }
     >
       <div className="flex flex-col items-center gap-8 lg:flex-row lg:gap-12">
         <div className="flex shrink-0 items-center gap-2.5 text-sm">

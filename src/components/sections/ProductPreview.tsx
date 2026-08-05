@@ -50,6 +50,7 @@ export function ProductPreview({ panels }: ProductPreviewProps) {
     <SectionShell
       tone="dark"
       size="spacious"
+      variant="slab"
       backdrop={
         <>
           <Spotlight size="tall" />
@@ -73,7 +74,7 @@ export function ProductPreview({ panels }: ProductPreviewProps) {
 
       <Tabs
         defaultValue={first.controlSlug}
-        className="mt-14 items-center lg:mt-18"
+        className="mt-14 items-center lg:mt-16"
       >
         <TabsList className="border-white/12 bg-white/5 backdrop-blur-xl">
           {panels.map((panel) => (

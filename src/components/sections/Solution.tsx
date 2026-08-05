@@ -33,7 +33,8 @@ export function Solution() {
   return (
     <SectionShell
       tone="muted"
-      className="border-y border-border/60"
+      // Clears the calculator card hanging down from the section above.
+      containerClassName="sm:pt-[9rem] md:pt-[10.5rem] lg:pt-[12.5rem]"
       backdrop={
         <>
           <Aurora intensity="soft" />
@@ -47,7 +48,7 @@ export function Solution() {
         description="Ten controls, grouped by when they act. Turn on the ones that match your problem and leave the rest off."
       />
 
-      <ol className="mt-16 grid gap-5 md:grid-cols-2 lg:mt-20 lg:grid-cols-4">
+      <ol className="mt-14 grid gap-5 md:grid-cols-2 lg:mt-16 lg:grid-cols-4">
         {stages.map((stage, index) => {
           const group = groups.find((item) => item.title === stage.label);
 

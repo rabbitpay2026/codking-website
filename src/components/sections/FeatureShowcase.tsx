@@ -44,7 +44,7 @@ export function FeatureShowcase() {
         description="Each one works on its own. Together they close the gap between the orders you take and the orders you get paid for."
       />
 
-      <div className="mt-16 grid gap-6 md:grid-cols-2 lg:mt-20">
+      <div className="mt-14 grid gap-6 md:grid-cols-2 lg:mt-16">
         {controls.map((control, index) => (
           <BlurFade
             key={control.slug}

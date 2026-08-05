@@ -80,7 +80,7 @@ export function PricingPreview() {
         description="Every plan includes a 7-day free trial and no credit card. Messages are billed at your plan's per-message rate."
       />
 
-      <div className="mt-16 grid items-start gap-6 lg:mt-20 lg:grid-cols-3">
+      <div className="mt-14 grid items-start gap-6 lg:mt-16 lg:grid-cols-3">
         {plans.map((plan, index) => {
           const { amount, period } = formatPrice(plan.price);
 

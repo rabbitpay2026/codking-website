@@ -44,6 +44,17 @@ export async function FinalCta() {
       containerClassName="text-center"
       backdrop={
         <>
+          {/*
+            The page fades into the brand rather than hitting it. This tone
+            does not flip the token layer, so `background` here is still the
+            light page colour above it — the band arrives instead of cutting in.
+          */}
+          <div
+            aria-hidden
+            // Kept shorter than the container's top padding at every
+            // breakpoint, so the white never reaches the white heading.
+            className="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-background to-transparent sm:h-24 lg:h-28"
+          />
           <div
             aria-hidden
             className="absolute inset-0"

@@ -197,16 +197,18 @@
   /*
    * Vertical rhythm.
    *
-   * Deliberately generous. The single biggest difference between a page that
-   * reads as a premium product and one that reads as a template is the amount
-   * of quiet between its sections — content that is allowed to end before the
-   * next thing begins. These three steps are the whole scale; `SectionShell`
-   * is the only place they are applied, so the rhythm cannot drift section by
-   * section.
+   * These are per-side values, so the seam a reader perceives between two
+   * sections is roughly double them. They are tuned against that combined
+   * figure: generous enough that nothing feels crowded, tight enough that a
+   * section never reads as marooned from the one before it. Whitespace alone
+   * does not make a page premium — whitespace that still connects does.
+   *
+   * `SectionShell` is the only place they are applied, so the rhythm cannot
+   * drift section by section.
    */
   --spacing-section-sm: 4rem;
-  --spacing-section: 7rem;
-  --spacing-section-lg: 10rem;
+  --spacing-section: 6rem;
+  --spacing-section-lg: 8rem;
 
   /* Shell metrics. Owned here so the header, the scroll-margin that keeps
      anchored headings clear of it, and the spacer that stops the mobile

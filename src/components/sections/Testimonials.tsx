@@ -31,7 +31,6 @@ export async function Testimonials() {
   return (
     <SectionShell
       tone="muted"
-      className="border-y border-border/60"
       backdrop={
         <div
           aria-hidden
@@ -49,7 +48,7 @@ export async function Testimonials() {
         description={`Rated ${proof.rating} out of 5 from ${numberFormat.format(proof.reviewCount)}+ reviews on the Shopify App Store.`}
       />
 
-      <div className="mt-16 grid gap-6 md:grid-cols-2 lg:mt-20">
+      <div className="mt-14 grid gap-6 md:grid-cols-2 lg:mt-16">
         {stories.map((story, index) => (
           <BlurFade
             key={story.id}

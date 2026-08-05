@@ -35,7 +35,6 @@ export function HowItWorks() {
     <SectionShell
       id="how-it-works"
       tone="muted"
-      className="border-y border-border/60"
       backdrop={
         <DotPattern
           width={30}
@@ -54,7 +53,7 @@ export function HowItWorks() {
         description="No code, no theme changes, and no developer. Install it, set your rules, and it runs in the background."
       />
 
-      <ol className="mt-16 grid gap-x-8 gap-y-12 md:grid-cols-2 lg:mt-20 lg:grid-cols-4">
+      <ol className="mt-14 grid gap-x-8 gap-y-12 md:grid-cols-2 lg:mt-16 lg:grid-cols-4">
         {steps.map((step, index) => (
           // The reveal wrapper stays inside the list item so the markup
           // remains a real `ol > li` list.
@@ -82,7 +81,7 @@ export function HowItWorks() {
         ))}
       </ol>
 
-      <div className="mt-16 flex flex-col items-center gap-5 lg:mt-20">
+      <div className="mt-14 flex flex-col items-center gap-5 lg:mt-16">
         {installAction ? (
           <ActionLink
             action={{ ...installAction, label: "Install free on Shopify" }}

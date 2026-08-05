@@ -33,7 +33,7 @@ export function Faq() {
   if (faqs.length === 0) return null;
 
   return (
-    <SectionShell>
+    <SectionShell tone="muted">
       <div className="grid gap-14 lg:grid-cols-[0.8fr_1.2fr] lg:gap-24">
         <div className="lg:sticky lg:top-[calc(var(--spacing-header)+3rem)] lg:self-start">
           <SectionHeading

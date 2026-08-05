@@ -41,6 +41,12 @@ export function PainPoints() {
 
   return (
     <SectionShell
+      // The calculator card straddles the seam into the next section, so this
+      // one has to be allowed to spill and to paint above its neighbour —
+      // later siblings win the stacking order otherwise.
+      allowOverflow
+      className="z-20"
+      containerClassName="pb-12 sm:pb-0"
       backdrop={
         <div
           aria-hidden
@@ -58,7 +64,7 @@ export function PainPoints() {
         description="The loss is spread across returned freight, fake orders, and cash tied up in parcels that never arrive. No single bill shows the total, so the problem stays invisible."
       />
 
-      <div className="mt-16 grid gap-6 md:grid-cols-3 lg:mt-20">
+      <div className="mt-14 grid gap-6 md:grid-cols-3 lg:mt-16">
         {painPoints.map((painPoint, index) => {
           const Icon = iconFor[painPoint.id] ?? PackageX;
           const control = getControlBySlug(painPoint.controlSlug);
@@ -105,8 +111,14 @@ export function PainPoints() {
         })}
       </div>
 
-      <BlurFade inView delay={0.15}>
-        <div className="relative mt-16 flex flex-col items-center gap-5 overflow-hidden rounded-3xl border border-brand/20 bg-brand-soft px-8 py-10 text-center sm:flex-row sm:justify-between sm:text-left lg:mt-20">
+      {/*
+        Hangs half out of the section and into the one below. A card crossing
+        the boundary stitches two sections together far more effectively than
+        any amount of whitespace between them — and it puts the page's most
+        useful action exactly where the eye is already travelling.
+      */}
+      <BlurFade inView delay={0.15} className="sm:translate-y-1/2">
+        <div className="relative mt-14 flex flex-col items-center gap-5 overflow-hidden rounded-3xl border border-brand/20 bg-brand-soft px-8 py-10 text-center shadow-overlay sm:flex-row sm:justify-between sm:text-left lg:mt-16">
           <div
             aria-hidden
             className="absolute -top-24 -right-16 size-64 rounded-full bg-brand/15 blur-3xl"
