@@ -1,13 +1,17 @@
 import { routeFor } from "@/constants/routes";
-import { footerColumns } from "@/data/footer";
+import {
+  footerCompanyColumn,
+  footerToolsColumn,
+  footerTrustColumn,
+} from "@/data/footer";
 import {
   megaMenuFooterLinks,
   mobileActions,
   primaryNav,
-  resourcesNav,
   utilityActions,
 } from "@/data/navigation";
 import { getControlsByStage, getOrderStages } from "@/lib/content/controls";
+import { getResourceSections } from "@/lib/content/resources";
 
 import type {
   Control,
@@ -30,8 +34,20 @@ export function getPrimaryNav(): readonly PrimaryNavItem[] {
   return primaryNav;
 }
 
+/**
+ * The Resources dropdown and the footer's Resources column (§4.1, §4.5).
+ *
+ * Derived from the resource sections rather than listed separately, so the
+ * four surfaces §7 allows are declared once. Each item carries the section's
+ * own purpose line, which is what lets the dropdown say what Docs is for
+ * instead of just naming it.
+ */
 export function getResourcesNav(): readonly NavItem[] {
-  return resourcesNav;
+  return getResourceSections().map((section) => ({
+    label: section.title,
+    href: section.href,
+    description: section.purpose,
+  }));
 }
 
 export function getUtilityActions(): readonly UtilityAction[] {
@@ -43,37 +59,44 @@ export function getMobileActions(): readonly UtilityAction[] {
 }
 
 /**
- * The Features mega-menu: four columns by order stage (§4.1).
+ * The controls grouped by order stage — one group per stage, in stage order.
  *
- * Built from the controls repository, so a new control appears in the menu
- * without anyone editing navigation data — which is exactly the §11 promise
- * that one source feeds the mega-menu, the homepage, the feature pages and the
- * footer.
+ * Shared by the mega-menu columns (§4.1), the mobile drawer's accordion
+ * (§4.4) and the footer's Features column (§4.5). All three render the same
+ * grouping because all three read this.
+ */
+export function getControlNavGroups(): readonly NavGroup[] {
+  return getOrderStages().map((stage) => ({
+    title: stage.label,
+    items: getControlsByStage(stage.id).map(toNavItem),
+  }));
+}
+
+/**
+ * Four columns by order stage, plus the closing row (§4.1).
+ *
+ * Shares `getControlNavGroups()` with the mobile drawer and the footer, so the
+ * control set is built once and — because this is what the header hands
+ * across the server-client boundary — sent once.
  */
 export function getFeaturesMegaMenu(): FeaturesMegaMenu {
   return {
-    columns: getOrderStages().map((stage) => ({
-      stage,
-      items: getControlsByStage(stage.id).map(toNavItem),
-    })),
+    columns: getControlNavGroups(),
     footerLinks: megaMenuFooterLinks,
   };
 }
 
 /**
- * The complete footer index (§4.5).
+ * The footer's link columns other than Features (§4.5).
  *
- * The Features column is generated from the same controls source as the
- * mega-menu and prepended to the hand-authored columns, so the footer is a
- * genuine full index rather than a list that drifts.
+ * Features is returned separately by `getControlNavGroups()` because it is
+ * the only column with sub-groups, and the footer lays it out differently.
  */
 export function getFooterColumns(): readonly NavGroup[] {
-  const featuresColumn: NavGroup = {
-    title: "Features",
-    items: getOrderStages().flatMap((stage) =>
-      getControlsByStage(stage.id).map(toNavItem),
-    ),
-  };
-
-  return [featuresColumn, ...footerColumns];
+  return [
+    footerToolsColumn,
+    { title: "Resources", items: getResourcesNav() },
+    footerCompanyColumn,
+    footerTrustColumn,
+  ];
 }

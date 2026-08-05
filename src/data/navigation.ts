@@ -17,14 +17,6 @@ export const primaryNav: readonly PrimaryNavItem[] = [
   { label: "Resources", href: routes.resources, behaviour: "dropdown" },
 ];
 
-/** The Resources dropdown, and the footer's Resources column (§4.1, §4.5). */
-export const resourcesNav: readonly NavItem[] = [
-  { label: "Guides", href: routes.guides },
-  { label: "Blog", href: routes.blog },
-  { label: "Documentation", href: routes.docs },
-  { label: "Help Center", href: routes.help },
-];
-
 /** The mega-menu's closing row, beneath the four stage columns (§4.1). */
 export const megaMenuFooterLinks: readonly NavItem[] = [
   { label: "All features", href: routes.features },

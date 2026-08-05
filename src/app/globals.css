@@ -5,62 +5,77 @@
 
 /* ---------------------------------------------------------------------------
    Design tokens — light theme.
-   Values are intentionally neutral. Product branding is applied in a later
-   phase by overriding these custom properties only.
+
+   The brand values are sampled directly from the COD King logo
+   (`public/logos/cod logo.png`): violet #734dff for the wordmark, green
+   #7cd548 for the check. Everything else is tuned around them, so applying
+   the brand remains what the foundation intended — overriding these custom
+   properties and nothing else.
 --------------------------------------------------------------------------- */
 :root {
   --radius: 0.75rem;
 
   --background: hsl(0 0% 100%);
-  --foreground: hsl(222 47% 11%);
+  --foreground: hsl(250 25% 13%);
   --card: hsl(0 0% 100%);
-  --card-foreground: hsl(222 47% 11%);
+  --card-foreground: hsl(250 25% 13%);
   --popover: hsl(0 0% 100%);
-  --popover-foreground: hsl(222 47% 11%);
-  --primary: hsl(218 92% 53%);
+  --popover-foreground: hsl(250 25% 13%);
+  --primary: hsl(253 100% 65%);
   --primary-foreground: hsl(0 0% 100%);
-  --secondary: hsl(220 14% 96%);
-  --secondary-foreground: hsl(222 47% 11%);
-  --muted: hsl(220 14% 96%);
-  --muted-foreground: hsl(215 16% 47%);
-  --accent: hsl(217 95% 63%);
-  --accent-foreground: hsl(0 0% 100%);
+  --secondary: hsl(250 30% 97%);
+  --secondary-foreground: hsl(250 25% 13%);
+  --muted: hsl(250 25% 96%);
+  --muted-foreground: hsl(250 10% 45%);
+  /* Hover/active surface, not a brand colour — shadcn semantics. */
+  --accent: hsl(252 100% 97%);
+  --accent-foreground: hsl(252 60% 30%);
   --destructive: hsl(0 84% 60%);
   --destructive-foreground: hsl(0 0% 98%);
-  --border: hsl(220 13% 91%);
-  --input: hsl(220 13% 91%);
-  --ring: hsl(218 92% 53%);
+  --border: hsl(250 20% 92%);
+  --input: hsl(250 20% 92%);
+  --ring: hsl(253 100% 65%);
 
-  --brand: #196bf5;
-  --brand-deep: #0d4cb3;
-  --brand-accent: #4a8cfa;
-  --brand-soft: #e8f1fe;
-  --ink: #0f172a;
-  --cloud: #fafaff;
+  --brand: #734dff;
+  --brand-deep: #5a2ff2;
+  --brand-accent: #9d80ff;
+  --brand-soft: #f2eeff;
+  /*
+   * The logo's green. Accents, icons and fills only: at 1.8:1 against white
+   * it must never be used for text on a light surface.
+   */
+  --brand-check: #7cd548;
+  --ink: #14103a;
+  --cloud: #faf9ff;
 }
 
 /* Dark theme is opt-in via a `.dark` class on <html>, so a theme provider can
    be added later without touching component code. */
 .dark {
-  --background: hsl(224 71% 4%);
-  --foreground: hsl(210 40% 98%);
-  --card: hsl(222 47% 6%);
-  --card-foreground: hsl(210 40% 98%);
-  --popover: hsl(224 71% 4%);
-  --popover-foreground: hsl(210 40% 98%);
-  --primary: hsl(218 92% 60%);
+  --background: hsl(250 40% 5%);
+  --foreground: hsl(250 20% 97%);
+  --card: hsl(250 35% 8%);
+  --card-foreground: hsl(250 20% 97%);
+  --popover: hsl(250 35% 8%);
+  --popover-foreground: hsl(250 20% 97%);
+  /* Held at the light-theme violet: white on it clears AA at 4.96:1. */
+  --primary: hsl(253 100% 65%);
   --primary-foreground: hsl(0 0% 100%);
-  --secondary: hsl(217 33% 12%);
-  --secondary-foreground: hsl(210 40% 98%);
-  --muted: hsl(217 33% 12%);
-  --muted-foreground: hsl(215 20% 65%);
-  --accent: hsl(217 95% 68%);
-  --accent-foreground: hsl(0 0% 100%);
+  --secondary: hsl(250 30% 13%);
+  --secondary-foreground: hsl(250 20% 97%);
+  --muted: hsl(250 30% 13%);
+  --muted-foreground: hsl(250 12% 65%);
+  --accent: hsl(252 40% 16%);
+  --accent-foreground: hsl(250 20% 97%);
   --destructive: hsl(0 63% 31%);
   --destructive-foreground: hsl(210 40% 98%);
-  --border: hsl(217 33% 14%);
-  --input: hsl(217 33% 14%);
-  --ring: hsl(218 92% 60%);
+  --border: hsl(250 25% 16%);
+  --input: hsl(250 25% 16%);
+  --ring: hsl(253 100% 72%);
+
+  --brand-soft: hsl(252 40% 14%);
+  --ink: hsl(250 20% 97%);
+  --cloud: hsl(250 40% 7%);
 }
 
 /* ---------------------------------------------------------------------------
@@ -75,6 +90,7 @@
   --color-brand-deep: var(--brand-deep);
   --color-brand-accent: var(--brand-accent);
   --color-brand-soft: var(--brand-soft);
+  --color-brand-check: var(--brand-check);
   --color-ink: var(--ink);
   --color-cloud: var(--cloud);
 
@@ -114,6 +130,12 @@
   --spacing-section: 6rem;
   --spacing-section-sm: 4rem;
 
+  /* Shell metrics. Owned here so the header, the scroll-margin that keeps
+     anchored headings clear of it, and the spacer that stops the mobile
+     action bar covering content can never disagree. */
+  --spacing-header: 4rem;
+  --spacing-action-bar: 3.75rem;
+
   /* Display sizes that sit above Tailwind's default text scale. */
   --text-display: 3.5rem;
   --text-display--line-height: 1.05;
@@ -127,6 +149,33 @@
   --shadow-overlay: 0 8px 32px -8px oklch(0 0 0 / 0.16);
 
   --ease-emphasized: cubic-bezier(0.2, 0, 0, 1);
+
+  /* Disclosure motion. Radix publishes the measured height as a custom
+     property, so the accordion can animate to `auto` without JavaScript. */
+  --animate-accordion-down: accordion-down 220ms var(--ease-emphasized);
+  --animate-accordion-up: accordion-up 180ms var(--ease-emphasized);
+
+  @keyframes accordion-down {
+    from {
+      height: 0;
+      opacity: 0;
+    }
+    to {
+      height: var(--radix-accordion-content-height);
+      opacity: 1;
+    }
+  }
+
+  @keyframes accordion-up {
+    from {
+      height: var(--radix-accordion-content-height);
+      opacity: 1;
+    }
+    to {
+      height: 0;
+      opacity: 0;
+    }
+  }
 }
 
 @layer base {
@@ -136,6 +185,18 @@
 
   html {
     @apply scroll-smooth antialiased;
+    /* Keep anchored content clear of the sticky header. */
+    scroll-padding-top: calc(var(--spacing-header) + 1rem);
+  }
+
+  /*
+   * Set before first paint by the inline script in the site layout, which
+   * reads the dismissal from localStorage. Hiding the bar in CSS rather than
+   * after hydration means a merchant who has already dismissed it never sees
+   * it flash in and collapse.
+   */
+  [data-announcement="dismissed"] [data-slot="announcement-bar"] {
+    display: none;
   }
 
   body {
@@ -154,5 +215,21 @@
 
   p {
     @apply text-pretty;
+  }
+
+  /*
+   * Honoured globally rather than per component, so a new animation cannot
+   * ship without a reduced-motion path. Content is never hidden by this —
+   * only its movement is removed.
+   */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 }

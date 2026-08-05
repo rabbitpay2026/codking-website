@@ -1,3 +1,4 @@
+export * from "./announcement";
 export * from "./calculator";
 export * from "./controls";
 export * from "./customers";

@@ -1,5 +1,3 @@
-import type { OrderStage } from "@/types/controls";
-
 import type { Route } from "next";
 
 /**
@@ -36,16 +34,15 @@ export interface PrimaryNavItem extends NavItem {
 
 /**
  * The Features mega-menu: one column per order stage, plus a footer row (§4.1).
+ *
  * Assembled from the controls repository, so it can never drift from the
- * feature pages or the footer.
+ * feature pages or the footer. Columns are plain `NavGroup`s rather than
+ * carrying the whole `OrderStage`: the menu renders only the stage's label,
+ * and this object crosses the server-client boundary on every page, so the
+ * stage's problem statement would be payload nobody reads.
  */
-export interface MegaMenuColumn {
-  readonly stage: OrderStage;
-  readonly items: readonly NavItem[];
-}
-
 export interface FeaturesMegaMenu {
-  readonly columns: readonly MegaMenuColumn[];
+  readonly columns: readonly NavGroup[];
   readonly footerLinks: readonly NavItem[];
 }
 

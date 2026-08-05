@@ -46,14 +46,18 @@ src/
     (site)/       Marketing route group — every page in the sitemap
     layout.tsx    Document shell only (html, fonts, metadata base)
   components/
+    layout/       The global shell (header, nav, drawer, footer, action bar)
     shared/       Cross-cutting primitives (Container, Section, PagePlaceholder)
     templates/    Page templates shared by many routes (control, article, legal)
+    ui/           Unstyled-behaviour primitives (button, accordion)
   constants/
     theme/        Design token maps
     routes.ts     Route registry and dynamic-path builders
     site.ts       Site-wide config
     external.ts   Destinations outside this site (App Store, login, demo)
+    storage.ts    Browser storage keys
   data/           Typed content records — the CMS-replaceable layer
+  hooks/          Reusable client hooks
   lib/
     content/      Content repository — the only way components read content
     metadata.ts   Page metadata factory
@@ -62,9 +66,8 @@ src/
   types/          Domain contracts
 ```
 
-Folders arrive when they have something to hold. `components/layout/` and
-`components/sections/` are created by the phases that own them — the site shell
-and the reusable marketing bands respectively.
+Folders arrive when they have something to hold. `components/sections/` is
+created by the phase that owns the reusable marketing bands.
 
 `constants/` holds configuration that rarely changes and is referenced by code
 (routes, tokens). `data/` holds content a CMS could later supply. **Components
@@ -83,12 +86,19 @@ classes (`bg-primary`, `max-w-page`, `shadow-card`, `py-section`).
 that needs a class name or a raw value programmatically. It does **not**
 duplicate the values; colours and radii resolve to `var(--...)` references.
 
-To apply branding, override the custom properties under `:root` and `.dark` in
+Brand values are sampled from the logo (`public/logos/cod-king-wordmark.png`):
+violet `#734dff` and green `#7cd548`. The green fails contrast as text on a
+light surface — it is for icons and fills only, which is why `--brand-check`
+is named for its use rather than its hue.
+
+To re-brand, override the custom properties under `:root` and `.dark` in
 `globals.css`. No component markup should need to change.
 
 ## Conventions
 
 - Components are `PascalCase.tsx`; everything else is `kebab-case.ts`.
+  `components/ui/` is the exception and stays kebab-case, so files generated
+  by the shadcn registry drop in without being renamed.
 - Import via the `@/*` alias, never with relative `../../` paths.
 - Server Components by default. Add `"use client"` only where interactivity
   demands it.
@@ -135,8 +145,11 @@ action rather than a link that goes nowhere.
 
 ## Outstanding
 
-- `public/favicon.ico` and app icons are not yet added.
-- Every route is a placeholder and is `noIndex`.
-- Brand tokens in `globals.css` are inherited defaults, not chosen values.
+- Every page body is still a placeholder and is `noIndex`; the shell around
+  them is real.
+- External destinations are unset, so Install Free, Book a Demo, Log in and
+  WhatsApp render disabled until the env vars are supplied.
 - Pricing, FAQ, testimonials and integrations are empty typed collections
   awaiting content.
+- Proof figures (rating, review count) are static and unverified; §11 calls
+  for syncing them from the Shopify App Store.
