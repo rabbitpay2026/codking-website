@@ -1,7 +1,7 @@
 /**
  * Page shell widths and gutters.
  *
- * Consumed by `<Container>` (`src/components/common/Container.tsx`), which is
+ * Consumed by `<Container>` (`src/components/shared/Container.tsx`), which is
  * the only component that should apply these directly.
  */
 export const containerWidth = {

@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { Section } from "@/components/common/Section";
+import { Section } from "@/components/shared/Section";
 import { routes } from "@/constants/routes";
 import { bodyClass, headingClass, transitionClass } from "@/constants/theme";
 import { cn } from "@/lib/utils";

@@ -9,6 +9,14 @@ interface CreateMetadataOptions {
   readonly description?: string;
   /** App-relative path, used to derive the canonical and Open Graph URL. */
   readonly path?: string;
+  /**
+   * Keep the page out of the index.
+   *
+   * Every placeholder route sets this. Removing it is part of the definition
+   * of done for the phase that gives the page real content — an empty page
+   * that ranks is worse than one that does not exist.
+   */
+  readonly noIndex?: boolean;
 }
 
 /**
@@ -22,6 +30,7 @@ export function createMetadata({
   title,
   description = siteConfig.description,
   path = "/",
+  noIndex = false,
 }: CreateMetadataOptions = {}): Metadata {
   const url = absoluteUrl(path);
   const resolvedTitle = title ?? siteConfig.name;
@@ -32,6 +41,7 @@ export function createMetadata({
     alternates: {
       canonical: url,
     },
+    ...(noIndex ? { robots: { index: false, follow: false } } : {}),
     openGraph: {
       type: "website",
       siteName: siteConfig.name,

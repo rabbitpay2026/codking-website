@@ -1,6 +1,6 @@
 "use client";
 
-import { Section } from "@/components/common/Section";
+import { Section } from "@/components/shared/Section";
 import { bodyClass, headingClass, transitionClass } from "@/constants/theme";
 import { cn } from "@/lib/utils";
 

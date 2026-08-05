@@ -105,8 +105,8 @@
 }
 
 @theme {
-  /* Page shells — consumed by the <Container> component.
-     72rem matches the `max-w-6xl` used by every RabbitPay section. */
+  /* Page shells — consumed by the <Container> component, which is the only
+     place these are applied. Retuned in the design-system phase. */
   --container-page: 72rem;
   --container-prose: 45rem;
 
