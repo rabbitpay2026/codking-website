@@ -43,8 +43,8 @@ export async function Testimonials() {
       }
     >
       <SectionHeading
-        eyebrow="Proof"
-        title="What merchants say after switching"
+        eyebrow="Merchants"
+        title="Reviews from stores running it now"
         description={`Rated ${proof.rating} out of 5 from ${numberFormat.format(proof.reviewCount)}+ reviews on the Shopify App Store.`}
       />
 

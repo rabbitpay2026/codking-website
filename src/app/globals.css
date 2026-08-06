@@ -244,6 +244,28 @@
    */
   --animate-aurora: aurora-drift 26s ease-in-out infinite;
   --animate-float: float-y 7s ease-in-out infinite;
+  /* Draws attention to one element without moving it. */
+  --animate-halo: halo 3.2s ease-in-out infinite;
+  /* Travels a connector line from a callout toward what it points at. */
+  --animate-trace: trace 2.6s linear infinite;
+
+  @keyframes halo {
+    0%,
+    100% {
+      opacity: 0.35;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.85;
+      transform: scale(1.015);
+    }
+  }
+
+  @keyframes trace {
+    to {
+      stroke-dashoffset: -16;
+    }
+  }
 
   @keyframes aurora-drift {
     0%,

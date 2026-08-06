@@ -78,13 +78,12 @@ export async function FinalCta() {
       }
     >
       <h2 className="mx-auto max-w-3xl text-[2rem] leading-[1.05] font-semibold tracking-[-0.03em] text-balance text-white sm:text-[2.75rem] lg:text-[3.25rem]">
-        Ready to take control of your COD orders?
+        Your next cash order can be a verified one
       </h2>
 
       <p className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-pretty text-white/80 sm:text-lg">
-        Join {numberFormat.format(proof.merchantCount)}+ Shopify merchants
-        reducing RTOs, blocking fake orders, and converting more COD buyers to
-        prepaid.
+        Join {numberFormat.format(proof.merchantCount)}+ Shopify stores that
+        stopped treating cash on delivery as a cost of doing business.
       </p>
 
       <div className="mt-11 flex flex-col items-center justify-center gap-3 sm:flex-row">

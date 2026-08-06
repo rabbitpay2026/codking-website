@@ -48,9 +48,9 @@ export function HowItWorks() {
       }
     >
       <SectionHeading
-        eyebrow="Setup"
-        title="Live in under ten minutes"
-        description="No code, no theme changes, and no developer. Install it, set your rules, and it runs in the background."
+        eyebrow="Getting started"
+        title="Ten minutes, start to finish"
+        description="Install it, choose your rules, and leave it running. Nobody has to touch code."
       />
 
       <ol className="mt-14 grid gap-x-8 gap-y-12 md:grid-cols-2 lg:mt-16 lg:grid-cols-4">

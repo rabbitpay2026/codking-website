@@ -1,15 +1,13 @@
 import { Star } from "lucide-react";
 
+import { ShopifyMark } from "@/components/brand/BrandMarks";
 import { ActionLink } from "@/components/layout/ActionLink";
 import { HeroDevices } from "@/components/sections/hero/HeroDevices";
+import { HeroEnvironment } from "@/components/sections/hero/HeroEnvironment";
 import { SectionShell } from "@/components/sections/SectionShell";
 import { AnimatedShinyText } from "@/components/ui/animated-shiny-text";
-import { Aurora } from "@/components/ui/aurora";
 import { BlurFade } from "@/components/ui/blur-fade";
 import { Button } from "@/components/ui/button";
-import { GridPattern } from "@/components/ui/grid-pattern";
-import { Noise } from "@/components/ui/noise";
-import { cn } from "@/lib/utils";
 import { getProofMetrics, getUtilityActions } from "@/lib/content";
 
 const numberFormat = new Intl.NumberFormat("en");
@@ -17,17 +15,17 @@ const numberFormat = new Intl.NumberFormat("en");
 /**
  * The homepage hero (§5.1 #2).
  *
- * States the value in one line, backs it with the trust line the architecture
- * specifies, and offers exactly two actions: install, or see how it works.
- * Nothing else competes — every additional choice here costs conversions.
+ * One promise, one sentence of substance, and two actions. Everything else
+ * on this screen is the product itself — the argument is made by showing a
+ * checkout that already has the controls working in it, not by describing
+ * them.
  *
- * The backdrop is layered rather than flat: a drifting colour field for
- * warmth, a grid for structure, and grain over the top to stop the gradient
- * banding. Each layer is masked so it fades before it reaches the content,
- * which is what keeps the type crisp on top of it — and every one of them is
- * CSS, so the whole scene costs nothing after first paint.
+ * The environment is light on purpose. A dark hero makes a bright product
+ * screen the only lit object in the frame, which flatters the effect and not
+ * the product; a lavender room lets the devices read as physical objects
+ * standing in it.
  *
- * Trust figures come from the proof repository, never from copy (§11.1).
+ * Trust figures render from the proof repository, never from copy (§11.1).
  */
 export async function Hero() {
   const proof = await getProofMetrics();
@@ -38,56 +36,43 @@ export async function Hero() {
   return (
     <SectionShell
       size="spacious"
-      containerClassName="pt-14 md:pt-20 lg:pt-24"
-      backdrop={
-        <>
-          <Aurora />
-          <GridPattern
-            width={56}
-            height={56}
-            className={cn(
-              "absolute inset-0 h-full stroke-brand/[0.07]",
-              "[mask-image:radial-gradient(80%_60%_at_50%_0%,white,transparent)]",
-            )}
-          />
-          <Noise />
-          {/* Settles the section into the one below it. */}
-          <div
-            aria-hidden
-            className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent to-background"
-          />
-        </>
-      }
+      containerClassName="pt-12 md:pt-16 lg:pt-20"
+      backdrop={<HeroEnvironment />}
     >
-      <div className="grid items-center gap-16 lg:grid-cols-[1.02fr_0.98fr] lg:gap-12">
-        <div>
+      <div className="grid items-center gap-14 lg:grid-cols-[0.86fr_1.14fr] lg:gap-10">
+        <div className="max-w-xl">
           <BlurFade delay={0.05}>
-            <span className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-background/70 py-1 pr-3.5 pl-1 shadow-card backdrop-blur-md">
-              <span className="inline-flex items-center gap-1 rounded-full bg-brand px-2 py-0.5 text-[11px] font-semibold text-white">
-                <Star aria-hidden className="size-3 fill-white" />
-                {proof.rating}
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="inline-flex items-center gap-2 rounded-full border border-white/70 bg-white/70 py-1 pr-3.5 pl-1 shadow-card backdrop-blur-md">
+                <span className="inline-flex items-center gap-1 rounded-full bg-brand px-2 py-0.5 text-[11px] font-semibold text-white">
+                  <Star aria-hidden className="size-3 fill-white" />
+                  {proof.rating}
+                </span>
+                <AnimatedShinyText className="text-xs font-medium">
+                  {numberFormat.format(proof.reviewCount)}+ merchant reviews
+                </AnimatedShinyText>
               </span>
-              <AnimatedShinyText className="text-xs font-medium">
-                {numberFormat.format(proof.reviewCount)}+ reviews on the Shopify
-                App Store
-              </AnimatedShinyText>
-            </span>
+
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-white/70 bg-white/70 px-3 py-1.5 text-xs font-medium text-ink/70 shadow-card backdrop-blur-md">
+                <ShopifyMark className="size-4" />
+                Works inside Shopify checkout
+              </span>
+            </div>
           </BlurFade>
 
           <BlurFade delay={0.12}>
-            <h1 className="mt-7 text-[2.5rem] leading-[1.02] font-semibold tracking-[-0.03em] text-balance sm:text-6xl lg:text-[4rem]">
-              Stop losing money on{" "}
+            <h1 className="mt-8 text-[2.6rem] leading-[1.02] font-semibold tracking-[-0.035em] text-balance sm:text-6xl lg:text-[4.1rem]">
+              Make COD as profitable as{" "}
               <span className="bg-gradient-to-br from-brand via-brand to-brand-accent bg-clip-text text-transparent">
-                fake COD orders
+                prepaid
               </span>
             </h1>
           </BlurFade>
 
           <BlurFade delay={0.18}>
-            <p className="mt-7 max-w-xl text-lg leading-relaxed text-pretty text-muted-foreground">
-              COD King helps Shopify merchants verify orders, collect advance
-              payments, and turn Cash on Delivery into a profitable, low-risk
-              growth channel.
+            <p className="mt-7 text-lg leading-relaxed text-pretty text-ink/65">
+              Verify every order before it ships, price cash properly, and give
+              buyers a reason to pay upfront — without touching your theme.
             </p>
           </BlurFade>
 
@@ -100,7 +85,7 @@ export async function Hero() {
                     label: "Install free on Shopify",
                   }}
                   size="lg"
-                  className="shadow-[0_10px_30px_-10px_var(--brand)]"
+                  className="shadow-[0_12px_32px_-10px_var(--brand)]"
                 />
               ) : null}
 
@@ -108,7 +93,7 @@ export async function Hero() {
                 asChild
                 variant="secondary"
                 size="lg"
-                className="bg-background/70 backdrop-blur-md"
+                className="border-white/70 bg-white/70 backdrop-blur-md"
               >
                 <a href="#how-it-works">See how it works</a>
               </Button>
@@ -116,39 +101,37 @@ export async function Hero() {
           </BlurFade>
 
           <BlurFade delay={0.3}>
-            <dl className="mt-10 flex flex-wrap items-center gap-x-7 gap-y-3 text-sm text-muted-foreground">
+            <dl className="mt-10 flex flex-wrap items-center gap-x-7 gap-y-3 text-sm text-ink/55">
               <div className="flex items-baseline gap-1.5">
                 <dt className="sr-only">Merchants</dt>
-                <dd className="text-base font-semibold text-foreground">
+                <dd className="text-base font-semibold text-ink">
                   {numberFormat.format(proof.merchantCount)}+
                 </dd>
                 <span>merchants</span>
               </div>
-              <span aria-hidden className="h-4 w-px bg-border" />
-              <div className="flex items-baseline gap-1.5">
-                <dt className="sr-only">App Store rating</dt>
-                <dd className="text-base font-semibold text-foreground">
-                  {proof.rating}★
-                </dd>
-                <span>rating</span>
-              </div>
               {proof.countriesServed ? (
                 <>
-                  <span aria-hidden className="h-4 w-px bg-border" />
+                  <span aria-hidden className="h-4 w-px bg-ink/15" />
                   <div className="flex items-baseline gap-1.5">
                     <dt className="sr-only">Countries</dt>
-                    <dd className="text-base font-semibold text-foreground">
+                    <dd className="text-base font-semibold text-ink">
                       {proof.countriesServed}+
                     </dd>
                     <span>countries</span>
                   </div>
                 </>
               ) : null}
+              <span aria-hidden className="h-4 w-px bg-ink/15" />
+              <div className="flex items-baseline gap-1.5">
+                <dt className="sr-only">Setup</dt>
+                <dd className="text-base font-semibold text-ink">10 min</dd>
+                <span>setup, no code</span>
+              </div>
             </dl>
           </BlurFade>
         </div>
 
-        <BlurFade delay={0.2} className="lg:pl-4">
+        <BlurFade delay={0.2} className="lg:-mr-8 xl:-mr-16">
           <HeroDevices />
         </BlurFade>
       </div>

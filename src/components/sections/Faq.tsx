@@ -38,8 +38,8 @@ export function Faq() {
         <div className="lg:sticky lg:top-[calc(var(--spacing-header)+3rem)] lg:self-start">
           <SectionHeading
             align="left"
-            eyebrow="Questions"
-            title="The things merchants ask before installing"
+            eyebrow="Before you install"
+            title="The questions merchants actually ask"
           />
 
           <div className="mt-10 flex items-start gap-3 rounded-2xl border border-border bg-cloud p-5">

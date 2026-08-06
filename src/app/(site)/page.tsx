@@ -19,7 +19,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = createMetadata({
   description:
-    "COD King helps Shopify merchants verify orders, collect advance payments, and turn Cash on Delivery into a profitable, low-risk growth channel.",
+    "Verify every cash-on-delivery order, price cash properly, and move buyers to prepaid — inside the Shopify checkout you already have.",
   path: routes.home,
 });
 

@@ -1,4 +1,4 @@
-import { ArrowRight, PackageX, TrendingDown, Wallet } from "lucide-react";
+import { ArrowRight, Banknote, PackageX, Undo2 } from "lucide-react";
 import Link from "next/link";
 
 import { SectionHeading } from "@/components/sections/SectionHeading";
@@ -12,38 +12,32 @@ import type { LucideIcon } from "lucide-react";
 
 /**
  * Icons are presentation, not content, so they are mapped here rather than
- * stored on the record — a copywriter changing a pain point should not have
- * to pick an icon.
+ * stored on the record — changing a line of copy should not mean picking art.
  */
 const iconFor: Record<string, LucideIcon> = {
   "fake-orders": PackageX,
-  rto: TrendingDown,
-  prepaid: Wallet,
+  rto: Undo2,
+  prepaid: Banknote,
 };
 
 /**
  * The COD loss, made visible (§5.1 #4).
  *
- * The emotional centre of the page. The loss is invisible because it is
- * spread across small line items no single bill totals (§2), so the section
- * names each one and then hands the merchant the tool that turns it into
- * their own number.
+ * Composed as a statement rather than a row of cards, because that is the
+ * argument: the loss is real but no single bill ever totals it (§2). Reading
+ * the costs as ruled line items — each with the control that removes it in
+ * the right-hand column — makes the shape of the problem obvious before a
+ * word of product copy is spent on it, and the closing row is the only place
+ * the total can come from: the merchant's own numbers.
  *
- * The cards carry a warm severity rule and lift on hover, and the treatment
- * stops there: this is the one section where the copy has to do the work, and
- * decorating a problem undercuts it.
- *
- * The primary action is the calculator, not the install — §5.2 forbids asking
- * for the install before the merchant has seen the value.
+ * The action here is the calculator, never the install. §5.2 is explicit that
+ * the install is not asked for until the merchant has seen what it is worth.
  */
 export function PainPoints() {
   const painPoints = getPainPoints();
 
   return (
     <SectionShell
-      // The calculator card straddles the seam into the next section, so this
-      // one has to be allowed to spill and to paint above its neighbour —
-      // later siblings win the stacking order otherwise.
       allowOverflow
       className="z-20"
       containerClassName="pb-12 sm:pb-0"
@@ -53,90 +47,107 @@ export function PainPoints() {
           className="absolute inset-0"
           style={{
             backgroundImage:
-              "radial-gradient(70% 50% at 50% 12%, color-mix(in oklab, var(--destructive) 7%, transparent), transparent 65%)",
+              "radial-gradient(65% 45% at 50% 8%, color-mix(in oklab, var(--destructive) 6%, transparent), transparent 62%)",
           }}
         />
       }
     >
       <SectionHeading
-        eyebrow="The COD loss"
-        title="COD is costing you more than you think"
-        description="The loss is spread across returned freight, fake orders, and cash tied up in parcels that never arrive. No single bill shows the total, so the problem stays invisible."
+        eyebrow="The hidden bill"
+        title="Cash on delivery sends you an invoice nobody prints"
+        description="It arrives in pieces — a freight charge here, a refused parcel there, working capital sitting in a van. Separately they look like the cost of doing business."
       />
 
-      <div className="mt-14 grid gap-6 md:grid-cols-3 lg:mt-16">
-        {painPoints.map((painPoint, index) => {
-          const Icon = iconFor[painPoint.id] ?? PackageX;
-          const control = getControlBySlug(painPoint.controlSlug);
+      <BlurFade inView className="mt-14 lg:mt-16">
+        <div className="overflow-hidden rounded-3xl border border-border bg-card shadow-card">
+          <ul>
+            {painPoints.map((painPoint, index) => {
+              const Icon = iconFor[painPoint.id] ?? PackageX;
+              const control = getControlBySlug(painPoint.controlSlug);
 
-          return (
-            <BlurFade
-              key={painPoint.id}
-              delay={0.06 * index}
-              inView
-              className="h-full"
-            >
-              <article className="group relative flex h-full surface-card flex-col overflow-hidden p-7">
-                <span
-                  aria-hidden
-                  className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-destructive/45 to-transparent"
-                />
-
-                <span className="grid size-11 place-items-center rounded-xl bg-destructive/8 text-destructive transition-transform duration-300 group-hover:scale-105">
-                  <Icon aria-hidden className="size-5" />
-                </span>
-
-                <h3 className="mt-6 text-lg font-semibold">
-                  {painPoint.title}
-                </h3>
-                <p className="mt-3 flex-1 text-sm leading-relaxed text-muted-foreground">
-                  {painPoint.body}
-                </p>
-
-                {control ? (
-                  <Link
-                    href={routeFor.control(control.slug)}
-                    className="mt-7 inline-flex items-center gap-1.5 rounded-md text-sm font-medium text-brand transition-colors outline-none hover:text-brand-deep focus-visible:ring-2 focus-visible:ring-ring/60"
-                  >
-                    Fixed by {control.name}
-                    <ArrowRight
+              return (
+                <li
+                  key={painPoint.id}
+                  className="group grid items-start gap-x-6 gap-y-4 border-b border-border p-7 transition-colors duration-300 last:border-b-0 hover:bg-accent/40 sm:grid-cols-[auto_1fr_auto] sm:p-8"
+                >
+                  <span className="flex items-center gap-4">
+                    <span
                       aria-hidden
-                      className="size-3.5 transition-transform duration-300 group-hover:translate-x-0.5"
-                    />
-                  </Link>
-                ) : null}
-              </article>
-            </BlurFade>
-          );
-        })}
-      </div>
+                      className="text-xs font-semibold text-muted-foreground/50 tabular-nums"
+                    >
+                      0{index + 1}
+                    </span>
+                    <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-destructive/8 text-destructive">
+                      <Icon aria-hidden className="size-5" />
+                    </span>
+                  </span>
+
+                  <div className="min-w-0">
+                    <h3 className="text-lg font-semibold tracking-tight">
+                      {painPoint.title}
+                    </h3>
+                    <p className="mt-2 max-w-xl text-sm leading-relaxed text-muted-foreground">
+                      {painPoint.body}
+                    </p>
+                  </div>
+
+                  {control ? (
+                    <Link
+                      href={routeFor.control(control.slug)}
+                      className="inline-flex items-center gap-1.5 self-center rounded-full border border-border bg-background px-3.5 py-2 text-sm font-medium whitespace-nowrap transition-colors outline-none hover:border-brand/30 hover:text-brand focus-visible:ring-2 focus-visible:ring-ring/60"
+                    >
+                      {control.name}
+                      <ArrowRight
+                        aria-hidden
+                        className="size-3.5 transition-transform duration-300 group-hover:translate-x-0.5"
+                      />
+                    </Link>
+                  ) : null}
+                </li>
+              );
+            })}
+          </ul>
+
+          {/* The total line. Only the merchant can fill it in. */}
+          <div className="flex flex-col gap-4 border-t-2 border-dashed border-border bg-cloud p-7 sm:flex-row sm:items-center sm:justify-between sm:p-8">
+            <p className="text-base font-semibold">
+              Total
+              <span className="ml-2 font-normal text-muted-foreground">
+                depends entirely on your store
+              </span>
+            </p>
+            <Button asChild variant="secondary" size="md">
+              <Link href={routes.codCalculator}>
+                Work out your number
+                <ArrowRight aria-hidden className="size-4" />
+              </Link>
+            </Button>
+          </div>
+        </div>
+      </BlurFade>
 
       {/*
-        Hangs half out of the section and into the one below. A card crossing
-        the boundary stitches two sections together far more effectively than
-        any amount of whitespace between them — and it puts the page's most
-        useful action exactly where the eye is already travelling.
+        Hangs into the section below. A card crossing the boundary stitches
+        two sections together far more effectively than space between them.
       */}
-      <BlurFade inView delay={0.15} className="sm:translate-y-1/2">
-        <div className="relative mt-14 flex flex-col items-center gap-5 overflow-hidden rounded-3xl border border-brand/20 bg-brand-soft px-8 py-10 text-center shadow-overlay sm:flex-row sm:justify-between sm:text-left lg:mt-16">
+      <BlurFade inView delay={0.12} className="sm:translate-y-1/2">
+        <div className="relative mt-14 flex flex-col items-center gap-5 overflow-hidden rounded-3xl border border-brand/20 bg-brand-soft px-8 py-9 text-center shadow-overlay sm:flex-row sm:justify-between sm:text-left lg:mt-16">
           <div
             aria-hidden
             className="absolute -top-24 -right-16 size-64 rounded-full bg-brand/15 blur-3xl"
           />
-
           <div className="relative">
             <p className="text-xl font-semibold text-ink sm:text-2xl">
-              What is COD costing your store?
+              Three questions. One number.
             </p>
             <p className="mt-2 text-sm leading-relaxed text-ink/65">
-              Answer three questions and see your own annual number. Free, no
-              signup.
+              See what cash on delivery costs your store in a year. Free, and
+              nothing to sign up for.
             </p>
           </div>
-
           <Button asChild size="lg" className="relative shrink-0">
             <Link href={routes.codCalculator}>
-              Open the COD Calculator
+              Open the calculator
               <ArrowRight aria-hidden className="size-4" />
             </Link>
           </Button>

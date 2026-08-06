@@ -43,9 +43,9 @@ export function Solution() {
       }
     >
       <SectionHeading
-        eyebrow="The controls"
-        title="One system, working at every stage of the order"
-        description="Ten controls, grouped by when they act. Turn on the ones that match your problem and leave the rest off."
+        eyebrow="The system"
+        title="Ten controls, four moments"
+        description="Each acts at a specific point in the order. Switch on what matches your problem; the rest stays out of the way."
       />
 
       <ol className="mt-14 grid gap-5 md:grid-cols-2 lg:mt-16 lg:grid-cols-4">

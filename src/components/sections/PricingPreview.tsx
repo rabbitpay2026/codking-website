@@ -76,8 +76,8 @@ export function PricingPreview() {
     >
       <SectionHeading
         eyebrow="Pricing"
-        title="Start free. Pay when it is earning."
-        description="Every plan includes a 7-day free trial and no credit card. Messages are billed at your plan's per-message rate."
+        title="Free to start, priced to stay"
+        description="A seven-day trial on every plan, no card required. Messages bill at your plan rate."
       />
 
       <div className="mt-14 grid items-start gap-6 lg:mt-16 lg:grid-cols-3">

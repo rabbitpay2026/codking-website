@@ -98,7 +98,7 @@ export const controls: readonly Control[] = [
     stage: "at-the-order",
     outcome:
       "Collect a fixed or percentage deposit upfront to secure buyer commitment.",
-    featured: true,
+    featured: false,
     benefits: [
       "Set the deposit as a fixed amount or a percentage",
       "Collect it through Shopify Payments or any gateway",

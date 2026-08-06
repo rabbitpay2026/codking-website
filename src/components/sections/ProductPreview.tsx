@@ -67,9 +67,9 @@ export function ProductPreview({ panels }: ProductPreviewProps) {
       }
     >
       <SectionHeading
-        eyebrow="See it working"
-        title="What it looks like on a real store"
-        description="No theme changes, no code. The controls run inside your existing Shopify checkout."
+        eyebrow="In the product"
+        title="This is the whole surface area"
+        description="It runs inside the checkout you already have. Nothing to rebuild, nothing to re-theme."
       />
 
       <Tabs

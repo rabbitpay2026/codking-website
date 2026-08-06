@@ -1,26 +1,42 @@
 import { ArrowRight, Check } from "lucide-react";
 import Link from "next/link";
 
+import { FlagshipVisual } from "@/components/sections/flagship/FlagshipVisual";
 import { SectionHeading } from "@/components/sections/SectionHeading";
 import { SectionShell } from "@/components/sections/SectionShell";
 import { BlurFade } from "@/components/ui/blur-fade";
 import { GridPattern } from "@/components/ui/grid-pattern";
-import { MagicCard } from "@/components/ui/magic-card";
 import { routeFor } from "@/constants/routes";
 import { cn } from "@/lib/utils";
 import { getFeaturedControls } from "@/lib/content";
 
 /**
- * Key controls in focus (§5.1 #6).
+ * Headline written per capability rather than stored on the record.
  *
- * Four controls, each with the outcome it delivers and what the merchant
- * actually gets. Which four are featured is a flag on the content record, so
- * changing the emphasis is a data edit rather than a code change.
+ * The control's `outcome` describes what it does and is reused everywhere;
+ * these are the promise the homepage makes about it, which is a different
+ * sentence with a different job and belongs to this section alone.
+ */
+const promiseFor: Record<string, string> = {
+  "otp-verification": "Every order proves it is real before you pack it",
+  "cod-rules": "Cash disappears exactly where it loses you money",
+  "prepaid-nudge": "Buyers choose prepaid because it is genuinely better",
+};
+
+/**
+ * The flagship capabilities (§5.1 #6).
  *
- * The pointer-following highlight is the one purely tactile interaction on
- * the page. It earns its place because these cards are scanned rather than
- * read, and a card that answers the cursor makes the grid feel handled rather
- * than printed. It degrades to a plain bordered card without JavaScript.
+ * Three, not ten. These are the controls that carry most of the loss, and
+ * they are given full-width rows with a working product surface each instead
+ * of a card in a grid — because a card can only assert a capability, and a
+ * screen can show it.
+ *
+ * Rows alternate side so the eye zig-zags down the section rather than
+ * running down a single column, which is what stops three long rows reading
+ * as three repetitions of the same block.
+ *
+ * Which controls appear here is the `featured` flag on the content record, so
+ * changing the emphasis is a data edit (§12.1).
  */
 export function FeatureShowcase() {
   const controls = getFeaturedControls();
@@ -32,81 +48,83 @@ export function FeatureShowcase() {
           width={64}
           height={64}
           className={cn(
-            "absolute inset-0 h-full stroke-brand/[0.06]",
-            "[mask-image:radial-gradient(70%_60%_at_50%_40%,white,transparent)]",
+            "absolute inset-0 h-full stroke-brand/[0.055]",
+            "[mask-image:radial-gradient(70%_60%_at_50%_35%,white,transparent)]",
           )}
         />
       }
     >
       <SectionHeading
-        eyebrow="What you turn on"
-        title="The four controls that remove most of the loss"
-        description="Each one works on its own. Together they close the gap between the orders you take and the orders you get paid for."
+        eyebrow="The three that matter"
+        title="Most of the loss comes down to three decisions"
+        description="Who you take cash from, whether the order is real, and what it costs the buyer to choose cash. Get those right and the rest is housekeeping."
       />
 
-      <div className="mt-14 grid gap-6 md:grid-cols-2 lg:mt-16">
-        {controls.map((control, index) => (
-          <BlurFade
-            key={control.slug}
-            delay={0.06 * index}
-            inView
-            className="h-full"
-          >
-            <MagicCard
-              gradientColor="var(--brand)"
-              gradientOpacity={0.06}
-              gradientFrom="var(--brand)"
-              gradientTo="var(--brand-accent)"
-              className="group h-full surface-card"
-            >
-              <article className="flex h-full flex-col p-8">
-                <div className="flex items-start justify-between gap-4">
-                  <h3 className="text-xl font-semibold tracking-tight">
+      <div className="mt-16 space-y-16 lg:mt-20 lg:space-y-24">
+        {controls.map((control, index) => {
+          const reversed = index % 2 === 1;
+
+          return (
+            <BlurFade key={control.slug} inView>
+              <article className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
+                <div className={cn(reversed && "lg:order-2")}>
+                  <p className="inline-flex items-center gap-2.5 text-xs font-semibold tracking-[0.14em] text-brand uppercase">
+                    <span className="grid size-6 place-items-center rounded-full bg-brand text-[11px] text-white tabular-nums">
+                      {index + 1}
+                    </span>
                     {control.name}
+                  </p>
+
+                  <h3 className="mt-5 text-[1.75rem] leading-[1.12] font-semibold tracking-[-0.025em] text-balance lg:text-[2.15rem]">
+                    {promiseFor[control.slug] ?? control.outcome}
                   </h3>
-                  <span
-                    aria-hidden
-                    className="mt-1 text-xs font-semibold text-brand/35 tabular-nums"
+
+                  <p className="mt-4 max-w-lg leading-relaxed text-pretty text-muted-foreground">
+                    {control.outcome}
+                  </p>
+
+                  {control.benefits ? (
+                    <ul className="mt-7 grid gap-3 sm:grid-cols-2">
+                      {control.benefits.map((benefit) => (
+                        <li key={benefit} className="flex items-start gap-2.5">
+                          <span className="mt-0.5 grid size-4 shrink-0 place-items-center rounded-full bg-brand-check/25">
+                            <Check
+                              aria-hidden
+                              className="size-2.5 text-ink/70"
+                            />
+                          </span>
+                          <span className="text-sm leading-relaxed text-foreground/85">
+                            {benefit}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : null}
+
+                  <Link
+                    href={routeFor.control(control.slug)}
+                    className="group mt-8 inline-flex items-center gap-1.5 rounded-md text-sm font-medium text-brand transition-colors outline-none hover:text-brand-deep focus-visible:ring-2 focus-visible:ring-ring/60"
                   >
-                    0{index + 1}
-                  </span>
+                    How {control.name} works
+                    <ArrowRight
+                      aria-hidden
+                      className="size-3.5 transition-transform duration-300 group-hover:translate-x-0.5"
+                    />
+                  </Link>
                 </div>
 
-                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                  {control.outcome}
-                </p>
-
-                {control.benefits ? (
-                  <ul className="mt-6 flex-1 space-y-3 border-t border-border pt-6">
-                    {control.benefits.map((benefit) => (
-                      <li key={benefit} className="flex items-start gap-3">
-                        <span className="mt-0.5 grid size-4 shrink-0 place-items-center rounded-full bg-brand-check/20">
-                          <Check aria-hidden className="size-2.5 text-ink/70" />
-                        </span>
-                        <span className="text-sm leading-relaxed text-foreground/85">
-                          {benefit}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <div className="flex-1" />
-                )}
-
-                <Link
-                  href={routeFor.control(control.slug)}
-                  className="mt-7 inline-flex items-center gap-1.5 rounded-md text-sm font-medium text-brand transition-colors outline-none hover:text-brand-deep focus-visible:ring-2 focus-visible:ring-ring/60"
-                >
-                  How {control.name} works
-                  <ArrowRight
+                <div className={cn("relative", reversed && "lg:order-1")}>
+                  {/* Lifts the surface off the page without a hard shadow. */}
+                  <div
                     aria-hidden
-                    className="size-3.5 transition-transform duration-300 group-hover:translate-x-0.5"
+                    className="absolute -inset-6 -z-10 rounded-[2rem] bg-brand/[0.07] blur-2xl"
                   />
-                </Link>
+                  <FlagshipVisual slug={control.slug} />
+                </div>
               </article>
-            </MagicCard>
-          </BlurFade>
-        ))}
+            </BlurFade>
+          );
+        })}
       </div>
     </SectionShell>
   );

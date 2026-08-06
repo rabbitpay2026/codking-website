@@ -1,5 +1,6 @@
 import { Star } from "lucide-react";
 
+import { ShopifyMark } from "@/components/brand/BrandMarks";
 import { SectionShell } from "@/components/sections/SectionShell";
 import { Marquee } from "@/components/ui/marquee";
 import { getProofMetrics, getTrustedBrands } from "@/lib/content";
@@ -7,53 +8,64 @@ import { getProofMetrics, getTrustedBrands } from "@/lib/content";
 const numberFormat = new Intl.NumberFormat("en");
 
 /**
- * The proof strip (§5.1 #3).
+ * The proof rail (§5.1 #3).
  *
- * Deliberately the quietest band on the page. It sits directly under the
- * hero, and its job is to be believed rather than admired — so it is almost
- * white, hairline-ruled, and carries no colour of its own. The restraint is
- * what makes it read as a fact rather than a claim.
+ * Sits directly under the hero and has one job: be believed. So it is quiet —
+ * no colour of its own, no card, no emphasis beyond the rating itself. The
+ * restraint is the point; a trust strip that shouts reads as a claim rather
+ * than a fact.
  *
- * A marquee earns its place here and nowhere else: the brand list is short,
- * and scrolling it signals "more than fits" without padding the row out with
- * filler. It pauses on hover so a merchant can read a name they recognise,
- * and the same names are repeated in a visually hidden list so assistive
- * technology gets a static, complete version.
+ * The rating and review count come from the proof repository, so this figure
+ * and the hero's can never disagree (§11.1).
+ *
+ * Merchant names scroll rather than sit in a fixed row: the list is short,
+ * and motion signals "more than fits" without padding it out with filler. It
+ * pauses on hover so a recognisable name can be read, and the same names are
+ * repeated in a visually hidden sentence so nothing depends on the animation.
  */
 export async function TrustBar() {
-  const [proof, brands] = [await getProofMetrics(), getTrustedBrands()];
+  const proof = await getProofMetrics();
+  const brands = getTrustedBrands();
 
   return (
     <SectionShell
       tone="muted"
       size="compact"
-      ariaLabel="Merchants using COD King"
+      ariaLabel="Merchants and marketplace rating"
     >
-      <div className="flex flex-col items-center gap-8 lg:flex-row lg:gap-12">
-        <div className="flex shrink-0 items-center gap-2.5 text-sm">
-          <span className="flex items-center gap-0.5" aria-hidden>
-            {Array.from({ length: 5 }, (_, index) => (
-              <Star key={index} className="size-3.5 fill-brand text-brand" />
-            ))}
-          </span>
-          <span className="font-semibold">{proof.rating}</span>
-          <span className="text-muted-foreground">
-            from {numberFormat.format(proof.reviewCount)}+ reviews
-          </span>
+      <div className="flex flex-col items-center gap-7 lg:flex-row lg:gap-10">
+        <div className="flex shrink-0 items-center gap-3">
+          <ShopifyMark className="size-5" />
+          <div className="leading-tight">
+            <div className="flex items-center gap-1.5">
+              <span className="flex items-center gap-0.5" aria-hidden>
+                {Array.from({ length: 5 }, (_, index) => (
+                  <Star key={index} className="size-3 fill-brand text-brand" />
+                ))}
+              </span>
+              <span className="text-sm font-semibold tabular-nums">
+                {proof.rating}
+              </span>
+            </div>
+            <p className="mt-0.5 text-xs text-muted-foreground">
+              {numberFormat.format(proof.reviewCount)}+ reviews on the Shopify
+              App Store
+            </p>
+          </div>
         </div>
 
         <span
           aria-hidden
-          className="hidden h-8 w-px shrink-0 bg-border lg:block"
+          className="hidden h-9 w-px shrink-0 bg-border lg:block"
         />
 
         <div className="relative w-full min-w-0 flex-1">
-          <Marquee pauseOnHover className="[--duration:38s] [--gap:4rem]">
+          <Marquee pauseOnHover className="[--duration:42s] [--gap:3.5rem]">
             {brands.map((brand) => (
               <span
                 key={brand.name}
                 aria-hidden
-                className="text-base font-semibold whitespace-nowrap text-muted-foreground/60 transition-colors duration-300 hover:text-foreground"
+                className="text-[15px] font-semibold tracking-tight whitespace-nowrap text-muted-foreground/55 transition-colors duration-300 hover:text-foreground"
               >
                 {brand.name}
               </span>
@@ -62,15 +74,15 @@ export async function TrustBar() {
 
           <div
             aria-hidden
-            className="pointer-events-none absolute inset-y-0 left-0 w-20 bg-gradient-to-r from-cloud to-transparent"
+            className="pointer-events-none absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-cloud to-transparent"
           />
           <div
             aria-hidden
-            className="pointer-events-none absolute inset-y-0 right-0 w-20 bg-gradient-to-l from-cloud to-transparent"
+            className="pointer-events-none absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-cloud to-transparent"
           />
 
           <p className="sr-only">
-            Merchants using COD King include{" "}
+            Stores using COD King include{" "}
             {brands.map((brand) => brand.name).join(", ")}.
           </p>
         </div>

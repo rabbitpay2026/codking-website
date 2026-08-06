@@ -18,20 +18,20 @@ import type {
 export const painPoints: readonly PainPoint[] = [
   {
     id: "fake-orders",
-    title: "Fake orders and fraud",
-    body: "Customers place COD orders with no intention to pay. You lose on product, packaging, and courier costs every single time.",
+    title: "Orders nobody meant to pay for",
+    body: "A parcel goes out, comes back, and you have paid twice to move it. Nothing about the order looked wrong at checkout.",
     controlSlug: "otp-verification",
   },
   {
     id: "rto",
-    title: "RTO drains profit",
-    body: "Return-to-origin charges eat into your margins. On average, Indian D2C brands lose 15–30% of COD revenue to RTOs.",
+    title: "Returns you funded twice",
+    body: "Freight out, freight back, and the packaging in between. One delivered order rarely covers the one that came home.",
     controlSlug: "partial-cod-payment",
   },
   {
     id: "prepaid",
-    title: "Low prepaid conversion",
-    body: "COD customers are harder to convert to prepaid. Without the right nudges, you are missing out on better margins and faster cash flow.",
+    title: "Cash you wait weeks to see",
+    body: "Every cash order ties up working capital until the courier settles. Prepaid buyers pay today; cash buyers pay eventually, if at all.",
     controlSlug: "prepaid-nudge",
   },
 ];
@@ -48,14 +48,14 @@ export const outcomeMetrics: readonly OutcomeMetric[] = [
     value: 35,
     suffix: "%",
     label: "Fewer fake and RTO orders",
-    caption: "Up to, once OTP verification is switched on.",
+    caption: "Ceiling, once verification is switched on.",
   },
   {
     id: "sms-cost",
     value: 70,
     suffix: "%",
     label: "Saved on messaging",
-    caption: "Up to, after connecting a local SMS provider.",
+    caption: "Ceiling, on a local messaging provider.",
   },
   {
     id: "roi",
@@ -63,14 +63,14 @@ export const outcomeMetrics: readonly OutcomeMetric[] = [
     prefix: "2–",
     suffix: "x",
     label: "Return within 30 days",
-    caption: "What merchants report in their first month.",
+    caption: "Reported by merchants in month one.",
   },
   {
     id: "countries",
     value: 100,
     suffix: "+",
     label: "Countries supported",
-    caption: "Including every major COD market.",
+    caption: "Every major cash-on-delivery market.",
   },
 ];
 
@@ -91,23 +91,23 @@ export const trustedBrands: readonly TrustedBrand[] = [
 export const howItWorksSteps: readonly HowItWorksStep[] = [
   {
     id: "install",
-    title: "Install from the Shopify App Store",
-    body: "Search for COD King and click install. One click, and it connects to your store automatically.",
+    title: "Add it to your store",
+    body: "One click from the App Store. No theme edits, no developer, nothing to deploy.",
   },
   {
     id: "configure",
-    title: "Configure your COD rules",
-    body: "Turn on OTP verification, set partial payment amounts, and create your show/hide rules — all from one dashboard.",
+    title: "Decide how cash behaves",
+    body: "Choose where COD is offered, what it costs, and what a buyer has to confirm.",
   },
   {
     id: "monitor",
-    title: "Monitor results",
-    body: "COD King works silently in the background. Get notified as orders are verified, reminders go out, and RTO rates fall.",
+    title: "Let it run",
+    body: "Orders are verified, held, or released on their own. You get told what changed.",
   },
   {
     id: "scale",
-    title: "Scale globally",
-    body: "Connect your local SMS provider to cut messaging costs, and reach customers in their preferred language and number format.",
+    title: "Bring your own gateway",
+    body: "Route messages through a regional provider and pay their rate, not an international one.",
   },
 ];
 

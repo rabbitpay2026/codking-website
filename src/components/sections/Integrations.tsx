@@ -48,9 +48,9 @@ export function Integrations() {
         <div>
           <SectionHeading
             align="left"
-            eyebrow="Integrations"
-            title="Use your own SMS provider and pay local rates"
-            description="Connect a regional gateway and you pay your provider directly, in local currency. Merchants cut messaging costs by up to 70% against international rates."
+            eyebrow="Messaging"
+            title="Bring your own provider, pay their rate"
+            description="Settle with a regional gateway directly, in local currency — up to 70% below international rates. On COD volume that is the difference between a bill and a rounding error."
           />
 
           <ul className="mt-10 flex flex-wrap gap-2.5">
