@@ -16,6 +16,17 @@ export interface ProofMetrics {
    * rendering a placeholder (§5.1 #3).
    */
   readonly countriesServed: number | null;
+  /**
+   * Lifetime COD orders processed, stored whole.
+   *
+   * The scale band renders it compactly ("10M+"), but the compaction is the
+   * presentation layer's job — storing the display string here would make the
+   * figure impossible to compare, sum or sync against the source it will
+   * eventually come from.
+   */
+  readonly ordersProcessed: number;
+  /** Rolling platform availability as a percentage, e.g. 99.9. */
+  readonly uptimePercent: number;
 }
 
 /**

@@ -16,4 +16,6 @@ export const proofMetrics: ProofMetrics = {
   rating: 4.9,
   reviewCount: 850,
   countriesServed: 100,
+  ordersProcessed: 10_000_000,
+  uptimePercent: 99.9,
 };

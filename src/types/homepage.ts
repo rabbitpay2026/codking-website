@@ -45,12 +45,25 @@ export interface OutcomeMetric {
  */
 export interface PlatformStat {
   readonly id: string;
+  /**
+   * The figure as rendered, which is not always the figure as stored: ten
+   * million orders is carried here as `10` with an `M+` suffix. Compaction
+   * happens where the number is prepared for display, never in the repository.
+   */
   readonly value: number;
   readonly suffix?: string;
   readonly label: string;
+  /**
+   * One sentence saying what the figure actually counts.
+   *
+   * A number and a two-word label can be read as almost anything, and a scale
+   * band without this becomes four impressive quantities of nothing in
+   * particular. This is the line that makes each one a claim.
+   */
+  readonly caption: string;
   readonly decimalPlaces?: number;
   /** Selects the icon in the section — art, not content. */
-  readonly icon: "globe" | "store" | "timer";
+  readonly icon: "store" | "orders" | "globe" | "uptime";
 }
 
 /** A step in the setup sequence (§5.1 #7). */
