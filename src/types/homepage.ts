@@ -61,14 +61,35 @@ export interface HowItWorksStep {
 }
 
 /**
+ * A store's supplied logo artwork.
+ *
+ * `width` and `height` are the *rendered* box on the logo wall, not the file's
+ * intrinsic pixels. Two things are being carried at once: the exact aspect
+ * ratio, so the row reserves the right space and never shifts as the images
+ * arrive; and the optical size, which is not the same for every mark. A single
+ * uppercase wordmark set to the same height as a stacked lockup looks a third
+ * larger than it is, so each box is balanced by eye against the others rather
+ * than by a shared height — which is the difference between a logo wall and a
+ * row of images.
+ */
+export interface BrandLogo {
+  readonly src: string;
+  readonly width: number;
+  readonly height: number;
+}
+
+/**
  * A named store using the product, shown as a trust signal (§5.1 #3).
  *
- * `id` selects the store's lockup on the logo wall. It is kept separate from
- * the name so artwork can arrive — or be replaced with the merchant's own
- * supplied file — without the display name changing, and so a store with no
- * lockup yet still renders as a set wordmark rather than as a gap.
+ * `id` is kept separate from both the name and the artwork so a store can be
+ * renamed, or have its logo replaced, without the other two changing.
+ *
+ * `logo` is optional on purpose: a store whose artwork has not arrived yet
+ * renders as a set wordmark rather than as a gap, so adding a merchant is
+ * never blocked on a file.
  */
 export interface TrustedBrand {
   readonly id: string;
   readonly name: string;
+  readonly logo?: BrandLogo;
 }

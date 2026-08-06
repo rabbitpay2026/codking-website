@@ -95,17 +95,45 @@ export const homepageControlSlugs: readonly ControlSlug[] = [
 /**
  * Stores using COD King, shown as a logo wall (§5.1 #3).
  *
- * `id` points at the lockup in `components/brand/MerchantMarks`. Those are
- * built for this page rather than being the merchants' registered marks, and
- * every one is to be replaced with artwork the store supplies before launch —
- * a logo wall is a claim about someone else's brand, so the shipped version
- * has to be the version they handed over.
+ * These are the merchants' own marks, supplied as artwork, not lockups drawn
+ * for this page — a logo wall is a claim about someone else's brand, so the
+ * shipped version has to be the version they handed over.
+ *
+ * Every file is trimmed to the artwork's own bounding box before it lands in
+ * `public/logos/merchants`. Press-kit exports usually carry generous built-in
+ * padding (Casio's arrived as a 350px wordmark inside a 1080px frame), and a
+ * wall that respects that padding renders one brand a third the size of its
+ * neighbours. The untouched downloads are kept in `assets/brand-source`.
+ *
+ * `width`/`height` are the rendered box, balanced by eye rather than set to a
+ * shared height — see `BrandLogo`.
  */
 export const trustedBrands: readonly TrustedBrand[] = [
-  { id: "casio", name: "Casio" },
-  { id: "himalaya", name: "The Himalaya Drug Company" },
-  { id: "slobberman", name: "Slobberman" },
-  { id: "vinod", name: "Vinod Cookware" },
+  {
+    id: "casio",
+    name: "Casio",
+    logo: { src: "/logos/merchants/casio.png", width: 130, height: 24 },
+  },
+  {
+    id: "himalaya",
+    name: "Himalaya Herbals",
+    logo: { src: "/logos/merchants/himalaya.png", width: 117, height: 40 },
+  },
+  {
+    id: "redtape",
+    name: "RedTape",
+    logo: { src: "/logos/merchants/redtape.png", width: 131, height: 38 },
+  },
+  {
+    id: "slobberman",
+    name: "Slobberman",
+    logo: { src: "/logos/merchants/slobberman.png", width: 191, height: 22 },
+  },
+  {
+    id: "qwerty-cases",
+    name: "Qwerty Cases",
+    logo: { src: "/logos/merchants/qwerty-cases.png", width: 138, height: 38 },
+  },
 ];
 
 /** Setup, stated with the effort it actually takes (§5.1 #7). */
