@@ -206,9 +206,9 @@
    * `SectionShell` is the only place they are applied, so the rhythm cannot
    * drift section by section.
    */
-  --spacing-section-sm: 4rem;
-  --spacing-section: 6rem;
-  --spacing-section-lg: 8rem;
+  --spacing-section-sm: 3.25rem;
+  --spacing-section: 4.5rem;
+  --spacing-section-lg: 5.75rem;
 
   /* Shell metrics. Owned here so the header, the scroll-margin that keeps
      anchored headings clear of it, and the spacer that stops the mobile
@@ -333,6 +333,41 @@
  * behaviour between sections is one of the clearest tells that a page was
  * assembled by more than one hand.
  */
+/*
+ * Scroll-linked entrance that fails visible.
+ *
+ * The registry's reveal component sets `opacity: 0` inline and relies on
+ * JavaScript to undo it, which means a failed chunk, a blocked script, a slow
+ * hydration, a print, or any tool that does not scroll leaves the page blank
+ * below the fold. Content that is invisible by default is a correctness
+ * problem wearing a design costume.
+ *
+ * This does the same job in CSS. The animation only exists inside the
+ * `@supports` block, so a browser without scroll-driven animations never
+ * applies it and simply renders the finished state — visible. Reduced motion
+ * takes the same path.
+ */
+@utility reveal {
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: view()) {
+      animation: reveal-in linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 22%;
+    }
+  }
+}
+
+@keyframes reveal-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 @utility surface-card {
   @apply rounded-2xl border border-border bg-card shadow-card;
   @apply transition-[transform,box-shadow,border-color] duration-300;

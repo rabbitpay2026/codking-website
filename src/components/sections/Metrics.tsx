@@ -35,7 +35,7 @@ export function Metrics() {
         />
       }
     >
-      <dl className="grid gap-x-10 gap-y-14 sm:grid-cols-2 lg:grid-cols-4">
+      <dl className="grid gap-x-10 gap-y-14 sm:grid-cols-3">
         {metrics.map((metric, index) => (
           <BlurFade
             key={metric.id}

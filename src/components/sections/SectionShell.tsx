@@ -48,7 +48,7 @@ const toneClass: Record<SectionTone, string> = {
 const sizeClass: Record<SectionSize, string> = {
   compact: "py-10 md:py-12",
   default: "py-section-sm md:py-section lg:py-section-lg",
-  spacious: "py-section md:py-section-lg lg:py-[8.5rem]",
+  spacious: "py-section md:py-section-lg lg:py-[7rem]",
 };
 
 interface SectionShellProps extends WithChildren, WithClassName {

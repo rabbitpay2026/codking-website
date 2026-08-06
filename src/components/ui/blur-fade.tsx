@@ -1,94 +1,49 @@
-"use client";
+import { cn } from "@/lib/utils";
 
-import { useRef } from "react";
-import {
-  AnimatePresence,
-  motion,
-  useInView,
-  type MotionProps,
-  type UseInViewOptions,
-  type Variants,
-} from "motion/react";
+import type { ReactNode } from "react";
 
-type MarginType = UseInViewOptions["margin"];
-
-interface BlurFadeProps extends MotionProps {
-  children: React.ReactNode;
-  className?: string;
-  variant?: {
-    hidden: { y: number };
-    visible: { y: number };
-  };
-  duration?: number;
-  delay?: number;
-  offset?: number;
-  direction?: "up" | "down" | "left" | "right";
-  inView?: boolean;
-  inViewMargin?: MarginType;
-  blur?: string;
+interface BlurFadeProps {
+  readonly children: ReactNode;
+  readonly className?: string;
+  /**
+   * Retained for call-site compatibility. Scroll-driven animation has no
+   * timeline to delay against, so stagger is expressed by giving later items
+   * a slightly later entry range instead.
+   */
+  readonly delay?: number;
+  /** Retained for call-site compatibility; the reveal is always scroll-linked. */
+  readonly inView?: boolean;
 }
 
-const getFilter = (v: Variants[string]) =>
-  typeof v === "function" ? undefined : v.filter;
-
-export function BlurFade({
-  children,
-  className,
-  variant,
-  duration = 0.4,
-  delay = 0,
-  offset = 6,
-  direction = "down",
-  inView = false,
-  inViewMargin = "-50px",
-  blur = "6px",
-  ...props
-}: BlurFadeProps) {
-  const ref = useRef(null);
-  const inViewResult = useInView(ref, { once: true, margin: inViewMargin });
-  const isInView = !inView || inViewResult;
-  const defaultVariants: Variants = {
-    hidden: {
-      [direction === "left" || direction === "right" ? "x" : "y"]:
-        direction === "right" || direction === "down" ? -offset : offset,
-      opacity: 0,
-      filter: `blur(${blur})`,
-    },
-    visible: {
-      [direction === "left" || direction === "right" ? "x" : "y"]: 0,
-      opacity: 1,
-      filter: `blur(0px)`,
-    },
-  };
-  const combinedVariants = variant ?? defaultVariants;
-
-  const hiddenFilter = getFilter(combinedVariants.hidden);
-  const visibleFilter = getFilter(combinedVariants.visible);
-
-  const shouldTransitionFilter =
-    hiddenFilter != null &&
-    visibleFilter != null &&
-    hiddenFilter !== visibleFilter;
-
+/**
+ * Scroll-linked entrance.
+ *
+ * Reimplemented from the registry version, which animated with JavaScript
+ * from an inline `opacity: 0`. That default made every wrapped section
+ * invisible until a script ran and an observer fired — so a blocked chunk, a
+ * print, or any tool that does not scroll produced a page of headings above
+ * empty space. It was also a client component, which pulled a runtime into
+ * thirteen server-rendered sections for a fade.
+ *
+ * This version is a server component with no JavaScript at all. The motion
+ * lives entirely in the `reveal` utility, inside `@supports
+ * (animation-timeline: view())`, so any browser without scroll-driven
+ * animations — and anyone who asked for reduced motion — gets the finished,
+ * visible state. It can only ever fail towards content being shown.
+ */
+export function BlurFade({ children, className, delay = 0 }: BlurFadeProps) {
   return (
-    <AnimatePresence>
-      <motion.div
-        ref={ref}
-        initial="hidden"
-        animate={isInView ? "visible" : "hidden"}
-        exit="hidden"
-        variants={combinedVariants}
-        transition={{
-          delay: 0.04 + delay,
-          duration,
-          ease: "easeOut",
-          ...(shouldTransitionFilter ? { filter: { duration } } : {}),
-        }}
-        className={className}
-        {...props}
-      >
-        {children}
-      </motion.div>
-    </AnimatePresence>
+    <div
+      className={cn("reveal", className)}
+      style={
+        delay
+          ? // Later items start their range fractionally further into the
+            // viewport, which reads as a stagger without a timer.
+            { animationRange: `entry ${Math.min(delay * 40, 14)}% cover 26%` }
+          : undefined
+      }
+    >
+      {children}
+    </div>
   );
 }

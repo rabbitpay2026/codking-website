@@ -65,13 +65,6 @@ export const outcomeMetrics: readonly OutcomeMetric[] = [
     label: "Return within 30 days",
     caption: "Reported by merchants in month one.",
   },
-  {
-    id: "countries",
-    value: 100,
-    suffix: "+",
-    label: "Countries supported",
-    caption: "Every major cash-on-delivery market.",
-  },
 ];
 
 /**
