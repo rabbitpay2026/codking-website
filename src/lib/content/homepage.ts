@@ -3,6 +3,7 @@ import {
   howItWorksSteps,
   outcomeMetrics,
   painPoints,
+  painPointsCopy,
   trustedBrands,
 } from "@/data/homepage";
 import { getControlBySlug } from "@/lib/content/controls";
@@ -13,12 +14,17 @@ import type {
   HowItWorksStep,
   OutcomeMetric,
   PainPoint,
+  PainPointsCopy,
   PlatformStat,
   TrustedBrand,
 } from "@/types";
 
 export function getPainPoints(): readonly PainPoint[] {
   return painPoints;
+}
+
+export function getPainPointsCopy(): PainPointsCopy {
+  return painPointsCopy;
 }
 
 export function getOutcomeMetrics(): readonly OutcomeMetric[] {

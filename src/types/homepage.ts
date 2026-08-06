@@ -10,6 +10,21 @@ import type { ControlSlug } from "@/types/controls";
  * a developer.
  */
 
+/**
+ * The problem section's own copy (§5.1 #4).
+ *
+ * Held in the repository rather than typed into the component because it is
+ * the argument the whole section makes, not chrome around it — and because the
+ * closing line is a claim about what a failed delivery costs, which is exactly
+ * the kind of sentence marketing has to be able to change without a developer.
+ */
+export interface PainPointsCopy {
+  readonly title: string;
+  readonly description: string;
+  /** The single line under the section, stated as a cost. */
+  readonly callout: string;
+}
+
 /** One of the hidden costs of COD, made visible (§5.1 #4). */
 export interface PainPoint {
   readonly id: string;

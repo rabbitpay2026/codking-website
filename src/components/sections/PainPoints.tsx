@@ -1,12 +1,11 @@
-import { ArrowRight, Banknote, PackageX, Undo2 } from "lucide-react";
-import Link from "next/link";
+import { Banknote, PackageX, TriangleAlert, Undo2 } from "lucide-react";
 
+import { LossScene } from "@/components/sections/pain/LossScene";
+import { PainEnvironment } from "@/components/sections/pain/PainEnvironment";
 import { SectionHeading } from "@/components/sections/SectionHeading";
 import { SectionShell } from "@/components/sections/SectionShell";
 import { BlurFade } from "@/components/ui/blur-fade";
-import { Button } from "@/components/ui/button";
-import { routeFor, routes } from "@/constants/routes";
-import { getControlBySlug, getPainPoints } from "@/lib/content";
+import { getPainPoints, getPainPointsCopy } from "@/lib/content";
 
 import type { LucideIcon } from "lucide-react";
 
@@ -23,121 +22,136 @@ const iconFor: Record<string, LucideIcon> = {
 /**
  * The COD loss, made visible (§5.1 #4).
  *
- * Composed as an invoice rather than a row of cards, because that *is* the
- * argument: the loss is real but no single bill ever totals it (§2). Reading
- * the costs as ruled line items — each with the control that removes it in the
- * right-hand column — makes the shape of the problem obvious before a word of
- * product copy is spent on it.
+ * This is the section the rest of the page depends on. Everything above it says
+ * how big and how trusted the product is; nothing yet has said why a merchant
+ * should care. So it answers one question — why am I losing money on cash on
+ * delivery — and deliberately does not answer the next one. The controls that
+ * fix each of these are the following section's argument, and offering the cure
+ * in the same breath as the diagnosis is what makes a page read as a pitch
+ * rather than as an explanation.
  *
- * The total row is the close, and it is the only place the figure can come
- * from: the merchant's own numbers. An earlier pass put a second, larger
- * calculator card underneath this one, hanging halfway into the next section.
- * It asked for the same click twice, and the clearance the overhang needed
- * left a corridor of empty page on either side of it. One invoice, one total,
- * one action — the seam closes and the argument gets sharper.
+ * Three named costs in a row, one drawing of them beside it, and the line they
+ * total to underneath — the blueprint's arrangement, exactly. The costs are set
+ * as cards because this is the first section with weight to carry: the strip
+ * and the band above are single continuous statements, and three separate
+ * problems genuinely are three objects.
  *
- * The action here is the calculator, never the install. §5.2 is explicit that
- * the install is not asked for until the merchant has seen what it is worth.
+ * A row rather than a stacked column. Three costs listed downward read as a
+ * sequence — first this, then that — and these are not sequential; they are
+ * three simultaneous leaks. Side by side, the eye takes all three at once,
+ * which is the shape of the problem.
+ *
+ * Nothing in this section is coloured by its subject. An earlier pass gave the
+ * cards red chips and the close a pink banner, and the page stopped being one
+ * page — the hero establishes a white, almost achromatic system where the only
+ * saturated things are the product and Shopify's mark, and a section that
+ * introduces a second palette to say "this part is bad" reads as a different
+ * site making the point. The costs are stated in words; the surface stays the
+ * surface. Cards use the shared `surface-card`, so their radius, border, shadow
+ * and lift are the same decision every other card on the site makes, and the
+ * only colour that ever appears is the brand tint they take on hover.
+ *
+ * The titles are the merchant's own words for these — fake orders, RTO, prepaid
+ * share — because recognition is the entire job of the section, and recognition
+ * runs on familiar vocabulary.
+ *
+ * The line underneath is the close, and it is deliberately a cost rather than a
+ * call to action. §5.2 is explicit that the install is not asked for until the
+ * merchant has seen what it is worth, and the worth is what the next four
+ * sections are for.
+ *
+ * One reveal for the whole composition. Three staggered cards plus a drawing
+ * would put four entrances on a section whose subject is loss, and motion is
+ * the wrong register for it.
  */
 export function PainPoints() {
   const painPoints = getPainPoints();
+  const copy = getPainPointsCopy();
 
   return (
-    <SectionShell
-      backdrop={
-        <div
-          aria-hidden
-          className="absolute inset-0"
-          style={{
-            backgroundImage:
-              "radial-gradient(65% 45% at 50% 8%, color-mix(in oklab, var(--destructive) 6%, transparent), transparent 62%)",
-          }}
-        />
-      }
-    >
-      <SectionHeading
-        eyebrow="The hidden bill"
-        title="Cash on delivery sends an invoice nobody prints"
-        description="It arrives in pieces — freight out, a refused parcel back, working capital riding around in a van. Item by item it looks like the cost of doing business."
-      />
+    <SectionShell backdrop={<PainEnvironment />}>
+      {/*
+        No eyebrow. The title is already the plainest possible statement of the
+        subject, and a label above it saying the same thing in fewer words adds
+        a line without adding a fact.
+      */}
+      <SectionHeading title={copy.title} description={copy.description} />
 
-      <BlurFade inView className="mt-lede">
-        <div className="overflow-hidden rounded-3xl border border-border bg-card shadow-card">
-          <ul>
-            {painPoints.map((painPoint, index) => {
-              const Icon = iconFor[painPoint.id] ?? PackageX;
-              const control = getControlBySlug(painPoint.controlSlug);
+      <BlurFade className="mt-lede">
+        <div className="grid items-center gap-9 lg:grid-cols-[1fr_auto] lg:gap-10 xl:gap-12">
+          {/*
+            The costs and the line that totals them are one block, which is why
+            they share a column: the sentence underneath is what the three cards
+            add up to, and putting it outside their measure would make it a
+            separate remark about the section rather than its conclusion.
+          */}
+          <div>
+            <ul className="grid gap-4 sm:grid-cols-3">
+              {painPoints.map((painPoint) => {
+                const Icon = iconFor[painPoint.id] ?? PackageX;
 
-              return (
-                <li
-                  key={painPoint.id}
-                  className="group grid items-start gap-x-6 gap-y-3.5 border-b border-border p-6 transition-colors duration-300 last:border-b-0 hover:bg-accent/40 sm:grid-cols-[auto_1fr_auto] sm:p-7"
-                >
-                  <span className="flex items-center gap-4">
-                    <span
+                return (
+                  <li
+                    key={painPoint.id}
+                    className="group flex surface-card items-start gap-3.5 rounded-[1.15rem] p-5"
+                  >
+                    <Icon
                       aria-hidden
-                      className="text-xs font-semibold text-muted-foreground/50 tabular-nums"
-                    >
-                      0{index + 1}
-                    </span>
-                    <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-destructive/8 text-destructive">
-                      <Icon aria-hidden className="size-5" />
-                    </span>
-                  </span>
+                      className="mt-px size-5 shrink-0 text-ink/35 transition-colors duration-300 ease-emphasized group-hover:text-brand"
+                      strokeWidth={1.6}
+                    />
 
-                  <div className="min-w-0">
-                    <h3 className="text-lg font-semibold tracking-tight">
-                      {painPoint.title}
-                    </h3>
-                    <p className="mt-1.5 max-w-xl text-sm leading-relaxed text-muted-foreground">
-                      {painPoint.body}
-                    </p>
-                  </div>
+                    <div className="min-w-0">
+                      <h3 className="text-[14.5px] leading-none font-semibold tracking-[-0.012em] text-ink">
+                        {painPoint.title}
+                      </h3>
+                      <p className="mt-2.5 text-[12.5px] leading-relaxed text-pretty text-ink/50">
+                        {painPoint.body}
+                      </p>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
 
-                  {control ? (
-                    <Link
-                      href={routeFor.control(control.slug)}
-                      className="inline-flex items-center gap-1.5 self-center rounded-full border border-border bg-background px-3.5 py-2 text-sm font-medium whitespace-nowrap transition-colors outline-none hover:border-brand/30 hover:text-brand focus-visible:ring-2 focus-visible:ring-ring/60"
-                    >
-                      {control.name}
-                      <ArrowRight
-                        aria-hidden
-                        className="size-3.5 transition-transform duration-300 group-hover:translate-x-0.5"
-                      />
-                    </Link>
-                  ) : null}
-                </li>
-              );
-            })}
-          </ul>
+            {/*
+              The close.
 
-          {/* The total line. Only the merchant can fill it in. */}
-          <div className="relative flex flex-col gap-4 overflow-hidden border-t-2 border-dashed border-border bg-gradient-to-br from-brand-soft via-cloud to-brand-soft/60 p-6 sm:flex-row sm:items-center sm:justify-between sm:p-7">
-            <div
-              aria-hidden
-              className="absolute -top-20 -right-10 size-56 rounded-full bg-brand/12 blur-3xl"
-            />
+              An earlier pass set this as a red banner, and a red banner is the
+              one thing on this page loud enough to outrank the hero — which is
+              the wrong outcome for a line whose whole authority comes from
+              being stated flatly. It is the same white surface as everything
+              else, lit from behind rather than filled: the glow is what makes
+              it the last thing the eye lands on, and light does that without
+              raising its voice.
 
-            <div className="relative">
-              <p className="text-base font-semibold sm:text-lg">
-                Total
-                <span className="ml-2.5 font-normal text-muted-foreground">
-                  depends entirely on your store
+              The sentence carries the alarm. Nothing around it needs to.
+            */}
+            <div className="relative mt-4">
+              <div
+                aria-hidden
+                className="pointer-events-none absolute -inset-x-8 -inset-y-5 rounded-[2.5rem] bg-brand/[0.07] blur-2xl"
+              />
+
+              <p className="relative flex items-center justify-center gap-3 rounded-[1.15rem] border border-border bg-card px-5 py-4 text-center shadow-card">
+                <TriangleAlert
+                  aria-hidden
+                  className="size-[17px] shrink-0 text-ink/40"
+                  strokeWidth={1.6}
+                />
+                <span className="text-[13.5px] leading-snug font-medium text-pretty text-ink/75 sm:text-[14.5px]">
+                  {copy.callout}
                 </span>
               </p>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Three questions and you have the yearly figure. Free, and
-                nothing to sign up for.
-              </p>
             </div>
-
-            <Button asChild size="lg" className="relative shrink-0">
-              <Link href={routes.codCalculator}>
-                Work out your number
-                <ArrowRight aria-hidden className="size-4" />
-              </Link>
-            </Button>
           </div>
+
+          {/*
+            Ordered after the costs in the markup so a screen reader and a
+            narrow viewport both get them before the picture of them — the
+            drawing is a second reading, and a second reading is no use first.
+          */}
+          <LossScene className="max-w-[17rem] lg:w-[15rem] lg:max-w-none xl:w-[17.5rem]" />
         </div>
       </BlurFade>
     </SectionShell>

@@ -5,6 +5,7 @@ import type {
   HowItWorksStep,
   OutcomeMetric,
   PainPoint,
+  PainPointsCopy,
   TrustedBrand,
 } from "@/types";
 
@@ -18,23 +19,39 @@ import type {
 export const painPoints: readonly PainPoint[] = [
   {
     id: "fake-orders",
-    title: "Orders nobody meant to pay for",
-    body: "A parcel goes out, comes back, and you have paid twice to move it. Nothing about the order looked wrong at checkout.",
+    title: "Fake orders",
+    body: "Fraudsters place cash orders they never intend to accept, and are gone by the time the parcel arrives.",
     controlSlug: "otp-verification",
   },
   {
     id: "rto",
-    title: "Returns you funded twice",
-    body: "Freight out, freight back, and the packaging in between. One delivered order rarely covers the one that came home.",
+    title: "High RTO",
+    body: "Non-serious buyers refuse at the door. Freight out, freight back, and the packaging in between.",
     controlSlug: "partial-cod-payment",
   },
   {
     id: "prepaid",
-    title: "Cash you wait weeks to see",
-    body: "Every cash order ties up working capital until the courier settles. Prepaid buyers pay today; cash buyers pay eventually, if at all.",
+    title: "Low prepaid share",
+    body: "Most buyers default to cash, so working capital rides around in a van until the courier settles.",
     controlSlug: "prepaid-nudge",
   },
 ];
+
+/**
+ * The problem section's own words.
+ *
+ * The titles above are deliberately the plain names a merchant already uses for
+ * these — fake orders, RTO, prepaid share — rather than a more evocative
+ * rewrite of them. This section's job is recognition, and recognition needs the
+ * merchant's vocabulary, not ours. The line each card carries is what turns the
+ * familiar name into a number leaving the business.
+ */
+export const painPointsCopy: PainPointsCopy = {
+  title: "Why COD is killing your margins",
+  description:
+    "It arrives in pieces — freight out, a refused parcel back, working capital riding around in a van. Item by item it looks like the cost of doing business.",
+  callout: "Every fake order costs shipping, packaging and reverse logistics.",
+};
 
 /**
  * Published results (§5.1 #3).
