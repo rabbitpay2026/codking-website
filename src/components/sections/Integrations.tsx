@@ -1,134 +1,149 @@
-import { ArrowRight, Puzzle } from "lucide-react";
+import { Puzzle } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 
-import { WhatsappMark } from "@/components/brand/BrandMarks";
-import { ShopifyMark } from "@/components/brand/ShopifyMarks";
+import { PageEnvironment } from "@/components/sections/PageEnvironment";
 import { SectionHeading } from "@/components/sections/SectionHeading";
 import { SectionShell } from "@/components/sections/SectionShell";
 import { BlurFade } from "@/components/ui/blur-fade";
 import { routes } from "@/constants/routes";
-import { getFeaturedIntegrations, getIntegrations } from "@/lib/content";
-
-import type { ReactNode } from "react";
+import { getFeaturedIntegrations, getPlatformsCopy } from "@/lib/content";
 
 /**
- * Vendor artwork, keyed by slug.
+ * The vendor mark on a card.
  *
- * A provider with no mark falls back to its own initials rather than to a
- * generic icon — a wrong logo is worse than no logo, and a monogram is honest
- * about being a placeholder until the vendor's own file arrives.
+ * Held to one optical box rather than one height: these are five unrelated
+ * marks — a wordmark under a glyph, a circle, a rounded triangle — and the only
+ * thing that makes a row of them look deliberate is that each sits inside the
+ * same square and touches its edges at the same distance. `object-contain`
+ * inside a fixed box does that without cropping anything.
+ *
+ * `width`/`height` come from the record and are the rendered box, not the
+ * file's intrinsic size, with the ratio exact so the row reserves its space
+ * before an image has loaded. No `sizes`, deliberately: these are fixed-size
+ * images, and Next only emits the small 1x/2x pair for that case when `sizes`
+ * is absent.
+ *
+ * `alt` is empty because the provider's name is set in text directly beside it.
  */
-const markFor: Record<string, ReactNode> = {
-  shopify: <ShopifyMark className="size-5" />,
-  whatsapp: <WhatsappMark className="size-5" />,
-};
+function ProviderMark({
+  logo,
+  name,
+}: {
+  readonly logo?: { readonly src: string; width: number; height: number };
+  readonly name: string;
+}) {
+  if (!logo) {
+    return (
+      <span
+        aria-hidden
+        className="grid size-9 shrink-0 place-items-center text-[13px] font-bold text-ink/40"
+      >
+        {name.slice(0, 2).toUpperCase()}
+      </span>
+    );
+  }
+
+  return (
+    <span className="grid size-9 shrink-0 place-items-center">
+      <Image
+        src={logo.src}
+        alt=""
+        width={logo.width}
+        height={logo.height}
+        className="h-auto max-h-9 w-auto max-w-9 object-contain select-none"
+      />
+    </span>
+  );
+}
 
 /**
- * The platforms COD King connects to.
+ * The platforms COD King connects to (§3.1).
  *
  * Compatibility sits here — after the product has been shown, before pricing —
  * because merchants check it once they are interested, not before (§4.3).
  *
- * Two tiers on one surface. The three platforms that change what a merchant
- * can do get a card and a sentence; every remaining gateway is listed by name
- * underneath, because a compatibility list belongs under the argument rather
- * than instead of it. Both tiers read from the same repository record, so a
- * provider added to the data appears in exactly one of them — and only the
- * providers the product actually names are in that record, because an
- * integration claim is a promise and an unverified one is worse than an
- * absent one (§3.1).
+ * Five cards on one row, and the fifth is the honest one. A board like this is
+ * always incomplete, and a list that pretends otherwise invites the reader to
+ * find the omission; naming the gap and pointing at the full page is both more
+ * truthful and less work than growing the row every time a provider is added.
+ *
+ * The marks are the vendors' own artwork, in their own colours. That is the one
+ * place on this page where saturation is the point: a merchant scanning for
+ * "does it work with what I use" is looking for a logo, not reading names, and
+ * a desaturated logo wall would defeat the only job this section has.
+ *
+ * Everything under the marks is the site's standard card — `surface-card`, one
+ * radius, one shadow, one lift — so five brand palettes sit on the same surface
+ * as every other card on the homepage rather than on a treatment of their own.
+ *
+ * Read from the integrations repository, so a provider the product does not
+ * actually support cannot appear here: an integration claim is a promise, and
+ * an unverified one is worse than an absent one.
  */
 export function Integrations() {
   const featured = getFeaturedIntegrations();
-  const rest = getIntegrations().filter((integration) => !integration.featured);
+  const copy = getPlatformsCopy();
 
   return (
     <SectionShell
-      backdrop={
-        <div
-          aria-hidden
-          className="absolute inset-0"
-          style={{
-            backgroundImage:
-              "radial-gradient(55% 60% at 50% 0%, color-mix(in oklab, var(--brand) 8%, transparent), transparent 70%)",
-          }}
-        />
-      }
+      backdrop={<PageEnvironment />}
+      containerClassName="pt-7 md:pt-8 lg:pt-9"
     >
-      <SectionHeading
-        eyebrow="Integrations"
-        title="Bring your own gateway, pay their rate"
-        description="Every confirmation, every OTP, every recovery message is a line on somebody's bill. Connect a regional provider and it is theirs, at their price, in their currency — not a global rate with a margin on top."
-      />
+      <SectionHeading title={copy.title} description={copy.description} />
 
-      <ul className="mt-lede grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <ul className="mt-lede grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
         {featured.map((integration, index) => (
           <li key={integration.slug} className="h-full">
-            <BlurFade delay={0.05 * index} inView className="h-full">
-              <div className="flex h-full surface-card flex-col p-6">
-                <span className="grid size-11 place-items-center rounded-xl bg-white ring-1 ring-border">
-                  {markFor[integration.slug] ?? (
-                    <span
-                      aria-hidden
-                      className="text-[13px] font-bold text-brand"
-                    >
-                      {integration.name.slice(0, 2).toUpperCase()}
-                    </span>
-                  )}
-                </span>
+            <BlurFade delay={0.05 * index} className="h-full">
+              <div className="group flex h-full surface-card items-start gap-3.5 rounded-[1.15rem] p-5">
+                <ProviderMark logo={integration.logo} name={integration.name} />
 
-                <h3 className="mt-5 text-[15px] font-semibold tracking-tight">
-                  {integration.name}
-                </h3>
-                <p className="mt-2 text-[13px] leading-relaxed text-muted-foreground">
-                  {integration.blurb}
-                </p>
+                <div className="min-w-0">
+                  <h3 className="text-[14.5px] leading-none font-semibold tracking-[-0.012em] text-ink">
+                    {integration.name}
+                  </h3>
+                  <p className="mt-2.5 text-[12.5px] leading-relaxed text-pretty text-ink/50">
+                    {integration.blurb}
+                  </p>
+                </div>
               </div>
             </BlurFade>
           </li>
         ))}
 
         {/*
-          The rest, as one card rather than a second grid of near-empties.
+          The rest, as one card rather than a second grid of near-empties. It is
+          the only card here that is a link, because it is the only one making a
+          claim the reader might want to check.
 
-          It spans the full width only where that closes the grid. On three
-          columns the featured providers fill row one exactly, so this takes
-          row two whole. On two columns it is an ordinary cell, which is what
-          pairs it with the third provider instead of stranding that provider
-          beside a hole.
+          Its mark is a lucide outline rather than artwork: there is no vendor to
+          have supplied one, and a monochrome glyph is the honest way to say so
+          beside four real logos.
         */}
-        <li className="h-full lg:col-span-3">
-          <BlurFade delay={0.05 * featured.length} inView className="h-full">
-            <div className="flex h-full flex-col rounded-2xl border border-dashed border-brand/25 bg-gradient-to-br from-sky-200 to-white p-6">
-              <span className="grid size-11 place-items-center rounded-xl bg-white text-brand ring-1 ring-brand/12">
-                <Puzzle aria-hidden className="size-5" />
+        <li className="h-full">
+          <BlurFade delay={0.05 * featured.length} className="h-full">
+            <Link
+              href={routes.integrations}
+              className="group flex h-full surface-card items-start gap-3.5 rounded-[1.15rem] p-5 outline-none focus-visible:ring-2 focus-visible:ring-ring/60"
+            >
+              <span className="grid size-9 shrink-0 place-items-center">
+                <Puzzle
+                  aria-hidden
+                  className="size-6 text-ink/30 transition-colors duration-300 ease-emphasized group-hover:text-brand"
+                  strokeWidth={1.6}
+                />
               </span>
 
-              <h3 className="mt-5 text-[15px] font-semibold tracking-tight">
-                And every gateway below
-              </h3>
-              <ul className="mt-3 flex flex-wrap gap-1.5">
-                {rest.map((integration) => (
-                  <li
-                    key={integration.slug}
-                    className="rounded-full border border-border bg-white px-2.5 py-1 text-[12px] font-medium text-foreground/75"
-                  >
-                    {integration.name}
-                  </li>
-                ))}
-              </ul>
-
-              <Link
-                href={routes.integrations}
-                className="group mt-auto inline-flex items-center gap-1.5 rounded-md pt-5 text-[13px] font-semibold text-brand transition-colors outline-none hover:text-brand-deep focus-visible:ring-2 focus-visible:ring-ring/60"
-              >
-                See all integrations
-                <ArrowRight
-                  aria-hidden
-                  className="size-3.5 transition-transform duration-300 group-hover:translate-x-0.5"
-                />
-              </Link>
-            </div>
+              <div className="min-w-0">
+                <h3 className="text-[14.5px] leading-none font-semibold tracking-[-0.012em] text-ink">
+                  &amp; More
+                </h3>
+                <p className="mt-2.5 text-[12.5px] leading-relaxed text-pretty text-ink/50">
+                  Easy to integrate with other tools you use.
+                </p>
+              </div>
+            </Link>
           </BlurFade>
         </li>
       </ul>

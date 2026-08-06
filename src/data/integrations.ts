@@ -11,28 +11,49 @@ import type { Integration } from "@/types";
  */
 export const integrations: readonly Integration[] = [
   {
-    slug: "shopify",
-    name: "Shopify",
-    category: "platform",
+    slug: "meta-ads",
+    name: "Meta Ads",
+    category: "ads",
     featured: true,
-    blurb:
-      "Runs inside the checkout you already have. No theme edits, no developer, nothing to deploy.",
+    blurb: "Track conversions and optimize campaigns.",
+    logo: { src: "/logos/marketing/meta.png", width: 34, height: 36 },
+  },
+  {
+    slug: "google-ads",
+    name: "Google Ads",
+    category: "ads",
+    featured: true,
+    blurb: "Improve ROI with better conversion tracking.",
+    logo: { src: "/logos/marketing/google-ads.png", width: 36, height: 33 },
   },
   {
     slug: "whatsapp",
     name: "WhatsApp",
     category: "platform",
     featured: true,
-    blurb:
-      "Send the OTP, the order confirmation and the recovery reminder on the channel buyers already read.",
+    blurb: "Send notifications and recover more orders.",
+    logo: { src: "/logos/marketing/whatsapp.png", width: 36, height: 36 },
   },
   {
     slug: "msg91",
     name: "MSG91",
     category: "sms-gateway",
     featured: true,
+    blurb: "Send transactional SMS at scale seamlessly.",
+    logo: { src: "/logos/marketing/msg91.png", width: 36, height: 33 },
+  },
+  {
+    /*
+      The platform the product runs inside rather than one it connects out to,
+      so it is not on the homepage's marketing-and-communication board. It stays
+      in the repository because the integrations page still has to answer "does
+      it work with Shopify" — the answer is just not this section's argument.
+    */
+    slug: "shopify",
+    name: "Shopify",
+    category: "platform",
     blurb:
-      "Bring your own regional gateway and pay their rate directly, in local currency.",
+      "Runs inside the checkout you already have. No theme edits, no developer, nothing to deploy.",
   },
   { slug: "textlocal", name: "Textlocal", category: "sms-gateway" },
   { slug: "gupshup", name: "Gupshup", category: "sms-gateway" },

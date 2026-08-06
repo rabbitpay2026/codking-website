@@ -248,5 +248,11 @@ export const howItWorksSteps: readonly HowItWorksStep[] = [
 /** The flow's own heading. */
 export const howItWorksTitle = "How COD King works";
 
+/** The integrations board's own heading (§3.1). */
+export const platformsCopy = {
+  title: "Connect your marketing & communication platforms",
+  description: "COD King works seamlessly with your favorite tools.",
+} as const;
+
 /** Where the homepage sends a merchant who wants to size the problem (§5.1 #4). */
 export const calculatorHref = routes.codCalculator;

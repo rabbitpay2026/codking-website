@@ -7,6 +7,7 @@ import {
   outcomeMetrics,
   painPoints,
   painPointsCopy,
+  platformsCopy,
   trustedBrands,
 } from "@/data/homepage";
 import { getControlBySlug } from "@/lib/content/controls";
@@ -45,6 +46,10 @@ export function getHowItWorksSteps(): readonly HowItWorksStep[] {
 
 export function getHowItWorksTitle(): string {
   return howItWorksTitle;
+}
+
+export function getPlatformsCopy() {
+  return platformsCopy;
 }
 
 /**
