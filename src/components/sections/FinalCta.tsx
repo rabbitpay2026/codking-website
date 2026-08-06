@@ -1,10 +1,9 @@
 import { Check } from "lucide-react";
 
+import { ShopifyLockup } from "@/components/brand/ShopifyMarks";
 import { ActionLink } from "@/components/layout/ActionLink";
-import { SectionShell } from "@/components/sections/SectionShell";
+import { BorderBeam } from "@/components/ui/border-beam";
 import { DotPattern } from "@/components/ui/dot-pattern";
-import { Meteors } from "@/components/ui/meteors";
-import { Noise } from "@/components/ui/noise";
 import { cn } from "@/lib/utils";
 import { getProofMetrics, getUtilityActions } from "@/lib/content";
 
@@ -17,17 +16,22 @@ const REASSURANCES = [
 ];
 
 /**
- * The close (§5.1 #11).
+ * The close, as a card rather than a band.
  *
- * Restates the offer and asks for the install, with Book a Demo beside it for
- * the larger merchants who need a conversation first (§9.4). Nothing new is
- * introduced — by this point the merchant has seen the loss, the system, the
- * proof and the price, and the only job left is to make the action easy.
+ * The blueprint sets it beside the questions instead of below them, and that
+ * is the better arrangement: a merchant reading the FAQ is resolving the last
+ * objection, and the action they need next should be in view when they finish
+ * rather than one scroll further on. So this renders a surface with no section
+ * shell of its own — `Faq` owns the band both halves sit on.
  *
- * The richest surface on the page, and the last thing seen: a deep brand
- * gradient rather than the flat brand fill, lit from above, with meteors
- * carrying just enough movement to make the band feel alive. Grain over the
- * top stops a gradient this large from banding.
+ * Nothing new is introduced. By this point the merchant has seen the loss, the
+ * system, the proof and the price, and the only job left is to make the action
+ * easy.
+ *
+ * It is the one card on the page carrying a beam. That is deliberate and it is
+ * the only place it appears: a moving edge is the strongest attention signal
+ * the design system has, so spending it anywhere else would cost it the weight
+ * it needs here.
  */
 export async function FinalCta() {
   const proof = await getProofMetrics();
@@ -36,70 +40,53 @@ export async function FinalCta() {
   const demoAction = actions.find((action) => action.variant === "secondary");
 
   return (
-    <SectionShell
-      tone="brand"
-      size="spacious"
-      ariaLabel="Get started with COD King"
-      className="bg-gradient-to-b from-brand-deep via-brand to-brand-deep"
-      containerClassName="text-center"
-      backdrop={
-        <>
-          <div
-            aria-hidden
-            className="absolute inset-0"
-            style={{
-              backgroundImage:
-                "radial-gradient(60% 55% at 50% 0%, rgba(255,255,255,0.22), transparent 70%)",
-            }}
-          />
-          <DotPattern
-            width={28}
-            height={28}
-            cr={1}
-            className={cn(
-              "absolute inset-0 h-full fill-white/25",
-              "[mask-image:radial-gradient(55%_50%_at_50%_45%,white,transparent)]",
-            )}
-          />
-          <Meteors number={14} className="opacity-40" />
-          <Noise className="opacity-[0.06]" />
+    <div className="relative isolate flex h-full flex-col overflow-hidden rounded-[1.75rem] border border-brand/15 bg-gradient-to-b from-white via-sky-100 to-sky-200 p-8 text-center shadow-card lg:p-10">
+      <div
+        aria-hidden
+        className="absolute inset-0 -z-10"
+        style={{
+          backgroundImage:
+            "radial-gradient(60% 55% at 50% 0%, color-mix(in oklab, var(--brand) 14%, transparent), transparent 72%)",
+        }}
+      />
+      <DotPattern
+        width={26}
+        height={26}
+        cr={1}
+        className={cn(
+          "absolute inset-0 -z-10 h-full fill-brand/20",
+          "[mask-image:radial-gradient(60%_55%_at_50%_40%,white,transparent)]",
+        )}
+      />
+      {/* The violet accent, as a single cool body behind the heading. */}
+      <div
+        aria-hidden
+        className="absolute -top-24 left-1/2 -z-10 size-96 -translate-x-1/2 rounded-full bg-brand-violet/10 blur-[110px]"
+      />
+      <BorderBeam
+        size={180}
+        duration={11}
+        colorFrom="var(--brand)"
+        colorTo="var(--brand-accent)"
+      />
 
-          {/*
-            The page fades into the brand rather than hitting it. This tone
-            does not flip the token layer, so `background` here is still the
-            light page colour above it — the band arrives instead of cutting in.
+      <ShopifyLockup title="Shopify" className="mx-auto h-8 text-ink/80" />
 
-            It is the *last* layer for a reason. Painted first, the grain, the
-            dot field and the overhead glow all landed on top of it, so its
-            topmost pixel was no longer the page's own white and the join
-            showed as a hairline step. A seam only disappears if nothing is
-            drawn over it.
-
-            Kept shorter than the container's top padding at every breakpoint,
-            so the white never reaches the white heading.
-          */}
-          <div
-            aria-hidden
-            className="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-background to-transparent sm:h-24 lg:h-32"
-          />
-        </>
-      }
-    >
-      <h2 className="mx-auto max-w-3xl text-[2rem] leading-[1.05] font-semibold tracking-[-0.03em] text-balance text-white sm:text-[2.75rem] lg:text-[3.25rem]">
+      <h2 className="mx-auto mt-6 max-w-md text-[1.75rem] leading-[1.08] font-semibold tracking-[-0.03em] text-balance sm:text-[2.15rem]">
         Your next cash order can be a verified one
       </h2>
 
-      <p className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-pretty text-white/80 sm:text-lg">
+      <p className="mx-auto mt-4 max-w-sm leading-relaxed text-pretty text-muted-foreground">
         Join {numberFormat.format(proof.merchantCount)}+ Shopify stores that
         stopped treating cash on delivery as a cost of doing business.
       </p>
 
-      <div className="mt-11 flex flex-col items-center justify-center gap-3 sm:flex-row">
+      <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
         {installAction ? (
           <ActionLink
             action={{ ...installAction, label: "Install free on Shopify" }}
             size="lg"
-            className="bg-white text-brand shadow-[0_12px_35px_-10px_rgba(0,0,0,0.45)] hover:bg-white/90 hover:shadow-[0_16px_40px_-10px_rgba(0,0,0,0.5)]"
+            className="shadow-[0_14px_36px_-12px_var(--brand)]"
           />
         ) : null}
 
@@ -107,12 +94,12 @@ export async function FinalCta() {
           <ActionLink
             action={demoAction}
             size="lg"
-            className="border-white/35 bg-white/10 text-white backdrop-blur-md hover:border-white/60 hover:bg-white/20 hover:text-white"
+            className="border-white/80 bg-white/70 backdrop-blur-md"
           />
         ) : null}
       </div>
 
-      <ul className="mt-10 flex flex-wrap items-center justify-center gap-x-7 gap-y-2 text-sm text-white/75">
+      <ul className="mt-auto flex flex-wrap items-center justify-center gap-x-5 gap-y-2 pt-8 text-[13px] text-muted-foreground">
         {REASSURANCES.map((item) => (
           <li key={item} className="inline-flex items-center gap-1.5">
             <Check aria-hidden className="size-4 text-brand-check" />
@@ -120,6 +107,6 @@ export async function FinalCta() {
           </li>
         ))}
       </ul>
-    </SectionShell>
+    </div>
   );
 }

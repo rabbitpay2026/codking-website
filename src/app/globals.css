@@ -6,76 +6,93 @@
 /* ---------------------------------------------------------------------------
    Design tokens — light theme.
 
-   The brand values are sampled directly from the COD King logo
-   (`public/logos/cod logo.png`): violet #734dff for the wordmark, green
-   #7cd548 for the check. Everything else is tuned around them, so applying
-   the brand remains what the foundation intended — overriding these custom
-   properties and nothing else.
+   The site runs on a very light blue design language: white and three tints
+   of blue (#f8fbff, #f4f8ff, #eef6ff) carry every surface, and a single
+   saturated blue carries every action. The violet the brand was previously
+   built on is kept as `--brand-violet` and used the way an accent should be
+   used — sparingly, on a highlight or an interactive state — never as a
+   background field.
+
+   Everything else is tuned around those two, so applying the brand remains
+   what the foundation intended: overriding these custom properties and
+   nothing else.
 --------------------------------------------------------------------------- */
 :root {
   --radius: 0.75rem;
 
   --background: hsl(0 0% 100%);
-  --foreground: hsl(250 25% 13%);
+  --foreground: hsl(217 40% 13%);
   --card: hsl(0 0% 100%);
-  --card-foreground: hsl(250 25% 13%);
+  --card-foreground: hsl(217 40% 13%);
   --popover: hsl(0 0% 100%);
-  --popover-foreground: hsl(250 25% 13%);
-  --primary: hsl(253 100% 65%);
+  --popover-foreground: hsl(217 40% 13%);
+  --primary: hsl(221 83% 53%);
   --primary-foreground: hsl(0 0% 100%);
-  --secondary: hsl(250 30% 97%);
-  --secondary-foreground: hsl(250 25% 13%);
-  --muted: hsl(250 25% 96%);
-  --muted-foreground: hsl(250 10% 45%);
+  --secondary: hsl(214 60% 97%);
+  --secondary-foreground: hsl(217 40% 13%);
+  --muted: hsl(214 45% 96%);
+  --muted-foreground: hsl(215 16% 45%);
   /* Hover/active surface, not a brand colour — shadcn semantics. */
-  --accent: hsl(252 100% 97%);
-  --accent-foreground: hsl(252 60% 30%);
+  --accent: hsl(216 100% 98%);
+  --accent-foreground: hsl(221 65% 32%);
   --destructive: hsl(0 84% 60%);
   --destructive-foreground: hsl(0 0% 98%);
-  --border: hsl(250 20% 92%);
-  --input: hsl(250 20% 92%);
-  --ring: hsl(253 100% 65%);
+  --border: hsl(214 32% 91%);
+  --input: hsl(214 32% 91%);
+  --ring: hsl(221 83% 53%);
 
-  --brand: #734dff;
-  --brand-deep: #5a2ff2;
-  --brand-accent: #9d80ff;
-  --brand-soft: #f2eeff;
+  --brand: #2563eb;
+  --brand-deep: #1d4ed8;
+  --brand-accent: #60a5fa;
+  --brand-soft: #eef6ff;
+  /* Page tints, named for what they are so a section can pick its own step. */
+  --sky-50: #f8fbff;
+  --sky-100: #f4f8ff;
+  --sky-200: #eef6ff;
+  /*
+   * The accent, and only ever an accent. Highlights, hover states, the second
+   * stop of a gradient. Never a section background.
+   */
+  --brand-violet: #6d4aff;
   /*
    * The logo's green. Accents, icons and fills only: at 1.8:1 against white
    * it must never be used for text on a light surface.
    */
-  --brand-check: #7cd548;
-  --ink: #14103a;
-  --cloud: #faf9ff;
+  --brand-check: #22c55e;
+  --ink: #0b1b36;
+  --cloud: #f8fbff;
 }
 
 /* Dark theme is opt-in via a `.dark` class on <html>, so a theme provider can
    be added later without touching component code. */
 .dark {
-  --background: hsl(250 40% 5%);
-  --foreground: hsl(250 20% 97%);
-  --card: hsl(250 35% 8%);
-  --card-foreground: hsl(250 20% 97%);
-  --popover: hsl(250 35% 8%);
-  --popover-foreground: hsl(250 20% 97%);
-  /* Held at the light-theme violet: white on it clears AA at 4.96:1. */
-  --primary: hsl(253 100% 65%);
+  --background: hsl(222 47% 5%);
+  --foreground: hsl(214 30% 97%);
+  --card: hsl(222 44% 8%);
+  --card-foreground: hsl(214 30% 97%);
+  --popover: hsl(222 44% 8%);
+  --popover-foreground: hsl(214 30% 97%);
+  /* Lifted a step so white on it still clears AA on the darker surface. */
+  --primary: hsl(217 91% 60%);
   --primary-foreground: hsl(0 0% 100%);
-  --secondary: hsl(250 30% 13%);
-  --secondary-foreground: hsl(250 20% 97%);
-  --muted: hsl(250 30% 13%);
-  --muted-foreground: hsl(250 12% 65%);
-  --accent: hsl(252 40% 16%);
-  --accent-foreground: hsl(250 20% 97%);
+  --secondary: hsl(220 35% 13%);
+  --secondary-foreground: hsl(214 30% 97%);
+  --muted: hsl(220 35% 13%);
+  --muted-foreground: hsl(215 18% 65%);
+  --accent: hsl(220 45% 16%);
+  --accent-foreground: hsl(214 30% 97%);
   --destructive: hsl(0 63% 31%);
   --destructive-foreground: hsl(210 40% 98%);
-  --border: hsl(250 25% 16%);
-  --input: hsl(250 25% 16%);
-  --ring: hsl(253 100% 72%);
+  --border: hsl(220 30% 16%);
+  --input: hsl(220 30% 16%);
+  --ring: hsl(217 91% 68%);
 
-  --brand-soft: hsl(252 40% 14%);
-  --ink: hsl(250 20% 97%);
-  --cloud: hsl(250 40% 7%);
+  --brand-soft: hsl(220 45% 14%);
+  --sky-50: hsl(222 44% 7%);
+  --sky-100: hsl(222 42% 9%);
+  --sky-200: hsl(220 44% 12%);
+  --ink: hsl(214 30% 97%);
+  --cloud: hsl(222 47% 7%);
 }
 
 /* ---------------------------------------------------------------------------
@@ -91,6 +108,10 @@
   --color-brand-accent: var(--brand-accent);
   --color-brand-soft: var(--brand-soft);
   --color-brand-check: var(--brand-check);
+  --color-brand-violet: var(--brand-violet);
+  --color-sky-50: var(--sky-50);
+  --color-sky-100: var(--sky-100);
+  --color-sky-200: var(--sky-200);
   --color-ink: var(--ink);
   --color-cloud: var(--cloud);
 

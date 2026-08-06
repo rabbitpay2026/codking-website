@@ -146,14 +146,21 @@ export function CheckoutScreen() {
       </p>
 
       <div className="mt-1.5 space-y-1.5 px-4">
-        {/* Prepaid, made deliberately more attractive than cash. */}
+        {/*
+          Prepaid, made deliberately more attractive than cash.
+
+          Named for what it is on a real Shopify payment sheet — the method,
+          not a button. "Pay now" was the label here and read as a call to
+          action inside a mockup, which is exactly the thing this screen must
+          not look like.
+        */}
         <div className="rounded-xl border border-ink/10 bg-white p-2.5">
           <div className="flex items-center gap-2.5">
             <span
               aria-hidden
               className="size-3.5 shrink-0 rounded-full border-2 border-ink/20"
             />
-            <p className="flex-1 text-[11px] font-semibold">Pay now</p>
+            <p className="flex-1 text-[11px] font-semibold">Prepaid — UPI</p>
             <span className="rounded-full bg-brand-check/25 px-1.5 py-0.5 text-[8.5px] font-bold text-ink/75">
               Save ₹120
             </span>
@@ -189,7 +196,7 @@ export function CheckoutScreen() {
           <div className="mt-2 rounded-lg bg-white/90 p-2 ring-1 ring-brand/12">
             <div className="flex items-center justify-between">
               <span className="text-[9.5px] font-bold text-brand">
-                Pay ₹300 now
+                ₹300 advance
               </span>
               <span className="text-[8.5px] text-ink/45 tabular-nums">
                 ₹1,048 on delivery

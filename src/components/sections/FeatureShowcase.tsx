@@ -1,111 +1,62 @@
-import { ArrowRight, Check, ChevronRight, X } from "lucide-react";
+import {
+  ArrowRight,
+  BadgeIndianRupee,
+  BadgePercent,
+  ChartNoAxesCombined,
+  MessageSquareText,
+  ShieldCheck,
+  ShoppingCart,
+  SlidersHorizontal,
+  Wallet,
+} from "lucide-react";
 import Link from "next/link";
 
 import { FlagshipVisual } from "@/components/sections/flagship/FlagshipVisual";
 import { SectionHeading } from "@/components/sections/SectionHeading";
 import { SectionShell } from "@/components/sections/SectionShell";
 import { BlurFade } from "@/components/ui/blur-fade";
+import { Button } from "@/components/ui/button";
 import { GridPattern } from "@/components/ui/grid-pattern";
-import { routeFor } from "@/constants/routes";
+import { routeFor, routes } from "@/constants/routes";
 import { cn } from "@/lib/utils";
-import { getFeaturedControls } from "@/lib/content";
+import { getFeaturedControls, getHomepageControls } from "@/lib/content";
+
+import type { LucideIcon } from "lucide-react";
 
 /**
- * The argument this section makes about each control.
- *
- * Written per capability and owned here rather than stored on the record: the
- * control's `outcome` describes what it does and is reused on every surface,
- * while these three lines are the case the *homepage* makes for it. Same
- * capability, different job, different sentence.
- *
- * Each one is a story rather than a description — what it costs today, what
- * changes, and the shape of the mechanism — because a merchant does not buy a
- * feature, they buy the end of a specific problem.
+ * Icons are presentation, not content, so they are mapped here rather than
+ * stored on the record — changing a line of copy should not mean picking art.
  */
-interface FlagshipStory {
-  readonly promise: string;
-  readonly problem: string;
-  readonly change: string;
-  /** The mechanism in three or four beats, shown as a flow. */
-  readonly flow: readonly string[];
-}
-
-const stories: Record<string, FlagshipStory> = {
-  "otp-verification": {
-    promise: "Every order proves it is real before you pack it",
-    problem:
-      "A parcel leaves on trust and comes back unopened. You paid the freight both ways, and nothing about the order looked wrong at checkout.",
-    change:
-      "The buyer confirms on their own phone before anything is picked. Orders nobody confirms are held instead of shipped — so what you pack is what somebody actually wanted.",
-    flow: ["Order placed", "Code on WhatsApp", "Buyer confirms", "Dispatch"],
-  },
-  "cod-rules": {
-    promise: "Cash disappears exactly where it loses you money",
-    problem:
-      "The orders that come back look identical to the ones that stick, right up until the courier scans them into your warehouse again.",
-    change:
-      "Decide where cash is offered at all — by pincode, cart value, product or customer history. The orders you would have paid twice to move are never placed.",
-    flow: ["Pincode", "Cart value", "Customer tag", "Verdict"],
-  },
-  "prepaid-nudge": {
-    promise: "Buyers pick prepaid because it is genuinely the better deal",
-    problem:
-      "Cash feels free to the buyer. It costs you a handling fee, weeks of tied-up capital, and a return you fund from both ends.",
-    change:
-      "Put the real cost on cash, put a discount on prepaid, and let the gap do the persuading. Nobody is forced; the money simply arrives the day the order does.",
-    flow: ["Fee on cash", "Discount on prepaid", "Buyer chooses"],
-  },
+const iconFor: Record<string, LucideIcon> = {
+  "otp-verification": ShieldCheck,
+  "partial-cod-payment": Wallet,
+  "cod-fees": BadgeIndianRupee,
+  "cod-rules": SlidersHorizontal,
+  "prepaid-nudge": BadgePercent,
+  "messaging-gateways": MessageSquareText,
+  analytics: ChartNoAxesCombined,
+  "abandoned-cart-recovery": ShoppingCart,
 };
 
-/** The mechanism, as a flow the eye can follow in one pass. */
-function Flow({ steps }: { readonly steps: readonly string[] }) {
-  return (
-    <ol
-      aria-hidden
-      className="mt-6 flex flex-wrap items-center gap-x-1.5 gap-y-2"
-    >
-      {steps.map((label, index) => (
-        <li key={label} className="flex items-center gap-1.5">
-          {index > 0 ? <ChevronRight className="size-3 text-brand/45" /> : null}
-          <span
-            className={cn(
-              "rounded-full border px-2.5 py-1 text-[11px] font-semibold whitespace-nowrap",
-              index === steps.length - 1
-                ? "border-brand/30 bg-brand/10 text-brand"
-                : "border-border bg-card text-foreground/70",
-            )}
-          >
-            {label}
-          </span>
-        </li>
-      ))}
-    </ol>
-  );
-}
-
 /**
- * The flagship capabilities (§5.1 #6).
+ * The capability board.
  *
- * Three, not ten. These are the controls that carry most of the loss, and each
- * gets a full-width row with a *working* product surface beside it rather than
- * a card in a grid. That is the whole design decision here: a card can assert
- * a capability, a screenshot can illustrate one, but only something that runs
- * can demonstrate one — and a merchant who watches a rule fire has understood
- * the product in a way no paragraph achieves.
+ * Eight controls, one card each, on a four-column grid. The grid is the right
+ * shape here precisely because these are peers: a merchant arrives knowing
+ * their symptom, not our feature names, and a board they can scan in one pass
+ * lets them find themselves in it. Ranked rows would impose an order the
+ * merchant does not share.
  *
- * Each row is built as one composition rather than as heading-then-body: the
- * ghost numeral, the problem stated as a cost, the change stated as a
- * mechanism, the flow, and the demonstration are a single argument laid out
- * across two columns. Rows alternate side so the eye zig-zags down the section
- * instead of running down one rail, and the glow behind each demonstration
- * follows it across, which is what stops three long rows reading as three
- * repetitions of the same block.
+ * Every card is a link to the control's own page, so the section is also the
+ * page's main branch point into the product — the card is the whole target,
+ * not a "learn more" at the bottom of it.
  *
- * Which controls appear here is the `featured` flag on the content record, so
- * changing the emphasis is a data edit (§12.1).
+ * The set is read from the content repository (§11), so this grid and the
+ * hero's checklist are one list rendered twice and cannot disagree.
  */
 export function FeatureShowcase() {
-  const controls = getFeaturedControls();
+  const controls = getHomepageControls();
+  const featured = getFeaturedControls();
 
   return (
     <SectionShell
@@ -115,134 +66,112 @@ export function FeatureShowcase() {
           width={64}
           height={64}
           className={cn(
-            "absolute inset-0 h-full stroke-brand/[0.055]",
+            "absolute inset-0 h-full stroke-brand/[0.06]",
             "[mask-image:radial-gradient(70%_60%_at_50%_35%,white,transparent)]",
           )}
         />
       }
     >
       <SectionHeading
-        eyebrow="The three that matter"
-        title="Three controls carry almost all of the loss"
-        description="Who you take cash from, whether the order is real, and what choosing cash costs the buyer. Get these right and the rest is housekeeping."
+        eyebrow="The system"
+        title="Ten controls, four moments in an order"
+        description="Each one acts at a specific point. Switch on what matches your problem and the rest stays out of the way."
       />
 
-      <div className="mt-lede space-y-14 lg:space-y-20">
+      <ul className="mt-lede grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {controls.map((control, index) => {
-          const reversed = index % 2 === 1;
-          const story = stories[control.slug];
+          const Icon = iconFor[control.slug] ?? ShieldCheck;
 
           return (
-            <BlurFade key={control.slug} inView>
-              <article className="relative grid items-center gap-8 lg:grid-cols-[1fr_1.08fr] lg:gap-14">
-                {/* The number, as a watermark rather than a label. */}
-                <span
-                  aria-hidden
-                  className={cn(
-                    "pointer-events-none absolute -top-10 hidden text-[9rem] leading-none font-semibold tracking-tighter text-brand/[0.06] tabular-nums lg:block",
-                    reversed ? "right-0" : "left-0",
-                  )}
+            <li key={control.slug} className="h-full">
+              <BlurFade delay={0.04 * index} inView className="h-full">
+                <Link
+                  href={routeFor.control(control.slug)}
+                  className="group flex h-full surface-card flex-col p-6 outline-none focus-visible:ring-2 focus-visible:ring-ring/60"
                 >
-                  0{index + 1}
-                </span>
+                  <span
+                    aria-hidden
+                    className="grid size-11 place-items-center rounded-xl bg-gradient-to-br from-sky-200 to-white text-brand ring-1 ring-brand/12 transition-colors duration-300 group-hover:from-brand group-hover:to-brand-deep group-hover:text-white group-hover:ring-brand/30"
+                  >
+                    <Icon className="size-5" />
+                  </span>
 
-                <div className={cn("relative", reversed && "lg:order-2")}>
-                  <p className="inline-flex items-center gap-2.5 text-xs font-semibold tracking-[0.14em] text-brand uppercase">
-                    <span className="grid size-6 place-items-center rounded-full bg-brand text-[11px] text-white tabular-nums">
-                      {index + 1}
-                    </span>
+                  <h3 className="mt-5 text-[15px] leading-snug font-semibold tracking-tight">
                     {control.name}
+                  </h3>
+                  <p className="mt-2 flex-1 text-[13px] leading-relaxed text-muted-foreground">
+                    {control.outcome}
                   </p>
 
-                  <h3 className="mt-4 text-[1.7rem] leading-[1.1] font-semibold tracking-[-0.028em] text-balance lg:text-[2.2rem]">
-                    {story?.promise ?? control.outcome}
-                  </h3>
-
-                  {story ? (
-                    <dl className="mt-6 space-y-3.5">
-                      <div className="flex items-start gap-3">
-                        <dt>
-                          <span className="sr-only">The problem</span>
-                          <span
-                            aria-hidden
-                            className="mt-0.5 grid size-5 shrink-0 place-items-center rounded-full bg-destructive/10"
-                          >
-                            <X className="size-3 text-destructive" />
-                          </span>
-                        </dt>
-                        <dd className="text-sm leading-relaxed text-pretty text-muted-foreground">
-                          {story.problem}
-                        </dd>
-                      </div>
-
-                      <div className="flex items-start gap-3">
-                        <dt>
-                          <span className="sr-only">What changes</span>
-                          <span
-                            aria-hidden
-                            className="mt-0.5 grid size-5 shrink-0 place-items-center rounded-full bg-brand-check/25"
-                          >
-                            <Check className="size-3 text-ink/70" />
-                          </span>
-                        </dt>
-                        <dd className="text-sm leading-relaxed text-pretty text-foreground/85">
-                          {story.change}
-                        </dd>
-                      </div>
-                    </dl>
-                  ) : (
-                    <p className="mt-6 max-w-lg leading-relaxed text-pretty text-muted-foreground">
-                      {control.outcome}
-                    </p>
-                  )}
-
-                  {story ? <Flow steps={story.flow} /> : null}
-
-                  {control.benefits ? (
-                    <ul className="mt-6 grid gap-2.5 border-t border-border pt-6 sm:grid-cols-2">
-                      {control.benefits.map((benefit) => (
-                        <li key={benefit} className="flex items-start gap-2.5">
-                          <span
-                            aria-hidden
-                            className="mt-1.5 size-1 shrink-0 rounded-full bg-brand/55"
-                          />
-                          <span className="text-[13px] leading-relaxed text-foreground/75">
-                            {benefit}
-                          </span>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : null}
-
-                  <Link
-                    href={routeFor.control(control.slug)}
-                    className="group mt-6 inline-flex items-center gap-1.5 rounded-md text-sm font-medium text-brand transition-colors outline-none hover:text-brand-deep focus-visible:ring-2 focus-visible:ring-ring/60"
-                  >
-                    How {control.name} works
+                  <span className="mt-4 inline-flex items-center gap-1.5 text-[13px] font-semibold text-brand">
+                    Learn more
                     <ArrowRight
                       aria-hidden
                       className="size-3.5 transition-transform duration-300 group-hover:translate-x-0.5"
                     />
-                  </Link>
-                </div>
-
-                <div className={cn("relative", reversed && "lg:order-1")}>
-                  {/* Lifts the surface off the page without a hard shadow. */}
-                  <div
-                    aria-hidden
-                    className={cn(
-                      "absolute -inset-8 -z-10 rounded-[2.5rem] blur-3xl",
-                      reversed
-                        ? "bg-[radial-gradient(60%_60%_at_30%_40%,color-mix(in_oklab,var(--brand)_14%,transparent),transparent_70%)]"
-                        : "bg-[radial-gradient(60%_60%_at_70%_40%,color-mix(in_oklab,var(--brand)_14%,transparent),transparent_70%)]",
-                    )}
-                  />
-                  <FlagshipVisual slug={control.slug} />
-                </div>
-              </article>
-            </BlurFade>
+                  </span>
+                </Link>
+              </BlurFade>
+            </li>
           );
         })}
+      </ul>
+
+      {/*
+        The three that carry most of the loss, running.
+
+        A card can assert a capability and a screenshot can illustrate one, but
+        only something that runs can demonstrate one — and a merchant who
+        watches a rule fire has understood the product in a way no paragraph
+        achieves. So the three flagged `featured` in the repository get a live
+        panel directly under the board that names them, in the section where
+        the features are explained rather than as decoration elsewhere.
+
+        Each demonstration parks on its resolved frame off-screen and under
+        reduced motion, so the still is always the frame that makes the point.
+      */}
+      <div className="mt-14 border-t border-border pt-12">
+        <div className="mx-auto max-w-2xl text-center">
+          <h3 className="text-[1.6rem] leading-tight font-semibold tracking-[-0.025em] text-balance sm:text-[1.9rem]">
+            Three of them, running
+          </h3>
+          <p className="mt-3 leading-relaxed text-pretty text-muted-foreground">
+            Who you take cash from, whether the order is real, and what choosing
+            cash costs the buyer. Get these right and the rest is housekeeping.
+          </p>
+        </div>
+
+        <div className="mt-10 grid gap-5 lg:grid-cols-3">
+          {featured.map((control, index) => (
+            <BlurFade key={control.slug} delay={0.06 * index} inView>
+              <div className="relative">
+                {/* Lifts the panel off the page without a hard shadow. */}
+                <div
+                  aria-hidden
+                  className="absolute -inset-6 -z-10 rounded-[2rem] bg-[radial-gradient(60%_60%_at_50%_40%,color-mix(in_oklab,var(--brand)_12%,transparent),transparent_70%)] blur-2xl"
+                />
+
+                <p className="mb-3.5 inline-flex items-center gap-2 text-xs font-semibold tracking-[0.12em] text-brand uppercase">
+                  <span className="grid size-5 place-items-center rounded-full bg-brand text-[10px] text-white tabular-nums">
+                    {index + 1}
+                  </span>
+                  {control.name}
+                </p>
+
+                <FlagshipVisual slug={control.slug} />
+              </div>
+            </BlurFade>
+          ))}
+        </div>
+      </div>
+
+      <div className="mt-12 text-center">
+        <Button asChild variant="secondary" size="lg">
+          <Link href={routes.features}>
+            Explore all ten controls
+            <ArrowRight aria-hidden className="size-4" />
+          </Link>
+        </Button>
       </div>
     </SectionShell>
   );

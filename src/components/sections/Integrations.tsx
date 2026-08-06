@@ -1,60 +1,46 @@
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Puzzle } from "lucide-react";
 import Link from "next/link";
 
+import { WhatsappMark } from "@/components/brand/BrandMarks";
+import { ShopifyMark } from "@/components/brand/ShopifyMarks";
+import { SectionHeading } from "@/components/sections/SectionHeading";
 import { SectionShell } from "@/components/sections/SectionShell";
 import { BlurFade } from "@/components/ui/blur-fade";
-import { Button } from "@/components/ui/button";
 import { routes } from "@/constants/routes";
-import { getIntegrations } from "@/lib/content";
+import { getFeaturedIntegrations, getIntegrations } from "@/lib/content";
+
+import type { ReactNode } from "react";
 
 /**
- * The two rates, as the merchant meets them.
+ * Vendor artwork, keyed by slug.
  *
- * `width` is the bar length, not a second claim: it is the visual expression
- * of the same ceiling the copy states, so the drawing and the sentence cannot
- * drift apart.
+ * A provider with no mark falls back to its own initials rather than to a
+ * generic icon — a wrong logo is worse than no logo, and a monogram is honest
+ * about being a placeholder until the vendor's own file arrives.
  */
-const RATES = [
-  {
-    id: "bundled",
-    label: "Bundled international rate",
-    detail: "One global price, marked up, billed by the app",
-    width: "100%",
-    tone: "muted",
-  },
-  {
-    id: "regional",
-    label: "Your own regional gateway",
-    detail: "Settled directly with the provider, in local currency",
-    width: "30%",
-    tone: "brand",
-  },
-] as const;
+const markFor: Record<string, ReactNode> = {
+  shopify: <ShopifyMark className="size-5" />,
+  whatsapp: <WhatsappMark className="size-5" />,
+};
 
 /**
- * Messaging gateways (§6.2).
+ * The platforms COD King connects to.
  *
- * The architecture keeps Integrations out of the primary navigation because
- * merchants check compatibility after they are interested, not before (§4.3).
- * That reasoning is why the section sits here — after the product has been
- * shown, before pricing — rather than near the top.
+ * Compatibility sits here — after the product has been shown, before pricing —
+ * because merchants check it once they are interested, not before (§4.3).
  *
- * It is a cost argument far more than a compatibility one, so it is drawn as
- * one. An earlier pass put the providers in an orbit, which was pleasant and
- * said nothing: a ring of logos proves integrations exist, and the merchant's
- * question is what they *cost*. Two bars against each other answer that
- * before a word is read.
- *
- * Composed as one enclosing panel rather than the two-column text-and-visual
- * split used elsewhere on the page, so the section has a silhouette of its
- * own. The provider list runs full width along the bottom of the same panel,
- * which is where a compatibility list belongs — underneath the argument, not
- * instead of it.
- *
- * Every provider is real text. Nothing here depends on JavaScript.
+ * Two tiers on one surface. The three platforms that change what a merchant
+ * can do get a card and a sentence; every remaining gateway is listed by name
+ * underneath, because a compatibility list belongs under the argument rather
+ * than instead of it. Both tiers read from the same repository record, so a
+ * provider added to the data appears in exactly one of them — and only the
+ * providers the product actually names are in that record, because an
+ * integration claim is a promise and an unverified one is worse than an
+ * absent one (§3.1).
  */
 export function Integrations() {
-  const all = getIntegrations();
+  const featured = getFeaturedIntegrations();
+  const rest = getIntegrations().filter((integration) => !integration.featured);
 
   return (
     <SectionShell
@@ -64,103 +50,88 @@ export function Integrations() {
           className="absolute inset-0"
           style={{
             backgroundImage:
-              "radial-gradient(55% 60% at 50% 0%, color-mix(in oklab, var(--brand) 10%, transparent), transparent 70%)",
+              "radial-gradient(55% 60% at 50% 0%, color-mix(in oklab, var(--brand) 8%, transparent), transparent 70%)",
           }}
         />
       }
     >
-      <BlurFade inView>
-        <div className="overflow-hidden rounded-[1.75rem] border border-border bg-card shadow-card">
-          <div className="grid gap-8 p-7 lg:grid-cols-[0.9fr_1.1fr] lg:gap-14 lg:p-10">
-            <div>
-              <p className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.14em] text-brand uppercase">
-                <span aria-hidden className="h-px w-6 bg-brand/40" />
-                Messaging
-              </p>
+      <SectionHeading
+        eyebrow="Integrations"
+        title="Bring your own gateway, pay their rate"
+        description="Every confirmation, every OTP, every recovery message is a line on somebody's bill. Connect a regional provider and it is theirs, at their price, in their currency — not a global rate with a margin on top."
+      />
 
-              <h2 className="mt-5 text-[1.9rem] leading-[1.08] font-semibold tracking-[-0.028em] text-balance lg:text-[2.4rem]">
-                Bring your own gateway, pay their rate
-              </h2>
-
-              <p className="mt-4 leading-relaxed text-pretty text-muted-foreground">
-                Every confirmation, every OTP, every recovery message is a line
-                on somebody&rsquo;s bill. Connect a regional provider and it is
-                theirs, at their price, in their currency — not a global rate
-                with a margin on top.
-              </p>
-
-              <Button asChild variant="secondary" size="lg" className="mt-7">
-                <Link href={routes.integrations}>
-                  See all integrations
-                  <ArrowRight aria-hidden className="size-4" />
-                </Link>
-              </Button>
-            </div>
-
-            {/* The comparison. */}
-            <div className="self-center">
-              <p className="text-[11px] font-semibold tracking-[0.12em] text-muted-foreground/70 uppercase">
-                Cost of one message
-              </p>
-
-              <dl className="mt-5 space-y-6">
-                {RATES.map((rate) => (
-                  <div key={rate.id}>
-                    <div className="flex items-baseline justify-between gap-4">
-                      <dt className="text-sm font-semibold">{rate.label}</dt>
-                      {rate.tone === "brand" ? (
-                        <dd className="shrink-0 rounded-full bg-brand-check/25 px-2.5 py-1 text-[11px] font-bold text-ink/80">
-                          up to 70% less
-                        </dd>
-                      ) : null}
-                    </div>
-
-                    <div
+      <ul className="mt-lede grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {featured.map((integration, index) => (
+          <li key={integration.slug} className="h-full">
+            <BlurFade delay={0.05 * index} inView className="h-full">
+              <div className="flex h-full surface-card flex-col p-6">
+                <span className="grid size-11 place-items-center rounded-xl bg-white ring-1 ring-border">
+                  {markFor[integration.slug] ?? (
+                    <span
                       aria-hidden
-                      className="mt-2.5 h-3 overflow-hidden rounded-full bg-muted"
+                      className="text-[13px] font-bold text-brand"
                     >
-                      <div
-                        style={{ width: rate.width }}
-                        className={
-                          rate.tone === "brand"
-                            ? "h-full rounded-full bg-gradient-to-r from-brand to-brand-accent shadow-[0_2px_10px_-3px_var(--brand)]"
-                            : "h-full rounded-full bg-foreground/15"
-                        }
-                      />
-                    </div>
+                      {integration.name.slice(0, 2).toUpperCase()}
+                    </span>
+                  )}
+                </span>
 
-                    <p className="mt-2 text-[13px] leading-relaxed text-muted-foreground">
-                      {rate.detail}
-                    </p>
-                  </div>
-                ))}
-              </dl>
-
-              <p className="mt-6 border-t border-border pt-4 text-[13px] leading-relaxed text-muted-foreground">
-                On COD volume, where every order costs at least one message,
-                that is the difference between a bill and a rounding error.
-              </p>
-            </div>
-          </div>
-
-          {/* Compatibility, where it belongs — under the argument. */}
-          <div className="border-t border-border bg-cloud px-7 py-5 lg:px-10">
-            <p className="text-[11px] font-semibold tracking-[0.14em] text-muted-foreground/70 uppercase">
-              Connect any of these
-            </p>
-            <ul className="mt-3 flex flex-wrap gap-2">
-              {all.map((integration) => (
-                <li
-                  key={integration.slug}
-                  className="rounded-full border border-border bg-background px-3.5 py-1.5 text-sm font-medium text-foreground/80 transition-colors duration-300 hover:border-brand/35 hover:text-foreground"
-                >
+                <h3 className="mt-5 text-[15px] font-semibold tracking-tight">
                   {integration.name}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </BlurFade>
+                </h3>
+                <p className="mt-2 text-[13px] leading-relaxed text-muted-foreground">
+                  {integration.blurb}
+                </p>
+              </div>
+            </BlurFade>
+          </li>
+        ))}
+
+        {/*
+          The rest, as one card rather than a second grid of near-empties.
+
+          It spans the full width only where that closes the grid. On three
+          columns the featured providers fill row one exactly, so this takes
+          row two whole. On two columns it is an ordinary cell, which is what
+          pairs it with the third provider instead of stranding that provider
+          beside a hole.
+        */}
+        <li className="h-full lg:col-span-3">
+          <BlurFade delay={0.05 * featured.length} inView className="h-full">
+            <div className="flex h-full flex-col rounded-2xl border border-dashed border-brand/25 bg-gradient-to-br from-sky-200 to-white p-6">
+              <span className="grid size-11 place-items-center rounded-xl bg-white text-brand ring-1 ring-brand/12">
+                <Puzzle aria-hidden className="size-5" />
+              </span>
+
+              <h3 className="mt-5 text-[15px] font-semibold tracking-tight">
+                And every gateway below
+              </h3>
+              <ul className="mt-3 flex flex-wrap gap-1.5">
+                {rest.map((integration) => (
+                  <li
+                    key={integration.slug}
+                    className="rounded-full border border-border bg-white px-2.5 py-1 text-[12px] font-medium text-foreground/75"
+                  >
+                    {integration.name}
+                  </li>
+                ))}
+              </ul>
+
+              <Link
+                href={routes.integrations}
+                className="group mt-auto inline-flex items-center gap-1.5 rounded-md pt-5 text-[13px] font-semibold text-brand transition-colors outline-none hover:text-brand-deep focus-visible:ring-2 focus-visible:ring-ring/60"
+              >
+                See all integrations
+                <ArrowRight
+                  aria-hidden
+                  className="size-3.5 transition-transform duration-300 group-hover:translate-x-0.5"
+                />
+              </Link>
+            </div>
+          </BlurFade>
+        </li>
+      </ul>
     </SectionShell>
   );
 }

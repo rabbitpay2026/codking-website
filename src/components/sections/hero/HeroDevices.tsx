@@ -1,4 +1,4 @@
-import { BadgeIndianRupee, MapPinCheck } from "lucide-react";
+import { BadgeIndianRupee, SlidersHorizontal } from "lucide-react";
 
 import { CheckoutScreen } from "@/components/sections/hero/CheckoutScreen";
 import { VerifyScreen } from "@/components/sections/hero/VerifyScreen";
@@ -113,28 +113,33 @@ export function HeroDevices() {
         </div>
 
         {/*
-          The annotations butt up against the device rather than pointing at
-          it down a dashed line.
+          No verification card floats over the devices.
 
-          The line came first and was cut: at this width it had four percent of
-          the frame to travel in, which is not enough distance to read as a
-          connector — it read as a stray dash, and its anchor dot landed on
-          live UI. A card touching the edge of the thing it describes, with
-          that thing carrying its own halo inside the screen, makes the same
-          connection and costs the composition nothing.
+          An earlier pass lifted the OTP entry out of the phone and parked it
+          across both screens at hero size. It read well in isolation and cost
+          too much in place: it covered the payment sheet the front device
+          exists to show, and it duplicated the code entry already running on
+          the rear one. The interaction was worth keeping — it now runs as the
+          animated `OtpFlow` demonstration beside the controls that explain
+          it, where a visitor has the context to read it.
+
+          The annotations touch the device rather than pointing at it down a
+          dashed line. The line came first and was cut: at this width it had
+          four percent of the frame to travel in, which reads as a stray dash
+          rather than as a connector.
         */}
         <Callout
-          icon={MapPinCheck}
-          title="Address checked"
-          detail="Pincode serviceable"
-          className="top-[38%] -left-[3%] hidden w-[19%] md:block"
+          icon={SlidersHorizontal}
+          title="COD rules applied"
+          detail="Pincode, cart value, customer history"
+          className="top-[34%] -left-[3%] hidden w-[21%] md:block"
         />
 
         <Callout
           icon={BadgeIndianRupee}
-          title="Cash priced"
-          detail="Fee on cash, discount on prepaid"
-          className="top-[63%] -left-[3%] hidden w-[19%] md:block"
+          title="Prepaid made cheaper"
+          detail="Fee on cash, discount upfront"
+          className="top-[62%] -left-[3%] hidden w-[21%] md:block"
           delay="-3.2s"
         />
       </div>

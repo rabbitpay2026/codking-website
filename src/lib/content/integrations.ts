@@ -14,6 +14,11 @@ export function getIntegrationsByCategory(
   );
 }
 
+/** The ones the homepage gives a card to (§5.1). */
+export function getFeaturedIntegrations(): readonly Integration[] {
+  return integrations.filter((integration) => integration.featured);
+}
+
 export function getIntegrationBySlug(slug: string): Integration | undefined {
   return integrations.find((integration) => integration.slug === slug);
 }

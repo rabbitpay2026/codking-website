@@ -89,8 +89,11 @@ export function PrepaidChoice() {
                 ) : null}
               </span>
 
+              {/* Named for the method a real Shopify payment sheet lists,
+                  not for a button. "Pay now" read as a call to action inside a
+                  mockup, which is the one thing a product screen must not do. */}
               <span className="flex flex-1 items-center gap-1.5 text-[13px] font-semibold">
-                Pay now
+                Prepaid — UPI
                 <Sparkles aria-hidden className="size-3 text-brand" />
               </span>
 

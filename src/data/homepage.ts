@@ -1,10 +1,10 @@
-import { routeFor, routes } from "@/constants/routes";
+import { routes } from "@/constants/routes";
 
 import type {
+  ControlSlug,
   HowItWorksStep,
   OutcomeMetric,
   PainPoint,
-  ProductPreviewPanel,
   TrustedBrand,
 } from "@/types";
 
@@ -68,6 +68,31 @@ export const outcomeMetrics: readonly OutcomeMetric[] = [
 ];
 
 /**
+ * How long setup takes, in minutes (§5.1 #7).
+ *
+ * The one figure in the scale band that is not a proof metric. It is the same
+ * claim the setup section makes, held here so the two cannot drift.
+ */
+export const setupMinutes = 10;
+
+/**
+ * The eight controls the homepage puts on the board (§5.1 #6).
+ *
+ * Slugs rather than copied names, so the hero checklist and the feature grid
+ * are the same list read twice and a rename happens in one place.
+ */
+export const homepageControlSlugs: readonly ControlSlug[] = [
+  "otp-verification",
+  "partial-cod-payment",
+  "cod-fees",
+  "cod-rules",
+  "prepaid-nudge",
+  "messaging-gateways",
+  "analytics",
+  "abandoned-cart-recovery",
+];
+
+/**
  * Stores using COD King, shown as a logo wall (§5.1 #3).
  *
  * `id` points at the lockup in `components/brand/MerchantMarks`. Those are
@@ -104,42 +129,6 @@ export const howItWorksSteps: readonly HowItWorksStep[] = [
     id: "scale",
     title: "Bring your own gateway",
     body: "Route messages through a regional provider and pay their rate, not an international one.",
-  },
-];
-
-/**
- * The interactive preview panels (§5.1 #6).
- *
- * Deliberately the three controls that carry most of the loss, so the preview
- * answers "what does it actually do" for the merchant who has just recognised
- * their own problem two sections earlier.
- *
- * Written from the merchant's chair, not the buyer's. The flagship section
- * above already shows each control as the buyer meets it; this one shows the
- * surface the merchant works in, and saying the same thing twice from the same
- * angle would make the second telling redundant.
- */
-export const productPreviewPanels: readonly ProductPreviewPanel[] = [
-  {
-    controlSlug: "otp-verification",
-    label: "OTP Verification",
-    headline: "A dispatch queue that is already filtered",
-    body: "Every order arrives marked verified, waiting, or blocked. The ones nobody confirmed sit in the queue instead of in a van, and you never find out which was which at the doorstep.",
-    href: routeFor.control("otp-verification"),
-  },
-  {
-    controlSlug: "partial-cod-payment",
-    label: "Partial COD Payment",
-    headline: "A deposit, and the ledger that tracks it",
-    body: "Take a fixed amount or a percentage at checkout. Each order carries what was paid and what is still owed on delivery, so reconciliation is a column rather than an afternoon.",
-    href: routeFor.control("partial-cod-payment"),
-  },
-  {
-    controlSlug: "cod-rules",
-    label: "COD Rules",
-    headline: "One rule list, running on every cart",
-    body: "Order the conditions, set the action, first match wins. Change a rule and it applies at the next checkout — no theme edit, no deploy, no developer.",
-    href: routeFor.control("cod-rules"),
   },
 ];
 

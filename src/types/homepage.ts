@@ -1,7 +1,5 @@
 import type { ControlSlug } from "@/types/controls";
 
-import type { Route } from "next";
-
 /**
  * Homepage content types.
  *
@@ -38,6 +36,23 @@ export interface OutcomeMetric {
   readonly decimalPlaces?: number;
 }
 
+/**
+ * One figure in the platform-scale band directly under the trust strip.
+ *
+ * Separate from `OutcomeMetric` because the two answer different questions.
+ * A platform stat says how big this is; an outcome metric says what it did for
+ * a store, and therefore has to carry the condition it holds under.
+ */
+export interface PlatformStat {
+  readonly id: string;
+  readonly value: number;
+  readonly suffix?: string;
+  readonly label: string;
+  readonly decimalPlaces?: number;
+  /** Selects the icon in the section — art, not content. */
+  readonly icon: "globe" | "store" | "timer";
+}
+
 /** A step in the setup sequence (§5.1 #7). */
 export interface HowItWorksStep {
   readonly id: string;
@@ -56,18 +71,4 @@ export interface HowItWorksStep {
 export interface TrustedBrand {
   readonly id: string;
   readonly name: string;
-}
-
-/**
- * One panel of the interactive product preview.
- *
- * Each panel is tied to a control, so the preview cannot drift from the
- * feature set and every panel has somewhere to send an interested merchant.
- */
-export interface ProductPreviewPanel {
-  readonly controlSlug: ControlSlug;
-  readonly label: string;
-  readonly headline: string;
-  readonly body: string;
-  readonly href: Route;
 }
