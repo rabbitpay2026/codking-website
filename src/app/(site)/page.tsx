@@ -1,6 +1,7 @@
 import { Faq } from "@/components/sections/Faq";
 import { FeatureShowcase } from "@/components/sections/FeatureShowcase";
 import { FinalCta } from "@/components/sections/FinalCta";
+import { FlagshipOverview } from "@/components/sections/FlagshipOverview";
 import { Hero } from "@/components/sections/Hero";
 import { HowItWorks } from "@/components/sections/HowItWorks";
 import { Integrations } from "@/components/sections/Integrations";
@@ -44,6 +45,16 @@ export default function HomePage() {
       <Metrics />
       <PainPoints />
       <Solution />
+      {/*
+        The overview sits directly above the walkthrough it introduces, not
+        directly below the metrics. Two things in the brief pin it here — it
+        has to come "before The Three That Matter", and it introduces three
+        capabilities "before explaining them in detail in the next section" —
+        and only this slot satisfies both. Placed up by the metrics it would
+        pitch the product before the problem, and the detail it is meant to
+        set up would be two sections away by the time the reader reached it.
+      */}
+      <FlagshipOverview />
       <FeatureShowcase />
       <ProductPreview panels={getProductPreviewPanels()} />
       <HowItWorks />

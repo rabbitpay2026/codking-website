@@ -45,8 +45,16 @@ export interface HowItWorksStep {
   readonly body: string;
 }
 
-/** A named store using the product, shown as a trust signal (§5.1 #3). */
+/**
+ * A named store using the product, shown as a trust signal (§5.1 #3).
+ *
+ * `id` selects the store's lockup on the logo wall. It is kept separate from
+ * the name so artwork can arrive — or be replaced with the merchant's own
+ * supplied file — without the display name changing, and so a store with no
+ * lockup yet still renders as a set wordmark rather than as a gap.
+ */
 export interface TrustedBrand {
+  readonly id: string;
   readonly name: string;
 }
 

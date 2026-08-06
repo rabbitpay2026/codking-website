@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Check } from "lucide-react";
 import Link from "next/link";
 
 import { PreviewMock } from "@/components/sections/preview/PreviewMocks";
@@ -49,7 +49,6 @@ export function ProductPreview({ panels }: ProductPreviewProps) {
   return (
     <SectionShell
       tone="dark"
-      size="spacious"
       variant="slab"
       backdrop={
         <>
@@ -62,20 +61,30 @@ export function ProductPreview({ panels }: ProductPreviewProps) {
               "[mask-image:radial-gradient(75%_60%_at_50%_30%,white,transparent)]",
             )}
           />
+          {/*
+            A second light from below. Without it the band bottoms out into
+            flat black and the panel appears to be falling out of the page —
+            a lit room has a floor as well as a ceiling.
+          */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-x-0 bottom-0 h-72"
+            style={{
+              backgroundImage:
+                "radial-gradient(70% 100% at 50% 100%, color-mix(in oklab, var(--brand) 26%, transparent), transparent 72%)",
+            }}
+          />
           <Noise className="opacity-[0.05]" />
         </>
       }
     >
       <SectionHeading
-        eyebrow="In the product"
-        title="This is the whole surface area"
-        description="It runs inside the checkout you already have. Nothing to rebuild, nothing to re-theme."
+        eyebrow="Inside the app"
+        title="The merchant's side of the same story"
+        description="Every control has a surface you can actually work in — a queue, a rule set, a ledger. It runs inside the checkout you already have."
       />
 
-      <Tabs
-        defaultValue={first.controlSlug}
-        className="mt-14 items-center lg:mt-16"
-      >
+      <Tabs defaultValue={first.controlSlug} className="mt-lede items-center">
         <TabsList className="border-white/12 bg-white/5 backdrop-blur-xl">
           {panels.map((panel) => (
             <TabsTrigger key={panel.controlSlug} value={panel.controlSlug}>
@@ -98,7 +107,7 @@ export function ProductPreview({ panels }: ProductPreviewProps) {
                 colorTo="var(--brand-check)"
               />
 
-              <div className="grid items-center gap-10 p-7 lg:grid-cols-2 lg:gap-16 lg:p-12">
+              <div className="grid items-center gap-8 p-6 lg:grid-cols-2 lg:gap-14 lg:p-10">
                 <div>
                   <h3 className="text-2xl font-semibold tracking-tight text-balance lg:text-3xl">
                     {panel.headline}
@@ -107,9 +116,27 @@ export function ProductPreview({ panels }: ProductPreviewProps) {
                     {panel.body}
                   </p>
 
+                  {panel.control.benefits ? (
+                    <ul className="mt-6 space-y-2.5 border-t border-white/10 pt-6">
+                      {panel.control.benefits.slice(0, 3).map((benefit) => (
+                        <li key={benefit} className="flex items-start gap-2.5">
+                          <span
+                            aria-hidden
+                            className="mt-0.5 grid size-4 shrink-0 place-items-center rounded-full bg-brand/25"
+                          >
+                            <Check className="size-2.5 text-brand-accent" />
+                          </span>
+                          <span className="text-[13px] leading-relaxed text-white/75">
+                            {benefit}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : null}
+
                   <Link
                     href={panel.href}
-                    className="group mt-7 inline-flex items-center gap-1.5 rounded-md text-sm font-medium text-brand-accent transition-colors outline-none hover:text-white focus-visible:ring-2 focus-visible:ring-ring/60"
+                    className="group mt-6 inline-flex items-center gap-1.5 rounded-md text-sm font-medium text-brand-accent transition-colors outline-none hover:text-white focus-visible:ring-2 focus-visible:ring-ring/60"
                   >
                     Read about {panel.control.name}
                     <ArrowRight

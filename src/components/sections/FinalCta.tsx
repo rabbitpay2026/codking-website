@@ -44,17 +44,6 @@ export async function FinalCta() {
       containerClassName="text-center"
       backdrop={
         <>
-          {/*
-            The page fades into the brand rather than hitting it. This tone
-            does not flip the token layer, so `background` here is still the
-            light page colour above it — the band arrives instead of cutting in.
-          */}
-          <div
-            aria-hidden
-            // Kept shorter than the container's top padding at every
-            // breakpoint, so the white never reaches the white heading.
-            className="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-background to-transparent sm:h-24 lg:h-28"
-          />
           <div
             aria-hidden
             className="absolute inset-0"
@@ -74,6 +63,25 @@ export async function FinalCta() {
           />
           <Meteors number={14} className="opacity-40" />
           <Noise className="opacity-[0.06]" />
+
+          {/*
+            The page fades into the brand rather than hitting it. This tone
+            does not flip the token layer, so `background` here is still the
+            light page colour above it — the band arrives instead of cutting in.
+
+            It is the *last* layer for a reason. Painted first, the grain, the
+            dot field and the overhead glow all landed on top of it, so its
+            topmost pixel was no longer the page's own white and the join
+            showed as a hairline step. A seam only disappears if nothing is
+            drawn over it.
+
+            Kept shorter than the container's top padding at every breakpoint,
+            so the white never reaches the white heading.
+          */}
+          <div
+            aria-hidden
+            className="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-background to-transparent sm:h-24 lg:h-32"
+          />
         </>
       }
     >

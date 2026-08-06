@@ -1,4 +1,4 @@
-import { MapPinCheck, ShieldCheck } from "lucide-react";
+import { BadgeIndianRupee, MapPinCheck } from "lucide-react";
 
 import { CheckoutScreen } from "@/components/sections/hero/CheckoutScreen";
 import { VerifyScreen } from "@/components/sections/hero/VerifyScreen";
@@ -29,7 +29,7 @@ function Callout({
       style={delay ? { animationDelay: delay } : undefined}
       className={cn(
         "absolute z-30 animate-float",
-        "rounded-2xl border border-white/80 bg-white/90 px-3 py-2.5 shadow-overlay backdrop-blur-xl",
+        "rounded-2xl border border-white/80 bg-white/92 px-3 py-2.5 shadow-overlay backdrop-blur-xl",
         className,
       )}
     >
@@ -51,103 +51,90 @@ function Callout({
  *
  * Two devices, one story: the checkout where the controls are applied, then
  * the verification that decides whether the order was ever real. The rear
- * device is smaller and turned further away so the eye lands on the checkout
+ * device is smaller, dimmer and set back so the eye lands on the checkout
  * first and reads the second phone as what happens next.
  *
+ * The devices carry no 3D rotation. An earlier pass turned them on the Y axis
+ * for perspective and paid for it in the only currency that matters here: a
+ * rotated layer is rasterised flat and resampled, which softened every glyph
+ * on the screens the whole hero exists to show. Depth is bought instead with
+ * scale, a dimming pass on the rear device, layered contact shadows and the
+ * key light behind them — none of which cost a pixel of sharpness.
+ *
  * The layout is planned around the annotations rather than the other way
- * round. The devices are pushed right to leave a clear column on the left for
- * the callouts, so a line can travel from the callout to the address block
+ * round. The front device is pushed right to leave a clear column for the
+ * callouts, so a connector can travel from a callout to the address block
  * without crossing anything. A line says *this element*; a card floating
  * nearby can only say *that region*.
  *
  * Nothing here fades in — see `Hero` for why the first screen must not depend
- * on JavaScript to be visible. The only motion is the callouts' slow float,
- * which starts from a visible state and is removed under reduced motion.
+ * on JavaScript to be visible. The only motion is the callouts' slow float and
+ * the travelling connector dashes, both removed under reduced motion.
  */
 export function HeroDevices() {
   return (
-    <div className="relative w-full [perspective:2200px]">
-      {/* Contact shadow, so the devices sit on the floor rather than hover. */}
-      <div
-        aria-hidden
-        className="absolute inset-x-[26%] bottom-[1%] h-12 rounded-[50%] bg-ink/20 blur-2xl"
-      />
-
-      <div className="relative aspect-[7/8] w-full sm:aspect-[8/7] lg:aspect-[7/8]">
-        {/* Connectors from the callouts to the address block. */}
-        <svg
+    <div className="relative w-full">
+      {/*
+        The scene's aspect is set per breakpoint from the tallest device it has
+        to hold, not from what looks balanced empty. The devices are absolutely
+        positioned against the bottom, so a scene shorter than the phone does
+        not crop it — it pushes it up through the copy above.
+      */}
+      <div className="relative aspect-[5/8] w-full sm:aspect-[9/10] lg:aspect-[6/7]">
+        {/* Contact shadows, so the devices sit on the floor rather than hover. */}
+        <div
           aria-hidden
-          viewBox="0 0 100 100"
-          preserveAspectRatio="none"
-          className="absolute inset-0 z-20 hidden size-full md:block"
-        >
-          <line
-            x1="20"
-            y1="35"
-            x2="23"
-            y2="35"
-            className="stroke-brand"
-            strokeWidth="1"
-            strokeDasharray="3 3"
-            vectorEffect="non-scaling-stroke"
-            style={{ animation: "var(--animate-trace)" }}
-          />
-          <line
-            x1="19"
-            y1="66"
-            x2="23"
-            y2="56"
-            className="stroke-brand/70"
-            strokeWidth="1"
-            strokeDasharray="3 3"
-            vectorEffect="non-scaling-stroke"
-            style={{
-              animation: "var(--animate-trace)",
-              animationDelay: "-1.3s",
-            }}
-          />
-        </svg>
-
-        {/* Anchor dots where each connector meets the device. */}
-        <span
-          aria-hidden
-          className="absolute top-[35%] left-[23%] z-30 hidden size-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand ring-4 ring-brand/25 md:block"
+          className="absolute inset-x-[16%] bottom-[-2%] h-10 rounded-[50%] bg-ink/22 blur-2xl"
         />
-        <span
+        <div
           aria-hidden
-          className="absolute top-[56%] left-[23%] z-30 hidden size-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand ring-4 ring-brand/25 md:block"
+          className="absolute inset-x-[26%] bottom-[0.5%] h-5 rounded-[50%] bg-ink/25 blur-lg"
         />
 
-        {/* Rear device — verification. */}
-        <div className="absolute top-0 right-0 hidden w-[36%] sm:block">
-          <div className="origin-bottom [transform:rotateY(-13deg)_rotateZ(3deg)]">
-            <Iphone>
-              <VerifyScreen />
-            </Iphone>
-          </div>
+        {/*
+          Rear device — verification.
+
+          Sized and placed so the front device covers only its outer bezel. An
+          earlier pass let it run 26% under the checkout, which cropped the
+          message bubble mid-word: a device showing broken text says the
+          product has broken text.
+        */}
+        <div className="absolute top-[2%] -right-[3%] hidden w-[37%] sm:block">
+          <Iphone depth="rear" screenWidth={220}>
+            <VerifyScreen />
+          </Iphone>
         </div>
 
         {/* Front device — checkout. */}
-        <div className="absolute bottom-0 left-[8%] w-[76%] sm:left-[21%] sm:w-[48%]">
-          <div className="origin-bottom [transform:rotateY(7deg)_rotateZ(-2deg)]">
-            <Iphone>
-              <CheckoutScreen />
-            </Iphone>
-          </div>
+        <div className="absolute bottom-0 left-[4%] w-[78%] sm:left-[16%] sm:w-[54%]">
+          <Iphone screenWidth={320}>
+            <CheckoutScreen />
+          </Iphone>
         </div>
 
+        {/*
+          The annotations butt up against the device rather than pointing at
+          it down a dashed line.
+
+          The line came first and was cut: at this width it had four percent of
+          the frame to travel in, which is not enough distance to read as a
+          connector — it read as a stray dash, and its anchor dot landed on
+          live UI. A card touching the edge of the thing it describes, with
+          that thing carrying its own halo inside the screen, makes the same
+          connection and costs the composition nothing.
+        */}
         <Callout
           icon={MapPinCheck}
           title="Address checked"
           detail="Pincode serviceable"
-          className="top-[27%] left-0 hidden w-[23%] md:block"
+          className="top-[38%] -left-[3%] hidden w-[19%] md:block"
         />
 
         <Callout
-          icon={ShieldCheck}
+          icon={BadgeIndianRupee}
           title="Cash priced"
           detail="Fee on cash, discount on prepaid"
-          className="top-[57%] left-0 hidden w-[23%] md:block"
+          className="top-[63%] -left-[3%] hidden w-[19%] md:block"
           delay="-3.2s"
         />
       </div>

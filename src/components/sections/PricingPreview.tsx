@@ -76,21 +76,37 @@ export function PricingPreview() {
     >
       <SectionHeading
         eyebrow="Pricing"
-        title="Free to start, priced to stay"
-        description="A seven-day trial on every plan, no card required. Messages bill at your plan rate."
+        title="Free to start, cheap to keep"
+        description="Seven days free on every plan, no card. Messages bill at your plan rate — and drop again once you bring your own gateway."
       />
 
-      <div className="mt-14 grid items-start gap-6 lg:mt-16 lg:grid-cols-3">
+      {/*
+        Stretched rather than start-aligned, so the three cards share a
+        baseline at the bottom and only the recommended one breaks the line —
+        at the top, where the lift is the point. Ragged card bottoms are the
+        difference between a price list and a price *table*.
+      */}
+      <div className="mt-lede grid items-stretch gap-5 lg:grid-cols-3">
         {plans.map((plan, index) => {
           const { amount, period } = formatPrice(plan.price);
 
           return (
-            <BlurFade key={plan.id} delay={0.07 * index} inView>
+            // The lift belongs on the grid item, not on the card inside it.
+            // Applied to the card, the negative margin moves the box up while
+            // `h-full` keeps its height — so the recommended plan ends 20px
+            // short at the bottom and the row reads as misaligned rather than
+            // as raised.
+            <BlurFade
+              key={plan.id}
+              delay={0.07 * index}
+              inView
+              className={cn("h-full", plan.recommended && "lg:-mt-5")}
+            >
               <article
                 className={cn(
                   "relative flex h-full flex-col overflow-hidden rounded-2xl p-8",
                   plan.recommended
-                    ? "border-2 border-brand/35 bg-card shadow-overlay lg:-mt-5 lg:pb-11"
+                    ? "border-2 border-brand/35 bg-card shadow-overlay"
                     : "surface-card",
                 )}
               >
@@ -164,7 +180,7 @@ export function PricingPreview() {
         })}
       </div>
 
-      <div className="mt-12 text-center">
+      <div className="mt-7 text-center">
         <Button asChild variant="quiet" size="md">
           <Link href={routes.pricing}>
             Compare plans in full

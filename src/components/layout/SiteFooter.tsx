@@ -1,6 +1,7 @@
-import { Check, Star } from "lucide-react";
+import { Star } from "lucide-react";
 import Link from "next/link";
 
+import { ShopifyMark } from "@/components/brand/ShopifyMarks";
 import { Logo } from "@/components/layout/Logo";
 import { Container } from "@/components/shared/Container";
 import { siteConfig } from "@/constants/site";
@@ -49,7 +50,7 @@ export async function SiteFooter() {
 
           <ul className="flex flex-wrap items-center gap-2">
             <li className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-3 py-1.5 text-xs font-medium text-foreground">
-              <Check aria-hidden className="size-3.5 text-brand-check" />
+              <ShopifyMark className="size-4" />
               Works with Shopify checkout
             </li>
             <li

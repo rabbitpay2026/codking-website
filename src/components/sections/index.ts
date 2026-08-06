@@ -1,6 +1,7 @@
 export * from "./Faq";
 export * from "./FeatureShowcase";
 export * from "./FinalCta";
+export * from "./FlagshipOverview";
 export * from "./Hero";
 export * from "./HowItWorks";
 export * from "./Integrations";

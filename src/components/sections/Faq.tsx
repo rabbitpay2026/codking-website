@@ -33,7 +33,13 @@ export function Faq() {
   if (faqs.length === 0) return null;
 
   return (
-    <SectionShell tone="muted">
+    // The seam matters more here than anywhere else on the page. This is the
+    // last light section before the brand band, and the band opens by fading
+    // the page background in over itself — which only vanishes if the page
+    // background is what is actually there. Left as a muted gradient, this
+    // section ends a percent or two off white, and a one-percent step across
+    // two thousand flat pixels reads as a drawn line.
+    <SectionShell tone="muted" seam="bottom">
       <div className="grid gap-14 lg:grid-cols-[0.8fr_1.2fr] lg:gap-24">
         <div className="lg:sticky lg:top-[calc(var(--spacing-header)+3rem)] lg:self-start">
           <SectionHeading

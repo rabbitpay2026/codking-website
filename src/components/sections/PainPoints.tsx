@@ -23,12 +23,18 @@ const iconFor: Record<string, LucideIcon> = {
 /**
  * The COD loss, made visible (§5.1 #4).
  *
- * Composed as a statement rather than a row of cards, because that is the
+ * Composed as an invoice rather than a row of cards, because that *is* the
  * argument: the loss is real but no single bill ever totals it (§2). Reading
- * the costs as ruled line items — each with the control that removes it in
- * the right-hand column — makes the shape of the problem obvious before a
- * word of product copy is spent on it, and the closing row is the only place
- * the total can come from: the merchant's own numbers.
+ * the costs as ruled line items — each with the control that removes it in the
+ * right-hand column — makes the shape of the problem obvious before a word of
+ * product copy is spent on it.
+ *
+ * The total row is the close, and it is the only place the figure can come
+ * from: the merchant's own numbers. An earlier pass put a second, larger
+ * calculator card underneath this one, hanging halfway into the next section.
+ * It asked for the same click twice, and the clearance the overhang needed
+ * left a corridor of empty page on either side of it. One invoice, one total,
+ * one action — the seam closes and the argument gets sharper.
  *
  * The action here is the calculator, never the install. §5.2 is explicit that
  * the install is not asked for until the merchant has seen what it is worth.
@@ -38,9 +44,6 @@ export function PainPoints() {
 
   return (
     <SectionShell
-      allowOverflow
-      className="z-20"
-      containerClassName="pb-12 sm:pb-0"
       backdrop={
         <div
           aria-hidden
@@ -54,11 +57,11 @@ export function PainPoints() {
     >
       <SectionHeading
         eyebrow="The hidden bill"
-        title="Cash on delivery sends you an invoice nobody prints"
-        description="It arrives in pieces — a freight charge here, a refused parcel there, working capital sitting in a van. Separately they look like the cost of doing business."
+        title="Cash on delivery sends an invoice nobody prints"
+        description="It arrives in pieces — freight out, a refused parcel back, working capital riding around in a van. Item by item it looks like the cost of doing business."
       />
 
-      <BlurFade inView className="mt-14 lg:mt-16">
+      <BlurFade inView className="mt-lede">
         <div className="overflow-hidden rounded-3xl border border-border bg-card shadow-card">
           <ul>
             {painPoints.map((painPoint, index) => {
@@ -68,7 +71,7 @@ export function PainPoints() {
               return (
                 <li
                   key={painPoint.id}
-                  className="group grid items-start gap-x-6 gap-y-4 border-b border-border p-7 transition-colors duration-300 last:border-b-0 hover:bg-accent/40 sm:grid-cols-[auto_1fr_auto] sm:p-8"
+                  className="group grid items-start gap-x-6 gap-y-3.5 border-b border-border p-6 transition-colors duration-300 last:border-b-0 hover:bg-accent/40 sm:grid-cols-[auto_1fr_auto] sm:p-7"
                 >
                   <span className="flex items-center gap-4">
                     <span
@@ -86,7 +89,7 @@ export function PainPoints() {
                     <h3 className="text-lg font-semibold tracking-tight">
                       {painPoint.title}
                     </h3>
-                    <p className="mt-2 max-w-xl text-sm leading-relaxed text-muted-foreground">
+                    <p className="mt-1.5 max-w-xl text-sm leading-relaxed text-muted-foreground">
                       {painPoint.body}
                     </p>
                   </div>
@@ -109,48 +112,32 @@ export function PainPoints() {
           </ul>
 
           {/* The total line. Only the merchant can fill it in. */}
-          <div className="flex flex-col gap-4 border-t-2 border-dashed border-border bg-cloud p-7 sm:flex-row sm:items-center sm:justify-between sm:p-8">
-            <p className="text-base font-semibold">
-              Total
-              <span className="ml-2 font-normal text-muted-foreground">
-                depends entirely on your store
-              </span>
-            </p>
-            <Button asChild variant="secondary" size="md">
+          <div className="relative flex flex-col gap-4 overflow-hidden border-t-2 border-dashed border-border bg-gradient-to-br from-brand-soft via-cloud to-brand-soft/60 p-6 sm:flex-row sm:items-center sm:justify-between sm:p-7">
+            <div
+              aria-hidden
+              className="absolute -top-20 -right-10 size-56 rounded-full bg-brand/12 blur-3xl"
+            />
+
+            <div className="relative">
+              <p className="text-base font-semibold sm:text-lg">
+                Total
+                <span className="ml-2.5 font-normal text-muted-foreground">
+                  depends entirely on your store
+                </span>
+              </p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Three questions and you have the yearly figure. Free, and
+                nothing to sign up for.
+              </p>
+            </div>
+
+            <Button asChild size="lg" className="relative shrink-0">
               <Link href={routes.codCalculator}>
                 Work out your number
                 <ArrowRight aria-hidden className="size-4" />
               </Link>
             </Button>
           </div>
-        </div>
-      </BlurFade>
-
-      {/*
-        Hangs into the section below. A card crossing the boundary stitches
-        two sections together far more effectively than space between them.
-      */}
-      <BlurFade inView delay={0.12} className="sm:translate-y-1/2">
-        <div className="relative mt-14 flex flex-col items-center gap-5 overflow-hidden rounded-3xl border border-brand/20 bg-brand-soft px-8 py-9 text-center shadow-overlay sm:flex-row sm:justify-between sm:text-left lg:mt-16">
-          <div
-            aria-hidden
-            className="absolute -top-24 -right-16 size-64 rounded-full bg-brand/15 blur-3xl"
-          />
-          <div className="relative">
-            <p className="text-xl font-semibold text-ink sm:text-2xl">
-              Three questions. One number.
-            </p>
-            <p className="mt-2 text-sm leading-relaxed text-ink/65">
-              See what cash on delivery costs your store in a year. Free, and
-              nothing to sign up for.
-            </p>
-          </div>
-          <Button asChild size="lg" className="relative shrink-0">
-            <Link href={routes.codCalculator}>
-              Open the calculator
-              <ArrowRight aria-hidden className="size-4" />
-            </Link>
-          </Button>
         </div>
       </BlurFade>
     </SectionShell>

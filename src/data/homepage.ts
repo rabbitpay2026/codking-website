@@ -68,16 +68,19 @@ export const outcomeMetrics: readonly OutcomeMetric[] = [
 ];
 
 /**
- * Stores using COD King, shown as a logo row (§5.1 #3).
+ * Stores using COD King, shown as a logo wall (§5.1 #3).
  *
- * Names only. Rendering a brand's actual logo is a trademark question, and a
- * wordmark set nobody has cleared is not worth the exposure.
+ * `id` points at the lockup in `components/brand/MerchantMarks`. Those are
+ * built for this page rather than being the merchants' registered marks, and
+ * every one is to be replaced with artwork the store supplies before launch —
+ * a logo wall is a claim about someone else's brand, so the shipped version
+ * has to be the version they handed over.
  */
 export const trustedBrands: readonly TrustedBrand[] = [
-  { name: "Casio" },
-  { name: "The Himalaya Drug Company" },
-  { name: "Slobberman" },
-  { name: "Vinod Cookware" },
+  { id: "casio", name: "Casio" },
+  { id: "himalaya", name: "The Himalaya Drug Company" },
+  { id: "slobberman", name: "Slobberman" },
+  { id: "vinod", name: "Vinod Cookware" },
 ];
 
 /** Setup, stated with the effort it actually takes (§5.1 #7). */
@@ -107,30 +110,35 @@ export const howItWorksSteps: readonly HowItWorksStep[] = [
 /**
  * The interactive preview panels (§5.1 #6).
  *
- * Deliberately the three controls that carry the most of the loss, so the
- * preview answers "what does it actually do" for the merchant who has just
- * recognised their own problem two sections earlier.
+ * Deliberately the three controls that carry most of the loss, so the preview
+ * answers "what does it actually do" for the merchant who has just recognised
+ * their own problem two sections earlier.
+ *
+ * Written from the merchant's chair, not the buyer's. The flagship section
+ * above already shows each control as the buyer meets it; this one shows the
+ * surface the merchant works in, and saying the same thing twice from the same
+ * angle would make the second telling redundant.
  */
 export const productPreviewPanels: readonly ProductPreviewPanel[] = [
   {
     controlSlug: "otp-verification",
     label: "OTP Verification",
-    headline: "Only real buyers get through",
-    body: "The buyer confirms their number over SMS or WhatsApp before the order is accepted. Bots, mistyped numbers, and fake buyers never reach your dispatch queue.",
+    headline: "A dispatch queue that is already filtered",
+    body: "Every order arrives marked verified, waiting, or blocked. The ones nobody confirmed sit in the queue instead of in a van, and you never find out which was which at the doorstep.",
     href: routeFor.control("otp-verification"),
   },
   {
     controlSlug: "partial-cod-payment",
     label: "Partial COD Payment",
-    headline: "A buyer with a stake turns up",
-    body: "Collect a fixed amount or a percentage at checkout. The rest is still collected on delivery, but now the buyer has something to lose by rejecting the parcel.",
+    headline: "A deposit, and the ledger that tracks it",
+    body: "Take a fixed amount or a percentage at checkout. Each order carries what was paid and what is still owed on delivery, so reconciliation is a column rather than an afternoon.",
     href: routeFor.control("partial-cod-payment"),
   },
   {
     controlSlug: "cod-rules",
     label: "COD Rules",
-    headline: "Risky orders never get placed",
-    body: "Turn COD off by pin code, cart value, product, or customer tag. The orders you would have paid twice to ship simply never enter the system.",
+    headline: "One rule list, running on every cart",
+    body: "Order the conditions, set the action, first match wins. Change a rule and it applies at the next checkout — no theme edit, no deploy, no developer.",
     href: routeFor.control("cod-rules"),
   },
 ];

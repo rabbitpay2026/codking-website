@@ -27,7 +27,7 @@ type SectionTone = "default" | "muted" | "dark" | "brand";
  * rather than against the number in isolation — generous, but never so wide
  * that a section reads as marooned from the one before it.
  */
-type SectionSize = "compact" | "default" | "spacious";
+type SectionSize = "flush" | "compact" | "default" | "spacious";
 
 /**
  * How the section meets the page.
@@ -46,9 +46,11 @@ const toneClass: Record<SectionTone, string> = {
 };
 
 const sizeClass: Record<SectionSize, string> = {
-  compact: "py-10 md:py-12",
+  /** For a section that is meant to arrive directly under the one above it. */
+  flush: "py-0",
+  compact: "py-8 md:py-10",
   default: "py-section-sm md:py-section lg:py-section-lg",
-  spacious: "py-section md:py-section-lg lg:py-[7rem]",
+  spacious: "py-section md:py-section-lg lg:py-[5.5rem]",
 };
 
 interface SectionShellProps extends WithChildren, WithClassName {
@@ -63,6 +65,19 @@ interface SectionShellProps extends WithChildren, WithClassName {
    */
   readonly backdrop?: ReactNode;
   readonly containerClassName?: string;
+  /**
+   * Fades the page background in over the section's own surface at the top,
+   * the bottom, or both.
+   *
+   * This is the join. Two sections with different surfaces meeting at a hard
+   * horizontal edge tell the eye to stop, and a page that tells the eye to
+   * stop twelve times is twelve pages. A seam dissolves the edge instead, so
+   * one surface arrives out of the other and the story keeps running.
+   *
+   * Rendered above the backdrop and below the content, so a heading can sit
+   * over a seam without being washed out.
+   */
+  readonly seam?: "top" | "bottom" | "both";
   /**
    * Lets content escape the section box, for elements that deliberately
    * straddle a seam. Off by default, because most backdrops rely on being
@@ -98,12 +113,27 @@ export function SectionShell({
   className,
   containerClassName,
   allowOverflow = false,
+  seam,
   ariaLabel,
   children,
 }: SectionShellProps) {
   const surface = (
     <>
       {backdrop}
+
+      {seam === "top" || seam === "both" ? (
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 top-0 z-[1] h-24 bg-gradient-to-b from-background to-transparent lg:h-32"
+        />
+      ) : null}
+      {seam === "bottom" || seam === "both" ? (
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-24 bg-gradient-to-t from-background to-transparent lg:h-32"
+        />
+      ) : null}
+
       <Container
         className={cn("relative z-10", sizeClass[size], containerClassName)}
       >
