@@ -1,4 +1,6 @@
 import {
+  controlBoard,
+  controlBoardTitle,
   homepageControlSlugs,
   howItWorksSteps,
   outcomeMetrics,
@@ -11,6 +13,7 @@ import { getProofMetrics } from "@/lib/content/proof";
 
 import type {
   Control,
+  ControlBoardCard,
   HowItWorksStep,
   OutcomeMetric,
   PainPoint,
@@ -108,6 +111,20 @@ export async function getPlatformStats(): Promise<readonly PlatformStat[]> {
  * both. A slug naming a control that does not exist is dropped once, here,
  * rather than rendering a dead card.
  */
+/**
+ * The eight cards on the capability board, validated against the repository.
+ *
+ * An entry naming a control that no longer exists is dropped here, once, rather
+ * than rendering a card that links to a page the site does not have.
+ */
+export function getControlBoard(): readonly ControlBoardCard[] {
+  return controlBoard.filter((card) => getControlBySlug(card.slug));
+}
+
+export function getControlBoardTitle(): string {
+  return controlBoardTitle;
+}
+
 export function getHomepageControls(): readonly Control[] {
   return homepageControlSlugs.flatMap((slug) => {
     const control = getControlBySlug(slug);

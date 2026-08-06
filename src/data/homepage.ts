@@ -1,6 +1,7 @@
 import { routes } from "@/constants/routes";
 
 import type {
+  ControlBoardCard,
   ControlSlug,
   HowItWorksStep,
   OutcomeMetric,
@@ -152,6 +153,65 @@ export const trustedBrands: readonly TrustedBrand[] = [
     logo: { src: "/logos/merchants/qwerty-cases.png", width: 138, height: 38 },
   },
 ];
+
+/**
+ * The capability board (§5.1 #6).
+ *
+ * Eight controls in the order the blueprint puts them: the three that stop a
+ * bad order first, then the four that change buyer behaviour, then the one that
+ * reports on all of it. Reading order is left to right across two rows, so the
+ * sequence has to survive being cut after the fourth card.
+ *
+ * Every entry is resolved by slug against the controls repository before it
+ * renders — one naming a control that does not exist is dropped rather than
+ * shown, so this board and the hero's checklist can never promise something the
+ * feature pages do not carry.
+ */
+export const controlBoard: readonly ControlBoardCard[] = [
+  {
+    slug: "otp-verification",
+    label: "OTP Verification",
+    blurb: "Verify customers with OTP to block fake orders.",
+  },
+  {
+    slug: "partial-cod-payment",
+    label: "Partial Payment",
+    blurb: "Collect advance payment to confirm serious orders.",
+  },
+  {
+    slug: "cod-fees",
+    label: "COD Fees",
+    blurb: "Add COD charges to reduce non-serious orders.",
+  },
+  {
+    slug: "cod-rules",
+    label: "Smart COD Rules",
+    blurb: "Show or hide COD based on location, cart value and customer.",
+  },
+  {
+    slug: "prepaid-nudge",
+    label: "Prepaid Discount",
+    blurb: "Offer discounts to customers who choose prepaid.",
+  },
+  {
+    slug: "messaging-gateways",
+    label: "WhatsApp & SMS",
+    blurb: "Send order updates, OTP and notifications via WhatsApp or SMS.",
+  },
+  {
+    slug: "analytics",
+    label: "Analytics & Insights",
+    blurb: "Track performance and make data-driven decisions.",
+  },
+  {
+    slug: "abandoned-cart-recovery",
+    label: "Abandoned Cart",
+    blurb: "Recover lost sales with smart WhatsApp reminders.",
+  },
+];
+
+/** The board's own heading. */
+export const controlBoardTitle = "Everything you need to control COD";
 
 /** Setup, stated with the effort it actually takes (§5.1 #7). */
 export const howItWorksSteps: readonly HowItWorksStep[] = [

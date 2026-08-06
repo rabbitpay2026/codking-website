@@ -1,7 +1,7 @@
 import { Banknote, PackageX, TriangleAlert, Undo2 } from "lucide-react";
 
 import { LossScene } from "@/components/sections/pain/LossScene";
-import { PainEnvironment } from "@/components/sections/pain/PainEnvironment";
+import { PageEnvironment } from "@/components/sections/PageEnvironment";
 import { SectionHeading } from "@/components/sections/SectionHeading";
 import { SectionShell } from "@/components/sections/SectionShell";
 import { BlurFade } from "@/components/ui/blur-fade";
@@ -69,7 +69,23 @@ export function PainPoints() {
   const copy = getPainPointsCopy();
 
   return (
-    <SectionShell backdrop={<PainEnvironment />}>
+    /*
+      The bottom padding is cut well below the section scale. The default is
+      tuned for a section that ends on a paragraph; this one ends on a bordered
+      bar, and a bar already reads as a stop — leaving the full gap under it puts
+      a corridor between the problem and the answer to it, which is the one join
+      on this page that should feel immediate.
+
+      Every breakpoint the section scale defines has to be overridden, not just
+      the first two. Tailwind orders utilities by breakpoint, so an unanswered
+      `lg:py-section-lg` lands after `md:pb-8` in the stylesheet and quietly puts
+      the full padding back on the widest screens — the only ones anyone reviews
+      the page on.
+    */
+    <SectionShell
+      backdrop={<PageEnvironment />}
+      containerClassName="pb-7 md:pb-8 lg:pb-9"
+    >
       {/*
         No eyebrow. The title is already the plainest possible statement of the
         subject, and a label above it saying the same thing in fewer words adds

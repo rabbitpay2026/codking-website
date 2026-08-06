@@ -1,7 +1,7 @@
 import { Noise } from "@/components/ui/noise";
 
 /**
- * The room the problem section stands in.
+ * The room a homepage section stands in.
  *
  * The hero's environment, continued — not a variation on it. Same base wash,
  * same 64px grid at the same 4.5% ink, same masked ellipse, same corner chroma
@@ -9,11 +9,11 @@ import { Noise } from "@/components/ui/noise";
  * because that exists to lift the hero's device off the field and there is no
  * device here.
  *
- * An earlier pass tinted the lower half warm to signal that the subject had
- * turned to loss. That was the background doing with colour what the copy is
- * supposed to do with facts, and it cost the thing that matters more: from the
- * hero down, this is one canvas, and a section that changes palette to make a
- * point reads as a different website making it.
+ * One component rather than a backdrop per section, because that is the only
+ * way the claim survives: from the hero down, this is one canvas. A section that
+ * tints its own field to signal its subject — warm for loss, cool for scale —
+ * is doing with colour what the copy is supposed to do with facts, and it reads
+ * as a different website making the point.
  *
  * The two chroma bodies are brand at the crown and violet at the foot — the
  * accent used the way the token system says an accent is used: a few percent,
@@ -21,7 +21,7 @@ import { Noise } from "@/components/ui/noise";
  *
  * All CSS. No canvas, no JavaScript, nothing running after first paint.
  */
-export function PainEnvironment() {
+export function PageEnvironment() {
   return (
     <>
       {/* Base wash — the hero's, to its third stop. */}

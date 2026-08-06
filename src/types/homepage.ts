@@ -25,6 +25,25 @@ export interface PainPointsCopy {
   readonly callout: string;
 }
 
+/**
+ * One control as the homepage board states it (§5.1 #6).
+ *
+ * `label` and `blurb` are not the control record's own `name` and `outcome`,
+ * and the difference is deliberate. A record is named for the merchant already
+ * inside the admin, where "COD Rules" and "Messaging Gateways" are the right
+ * words; a card on a homepage has one line to be understood by someone who has
+ * never seen the product, where "Smart COD Rules" and "WhatsApp & SMS" are.
+ *
+ * The `slug` is still the source of truth. Every entry is resolved against the
+ * controls repository before it renders, so the board can never advertise a
+ * capability the product does not have — it only gets to phrase one differently.
+ */
+export interface ControlBoardCard {
+  readonly slug: ControlSlug;
+  readonly label: string;
+  readonly blurb: string;
+}
+
 /** One of the hidden costs of COD, made visible (§5.1 #4). */
 export interface PainPoint {
   readonly id: string;
