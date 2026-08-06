@@ -213,29 +213,40 @@ export const controlBoard: readonly ControlBoardCard[] = [
 /** The board's own heading. */
 export const controlBoardTitle = "Everything you need to control COD";
 
-/** Setup, stated with the effort it actually takes (§5.1 #7). */
+/**
+ * Setup, stated with the effort it actually takes (§5.1 #7).
+ *
+ * Four steps, and only two of them are work. That is the argument: the merchant
+ * installs and configures, and from there the sequence carries on without them
+ * — a buyer orders, the product acts. Stating the last two steps as things that
+ * happen rather than things to do is the whole reason the flow is four long
+ * instead of two.
+ */
 export const howItWorksSteps: readonly HowItWorksStep[] = [
   {
     id: "install",
-    title: "Add it to your store",
-    body: "One click from the App Store. No theme edits, no developer, nothing to deploy.",
+    title: "Install app",
+    body: "Install COD King from the Shopify App Store.",
   },
   {
     id: "configure",
-    title: "Decide how cash behaves",
-    body: "Choose where COD is offered, what it costs, and what a buyer has to confirm.",
+    title: "Configure rules",
+    body: "Set OTP, COD fees, partial payment and other rules.",
   },
   {
-    id: "monitor",
-    title: "Let it run",
-    body: "Orders are verified, held, or released on their own. You get told what changed.",
+    id: "order",
+    title: "Customer places order",
+    body: "Customer places the order on your Shopify store.",
   },
   {
-    id: "scale",
-    title: "Bring your own gateway",
-    body: "Route messages through a regional provider and pay their rate, not an international one.",
+    id: "protect",
+    title: "COD King protects every order",
+    body: "We verify, collect, validate and help you grow.",
   },
 ];
+
+/** The flow's own heading. */
+export const howItWorksTitle = "How COD King works";
 
 /** Where the homepage sends a merchant who wants to size the problem (§5.1 #4). */
 export const calculatorHref = routes.codCalculator;

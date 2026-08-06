@@ -1,124 +1,183 @@
-import { Check } from "lucide-react";
+import {
+  BadgeCheck,
+  ShoppingCart,
+  SlidersHorizontal,
+  Store,
+} from "lucide-react";
 
-import { ShopifyMark } from "@/components/brand/ShopifyMarks";
-import { ActionLink } from "@/components/layout/ActionLink";
+import { PageEnvironment } from "@/components/sections/PageEnvironment";
 import { SectionHeading } from "@/components/sections/SectionHeading";
 import { SectionShell } from "@/components/sections/SectionShell";
 import { BlurFade } from "@/components/ui/blur-fade";
-import { DotPattern } from "@/components/ui/dot-pattern";
-import { cn } from "@/lib/utils";
-import { getHowItWorksSteps, getUtilityActions } from "@/lib/content";
+import { getHowItWorksSteps, getHowItWorksTitle } from "@/lib/content";
 
-const REASSURANCES = [
-  "7-day free trial",
-  "No credit card required",
-  "Cancel anytime",
-];
+import type { LucideIcon } from "lucide-react";
+
+/**
+ * Icons are presentation, not content, so they are mapped here rather than
+ * stored on the record — changing a line of copy should not mean picking art.
+ */
+const iconFor: Record<string, LucideIcon> = {
+  install: Store,
+  configure: SlidersHorizontal,
+  order: ShoppingCart,
+  protect: BadgeCheck,
+};
+
+/**
+ * The connector between two steps.
+ *
+ * A process flow is only a process if the eye can see the direction, and four
+ * cards in a row do not have one — they read as a set, like the capability board
+ * two sections up, which is exactly what this must not be mistaken for. So the
+ * connector does the work: a dashed run that travels toward the next card, and
+ * an arrowhead that says which way.
+ *
+ * It turns with the layout. Stacked, it drops from the foot of one card to the
+ * head of the next; four across, it crosses the gap between them. At the middle
+ * breakpoint the steps sit two by two and there is no single reading order for
+ * an arrow to assert, so it is simply not drawn.
+ *
+ * The travel is `animate-trace`, the existing token for a line moving toward
+ * what it points at, and it is CSS on a dash offset — no client component, no
+ * observer, nothing running on the main thread. The dash period divides exactly
+ * into the offset, so the loop has no seam, and the global reduced-motion rule
+ * parks it as a plain dashed line.
+ */
+function StepConnector() {
+  return (
+    <>
+      <span
+        aria-hidden
+        className="pointer-events-none absolute top-full left-[1.85rem] mt-1 block h-5 sm:hidden"
+      >
+        <svg viewBox="0 0 8 20" className="h-full" fill="none">
+          <path
+            d="M4 0v12"
+            className="animate-trace text-ink/25"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeDasharray="3 5"
+          />
+          <path
+            d="m1 14 3 4 3-4"
+            className="text-ink/30"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </span>
+
+      <span
+        aria-hidden
+        className="pointer-events-none absolute top-1/2 left-full hidden w-8 -translate-y-1/2 lg:block"
+      >
+        <svg viewBox="0 0 32 8" className="w-full" fill="none">
+          <path
+            d="M2 4h20"
+            className="animate-trace text-ink/25"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeDasharray="3 5"
+          />
+          <path
+            d="m25 1 4 3-4 3"
+            className="text-ink/30"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </span>
+    </>
+  );
+}
 
 /**
  * How it works (§5.1 #7).
  *
- * The effort is stated honestly — no code, under ten minutes — because the
- * objection this section removes is "how much work is this", and a vague
- * answer reads as a large one.
+ * The objection this removes is "how much work is this", and the answer is in
+ * the shape rather than in a claim about it: four steps, of which the merchant
+ * performs two. Install, configure, and then the flow continues without them.
+ * Nowhere does the section say "it's easy" — it shows where the merchant's
+ * involvement stops, which is the same statement made in a way that cannot be
+ * disbelieved.
  *
- * The install sits on a bar welded to the bottom of the step rail rather than
- * floating in centred space beneath it. Same action, but attached it reads as
- * the last step in the sequence, which is what it is; adrift it read as the
- * page having stopped and started again.
+ * A flow, not a timeline. The difference is entirely the connector: the same
+ * four cards without one are the capability board two sections above, and the
+ * whole point here is sequence. Every card is otherwise the site's standard
+ * `surface-card` at the same radius, shadow and lift as sections four and five,
+ * because a step is not a different kind of object from a control.
  *
- * Carries the `how-it-works` anchor the hero's secondary action points at,
- * which is why that action can be a plain in-page link rather than a second
- * competing destination.
+ * The step number sits opposite its icon rather than above the title. On top it
+ * competes with the title for the first read; at the head of the card, paired
+ * with the icon, it becomes what it actually is — an index, not a heading.
+ *
+ * Carries the `how-it-works` anchor other parts of the site point at.
+ *
+ * The reveals stagger left to right so the row assembles in the direction it is
+ * read, which is the only motion in the section besides the connectors.
  */
 export function HowItWorks() {
   const steps = getHowItWorksSteps();
-  const installAction = getUtilityActions().find(
-    (action) => action.variant === "primary",
-  );
+  const title = getHowItWorksTitle();
 
   return (
+    /*
+      Trimmed at the top for the same reason as the join above it: the board
+      names what the product does and this shows the order it happens in, so the
+      two belong together on the page.
+    */
     <SectionShell
       id="how-it-works"
-      tone="muted"
-      seam="top"
-      backdrop={
-        <DotPattern
-          width={30}
-          height={30}
-          cr={1}
-          className={cn(
-            "absolute inset-0 h-full fill-brand/15",
-            "[mask-image:radial-gradient(70%_55%_at_50%_25%,white,transparent)]",
-          )}
-        />
-      }
+      backdrop={<PageEnvironment />}
+      containerClassName="pt-7 md:pt-8 lg:pt-9"
     >
-      <SectionHeading
-        eyebrow="Getting started"
-        title="Ten minutes, start to finish"
-        description="Install it, decide how cash behaves, and leave it running. Nobody has to touch a line of code."
-      />
+      <SectionHeading title={title} />
 
-      <div className="mt-lede overflow-hidden rounded-[1.75rem] border border-border bg-card/70 shadow-card backdrop-blur-xl">
-        <ol className="grid gap-x-8 gap-y-9 p-7 md:grid-cols-2 lg:grid-cols-4 lg:p-9">
-          {steps.map((step, index) => (
-            // The reveal wrapper stays inside the list item so the markup
-            // remains a real `ol > li` list.
-            <li key={step.id}>
-              <BlurFade delay={0.07 * index} inView>
-                <div className="flex items-center gap-3">
-                  <span className="grid size-9 shrink-0 place-items-center rounded-full border border-brand/25 bg-background text-sm font-semibold text-brand tabular-nums shadow-card">
-                    {index + 1}
-                  </span>
-                  {/* Connector, drawn only between steps on wide screens. */}
-                  {index < steps.length - 1 ? (
-                    <span
+      <ol className="mt-lede grid gap-x-8 gap-y-7 sm:grid-cols-2 lg:grid-cols-4">
+        {steps.map((step, index) => {
+          const Icon = iconFor[step.id] ?? Store;
+
+          return (
+            <li key={step.id} className="relative h-full">
+              {/*
+                The reveal wrapper stays inside the list item so the markup
+                remains a real `ol > li` list.
+              */}
+              <BlurFade delay={0.06 * index} className="h-full">
+                <div className="group flex h-full surface-card flex-col rounded-[1.15rem] p-5">
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="grid size-7 shrink-0 place-items-center rounded-full border border-ink/12 bg-background text-[11.5px] leading-none font-semibold text-ink/50 tabular-nums transition-colors duration-300 ease-emphasized group-hover:border-brand/30 group-hover:text-brand">
+                      {index + 1}
+                    </span>
+
+                    <Icon
                       aria-hidden
-                      className="hidden h-px flex-1 bg-gradient-to-r from-brand/35 to-transparent lg:block"
+                      className="size-5 shrink-0 text-ink/30 transition-colors duration-300 ease-emphasized group-hover:text-brand"
+                      strokeWidth={1.6}
                     />
-                  ) : null}
+                  </div>
+
+                  <h3 className="mt-5 text-[14.5px] leading-snug font-semibold tracking-[-0.012em] text-balance text-ink">
+                    {step.title}
+                  </h3>
+                  <p className="mt-2.5 text-[12.5px] leading-relaxed text-pretty text-ink/50">
+                    {step.body}
+                  </p>
                 </div>
-
-                <h3 className="mt-5 text-base font-semibold">{step.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                  {step.body}
-                </p>
               </BlurFade>
+
+              {index < steps.length - 1 ? <StepConnector /> : null}
             </li>
-          ))}
-        </ol>
-
-        {/* The action, as the end of the rail rather than a fresh start. */}
-        <div className="flex flex-col items-center gap-4 border-t border-border bg-gradient-to-b from-cloud to-brand-soft/50 px-7 py-6 sm:flex-row sm:justify-between lg:px-9">
-          <div className="flex items-center gap-3">
-            <ShopifyMark className="size-8 shrink-0" />
-            <p className="text-sm leading-snug font-semibold">
-              One click from the Shopify App Store
-              <span className="block text-[13px] font-normal text-muted-foreground">
-                Nothing to deploy, nothing to re-theme.
-              </span>
-            </p>
-          </div>
-
-          {installAction ? (
-            <ActionLink
-              action={{ ...installAction, label: "Install free on Shopify" }}
-              size="lg"
-              className="shrink-0 shadow-[0_10px_30px_-10px_var(--brand)]"
-            />
-          ) : null}
-        </div>
-      </div>
-
-      <ul className="mt-5 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-muted-foreground">
-        {REASSURANCES.map((item) => (
-          <li key={item} className="inline-flex items-center gap-1.5">
-            <Check aria-hidden className="size-4 text-brand-check" />
-            {item}
-          </li>
-        ))}
-      </ul>
+          );
+        })}
+      </ol>
     </SectionShell>
   );
 }

@@ -3,6 +3,7 @@ import {
   controlBoardTitle,
   homepageControlSlugs,
   howItWorksSteps,
+  howItWorksTitle,
   outcomeMetrics,
   painPoints,
   painPointsCopy,
@@ -40,6 +41,10 @@ export function getTrustedBrands(): readonly TrustedBrand[] {
 
 export function getHowItWorksSteps(): readonly HowItWorksStep[] {
   return howItWorksSteps;
+}
+
+export function getHowItWorksTitle(): string {
+  return howItWorksTitle;
 }
 
 /**

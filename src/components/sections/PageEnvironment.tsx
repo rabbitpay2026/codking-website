@@ -19,6 +19,12 @@ import { Noise } from "@/components/ui/noise";
  * accent used the way the token system says an accent is used: a few percent,
  * in a corner, never as a field.
  *
+ * It also draws the rule that closes the section, at the same 7% ink the trust
+ * strip and the scale band use. One rule per join, always owned by the section
+ * above it — two neighbours each drawing their own edge would stack a pair of
+ * hairlines into a line twice as dark as every other, and the one thing worse
+ * than no divider is dividers of two different weights.
+ *
  * All CSS. No canvas, no JavaScript, nothing running after first paint.
  */
 export function PageEnvironment() {
@@ -60,6 +66,12 @@ export function PageEnvironment() {
       />
 
       <Noise className="opacity-[0.035]" />
+
+      {/* The join with whatever comes next. */}
+      <div
+        aria-hidden
+        className="absolute inset-x-0 bottom-0 h-px bg-ink/[0.07]"
+      />
     </>
   );
 }
