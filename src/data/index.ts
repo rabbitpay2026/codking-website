@@ -11,3 +11,4 @@ export * from "./navigation";
 export * from "./pricing";
 export * from "./proof";
 export * from "./resources";
+export * from "./socialProof";

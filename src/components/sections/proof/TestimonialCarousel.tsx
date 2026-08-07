@@ -1,189 +1,202 @@
 "use client";
 
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { Quote, Star } from "lucide-react";
+import Autoplay from "embla-carousel-autoplay";
+import useEmblaCarousel from "embla-carousel-react";
+import { useReducedMotion } from "motion/react";
 import { useCallback, useEffect, useState } from "react";
 
+import { Stars } from "@/components/sections/proof/Stars";
+import { StoreMonogram } from "@/components/sections/proof/StoreMonogram";
 import { cn } from "@/lib/utils";
 
-import type { CustomerStory } from "@/types";
+import type { MerchantTestimonial } from "@/types";
 
-/** How long one quote holds before the carousel advances. */
-const DWELL_MS = 7000;
+/** How long one testimonial holds before the carousel advances. */
+const DWELL_MS = 5500;
+
+/**
+ * Embla's transition length, in its own units (roughly milliseconds ÷ 10).
+ * Slower than the default 25, because the slide is the only motion in this
+ * section and a fast one draws more attention than what it is carrying.
+ */
+const SLIDE_DURATION = 30;
 
 interface TestimonialCarouselProps {
-  readonly stories: readonly CustomerStory[];
-  /** Stars to draw on each quote, from the proof repository. */
-  readonly rating: number;
+  readonly testimonials: readonly MerchantTestimonial[];
 }
 
 /**
- * The merchant quotes, as a carousel.
+ * The merchant reviews, one at a time, inside the blueprint's bordered panel.
  *
- * One quote at a time. Two quotes side by side asks the reader to choose which
- * to read and they read neither; one quote at a time is read, and the dots
- * make the rest discoverable without spending the vertical space.
+ * Embla rather than a hand-rolled index, and the reason is the height. Every
+ * slide is in the DOM at once inside a flex track, so the panel is already as
+ * tall as the longest review and stays that height as the carousel turns —
+ * a card that grows and shrinks every five seconds would drag the two columns
+ * beside it up and down with it. Keeping every slide in the document also
+ * means the reviews a visitor has not reached yet are still readable by a
+ * crawler and by anyone going through the page linearly, with no visually
+ * hidden second copy to keep in step.
  *
- * Three things keep this on the right side of tasteful. The movement is small
- * — a fade and eight pixels of travel, not a slide — because a card that
- * launches across the viewport is the reader's whole attention for half a
- * second and the quote is the point, not the transition. The rotation stops
- * the moment anyone interacts, since a control that moves while you are
- * reaching for it is a broken control. And the whole thing is inert under
- * reduced motion: no auto-advance, no travel, the dots still work.
- *
- * Only the current quote is painted, so the full set is also written out
- * once, visually hidden, below the control. A carousel that keeps four
- * fifths of its content out of the document is invisible to a crawler and to
- * anyone reading the page linearly — and a testimonial nobody can find is not
- * proof of anything.
+ * Restraint is enforced in three places. The dwell is long and the advance is
+ * slow, because the review is the point and the transition is not. Autoplay
+ * stops on hover and on focus and resumes when the pointer leaves, so the
+ * panel never moves under someone reaching for it. And under reduced motion
+ * nothing advances on its own — the dots still work, so nothing becomes
+ * unreachable.
  */
 export function TestimonialCarousel({
-  stories,
-  rating,
+  testimonials,
 }: TestimonialCarouselProps) {
   const prefersReduced = useReducedMotion();
-  const [index, setIndex] = useState(0);
-  const [paused, setPaused] = useState(false);
+  const count = testimonials.length;
 
-  const count = stories.length;
+  /*
+    Constructed once, via a lazy initialiser, so the plugin instance survives
+    re-renders. Building it inline would hand Embla a new plugin object on
+    every state change and the dwell timer would restart each time the selected
+    dot moved — a carousel that never quite reaches the next slide.
+  */
+  const [autoplay] = useState(() =>
+    Autoplay({
+      delay: DWELL_MS,
+      /* Resume once the pointer leaves; a paused-forever carousel is one most
+         visitors only ever see the first slide of. */
+      stopOnInteraction: false,
+      stopOnMouseEnter: true,
+    }),
+  );
 
-  const select = useCallback((next: number) => {
-    setPaused(true);
-    setIndex(next);
-  }, []);
+  const [emblaRef, emblaApi] = useEmblaCarousel(
+    {
+      loop: true,
+      align: "start",
+      duration: SLIDE_DURATION,
+      watchDrag: count > 1,
+    },
+    [autoplay],
+  );
+
+  const [selected, setSelected] = useState(0);
 
   useEffect(() => {
-    if (paused || prefersReduced || count < 2) return;
+    if (!emblaApi) return;
 
-    const timer = setInterval(
-      () => setIndex((current) => (current + 1) % count),
-      DWELL_MS,
-    );
+    const sync = () => setSelected(emblaApi.selectedScrollSnap());
+    sync();
+    emblaApi.on("select", sync).on("reInit", sync);
 
-    return () => clearInterval(timer);
-  }, [paused, prefersReduced, count]);
+    return () => {
+      emblaApi.off("select", sync).off("reInit", sync);
+    };
+  }, [emblaApi]);
+
+  /*
+    The global reduced-motion rule in `globals.css` collapses CSS transitions,
+    but Embla animates on its own frame loop and would keep advancing under it.
+    Stopping the plugin is the only thing that actually honours the preference.
+  */
+  useEffect(() => {
+    if (!emblaApi) return;
+    if (prefersReduced || count < 2) emblaApi.plugins().autoplay?.stop();
+  }, [emblaApi, prefersReduced, count]);
+
+  const select = useCallback(
+    (index: number) => emblaApi?.scrollTo(index),
+    [emblaApi],
+  );
 
   if (count === 0) return null;
 
-  const story = stories[index] ?? stories[0];
-  if (!story) return null;
-
   return (
-    <div
-      className="flex h-full flex-col"
-      onMouseEnter={() => setPaused(true)}
-      onFocusCapture={() => setPaused(true)}
-    >
+    <div className="flex h-full flex-col">
       {/*
-        The height is reserved rather than animated. Quotes differ in length,
-        and a panel that grows and shrinks every seven seconds drags the two
-        columns beside it up and down with it.
+        The panel the blueprint draws: a white box on a white card, held apart
+        by a hairline alone. No tint and no shadow — this is a frame around a
+        quotation, not a second card stacked inside the first.
 
-        The reservation is per breakpoint because the same quote is three lines
-        across a stacked card and nine down a third-width column. One value
-        tuned for the narrow case leaves a hand's depth of white under the wide
-        one, which reads as a card that failed to finish loading.
+        The padding is on the panel and the clip is on a bare child inside it,
+        which is not a spare div. `overflow: hidden` clips at the padding box,
+        so putting both on one element leaves the next slide visible in the
+        sixteen pixels of inset — a sliver of the following review sitting
+        against the border, on the card whose whole job is to look composed.
       */}
-      <div className="relative min-h-[15rem] flex-1 sm:min-h-[11rem] lg:min-h-[19rem]">
-        <AnimatePresence initial={false} mode="wait">
-          <motion.figure
-            key={story.id}
-            initial={prefersReduced ? false : { opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={prefersReduced ? undefined : { opacity: 0, y: -8 }}
-            transition={{ duration: 0.32, ease: [0.2, 0, 0, 1] }}
-            className="absolute inset-0 flex flex-col"
-          >
-            <Quote
-              aria-hidden
-              className="absolute -top-2 right-0 size-20 fill-brand/[0.06] text-transparent"
-            />
-
-            <div
-              className="relative flex items-center gap-0.5"
-              aria-label={`Rated ${rating} out of 5`}
-            >
-              {Array.from({ length: 5 }, (_, starIndex) => (
-                <Star
-                  key={starIndex}
-                  aria-hidden
-                  className="size-4 fill-brand text-brand"
+      <div
+        className="flex-1 rounded-xl border border-border p-4"
+        role="group"
+        aria-roledescription="carousel"
+        aria-label="Merchant reviews"
+      >
+        <div ref={emblaRef} className="h-full overflow-hidden">
+          <div className="flex h-full">
+            {testimonials.map((entry, index) => (
+              <figure
+                key={entry.id}
+                role="group"
+                aria-roledescription="slide"
+                aria-label={`${index + 1} of ${count}`}
+                className="flex min-w-0 flex-[0_0_100%] flex-col"
+              >
+                <Stars
+                  rating={entry.rating}
+                  className="size-[13px]"
+                  label={`Rated ${entry.rating} out of 5`}
                 />
-              ))}
-            </div>
 
-            <blockquote className="relative mt-5 flex-1 text-[15px] leading-relaxed text-pretty text-foreground/90">
-              &ldquo;{story.quote}&rdquo;
-            </blockquote>
+                <blockquote className="mt-2.5 flex-1 text-[12.5px] leading-[1.55] text-pretty text-foreground/85">
+                  &ldquo;{entry.quote}&rdquo;
+                </blockquote>
 
-            <figcaption className="relative mt-6 flex items-center justify-between gap-4 border-t border-border pt-5">
-              <span className="flex min-w-0 items-center gap-3">
-                <span
-                  aria-hidden
-                  className="grid size-9 shrink-0 place-items-center rounded-full bg-brand/10 text-xs font-semibold text-brand"
-                >
-                  {story.merchantName.slice(0, 2).toUpperCase()}
-                </span>
-                <span className="text-sm leading-snug font-semibold text-balance">
-                  {story.merchantName}
-                </span>
-              </span>
-
-              <span className="shrink-0 text-right">
-                <span className="block text-sm font-semibold text-brand">
-                  {story.metricValue}
-                </span>
-                <span className="block text-xs text-muted-foreground">
-                  {story.metricLabel}
-                </span>
-              </span>
-            </figcaption>
-          </motion.figure>
-        </AnimatePresence>
+                <figcaption className="mt-3.5 flex items-center gap-2.5">
+                  <StoreMonogram store={entry.store} size={28} />
+                  <span className="min-w-0">
+                    <span className="block truncate text-[12.5px] leading-tight font-semibold text-foreground">
+                      {entry.store}
+                    </span>
+                    <span className="block truncate text-[11.5px] leading-tight text-muted-foreground">
+                      {entry.caption}
+                    </span>
+                  </span>
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+        </div>
       </div>
 
       {/*
-        The dots.
+        The dots, centred under the panel as the blueprint places them.
 
-        Real buttons with an accessible name each, not decorated spans: this is
-        the only way to reach the other quotes, so it has to be reachable by
-        keyboard and announced as a control. The active one stretches into a
-        bar rather than merely changing colour, which reads as position in a
-        set at a glance and survives being looked at by someone who cannot
-        distinguish the two tints.
+        Real buttons with a name each, not decorated spans: these are the only
+        way to reach the other reviews, so they have to be reachable by
+        keyboard and announced as controls. The active one stretches into a bar
+        rather than only changing colour, which reads as position in a set at a
+        glance and survives being looked at by someone who cannot tell the two
+        tints apart.
       */}
       {count > 1 ? (
-        <div className="mt-7 flex items-center gap-2">
-          {stories.map((entry, dotIndex) => {
-            const active = dotIndex === index;
+        <div className="mt-3.5 flex items-center justify-center gap-1.5">
+          {testimonials.map((entry, index) => {
+            const active = index === selected;
 
             return (
               <button
                 key={entry.id}
                 type="button"
-                onClick={() => select(dotIndex)}
-                aria-label={`Show the review from ${entry.merchantName}`}
+                onClick={() => select(index)}
+                aria-label={`Show the review from ${entry.store}`}
                 aria-current={active}
                 className={cn(
-                  "h-2 rounded-full transition-[width,background-color] duration-300 ease-[var(--ease-emphasized)]",
+                  "h-1.5 rounded-full transition-[width,background-color] duration-300 ease-[var(--ease-emphasized)]",
                   "outline-none focus-visible:ring-2 focus-visible:ring-ring/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-                  active ? "w-7 bg-brand" : "w-2 bg-border hover:bg-brand/40",
+                  active
+                    ? "w-5 bg-foreground/65"
+                    : "w-1.5 bg-border hover:bg-foreground/30",
                 )}
               />
             );
           })}
         </div>
       ) : null}
-
-      {/* The whole set, in order, for anyone the carousel does not serve. */}
-      <ul className="sr-only">
-        {stories.map((entry) => (
-          <li key={entry.id}>
-            {entry.merchantName}: &ldquo;{entry.quote}&rdquo;
-          </li>
-        ))}
-      </ul>
     </div>
   );
 }
