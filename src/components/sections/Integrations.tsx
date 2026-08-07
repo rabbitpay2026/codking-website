@@ -37,7 +37,7 @@ function ProviderMark({
     return (
       <span
         aria-hidden
-        className="grid size-9 shrink-0 place-items-center text-[13px] font-bold text-ink/40"
+        className="grid size-11 shrink-0 place-items-center text-[15px] font-bold text-ink/40"
       >
         {name.slice(0, 2).toUpperCase()}
       </span>
@@ -45,13 +45,13 @@ function ProviderMark({
   }
 
   return (
-    <span className="grid size-9 shrink-0 place-items-center">
+    <span className="grid size-11 shrink-0 place-items-center">
       <Image
         src={logo.src}
         alt=""
         width={logo.width}
         height={logo.height}
-        className="h-auto max-h-9 w-auto max-w-9 object-contain select-none"
+        className="h-auto max-h-11 w-auto max-w-11 object-contain select-none"
       />
     </span>
   );
@@ -127,10 +127,10 @@ export function Integrations() {
               href={routes.integrations}
               className="group flex h-full surface-card items-start gap-3.5 rounded-[1.15rem] p-5 outline-none focus-visible:ring-2 focus-visible:ring-ring/60"
             >
-              <span className="grid size-9 shrink-0 place-items-center">
+              <span className="grid size-11 shrink-0 place-items-center">
                 <Puzzle
                   aria-hidden
-                  className="size-6 text-ink/30 transition-colors duration-300 ease-emphasized group-hover:text-brand"
+                  className="size-7 text-ink/30 transition-colors duration-300 ease-emphasized group-hover:text-brand"
                   strokeWidth={1.6}
                 />
               </span>

@@ -16,7 +16,7 @@ export const integrations: readonly Integration[] = [
     category: "ads",
     featured: true,
     blurb: "Track conversions and optimize campaigns.",
-    logo: { src: "/logos/marketing/meta.png", width: 34, height: 36 },
+    logo: { src: "/logos/marketing/meta.png", width: 41, height: 44 },
   },
   {
     slug: "google-ads",
@@ -24,7 +24,7 @@ export const integrations: readonly Integration[] = [
     category: "ads",
     featured: true,
     blurb: "Improve ROI with better conversion tracking.",
-    logo: { src: "/logos/marketing/google-ads.png", width: 36, height: 33 },
+    logo: { src: "/logos/marketing/google-ads.png", width: 44, height: 40 },
   },
   {
     slug: "whatsapp",
@@ -32,7 +32,7 @@ export const integrations: readonly Integration[] = [
     category: "platform",
     featured: true,
     blurb: "Send notifications and recover more orders.",
-    logo: { src: "/logos/marketing/whatsapp.png", width: 36, height: 36 },
+    logo: { src: "/logos/marketing/whatsapp.png", width: 44, height: 44 },
   },
   {
     slug: "msg91",
@@ -40,7 +40,7 @@ export const integrations: readonly Integration[] = [
     category: "sms-gateway",
     featured: true,
     blurb: "Send transactional SMS at scale seamlessly.",
-    logo: { src: "/logos/marketing/msg91.png", width: 36, height: 33 },
+    logo: { src: "/logos/marketing/msg91.png", width: 44, height: 40 },
   },
   {
     /*
