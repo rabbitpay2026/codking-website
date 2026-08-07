@@ -1,6 +1,3 @@
-import { ArrowRight, MessageCircleQuestion } from "lucide-react";
-import Link from "next/link";
-
 import { FinalCta } from "@/components/sections/FinalCta";
 import { SectionShell } from "@/components/sections/SectionShell";
 import {
@@ -10,8 +7,31 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { BlurFade } from "@/components/ui/blur-fade";
-import { routes } from "@/constants/routes";
 import { getFaqsByTag } from "@/lib/content";
+
+/**
+ * A plus that unfolds into a minus.
+ *
+ * Two bars, one of them rotated. Closed, the upright bar crosses the flat one
+ * and the pair reads as a plus; open, it rotates back onto its partner and
+ * the same two elements read as a minus. Nothing is swapped, nothing fades —
+ * which is why the transition is a single continuous movement rather than one
+ * glyph blinking into another.
+ *
+ * Driven by the trigger's own `data-state`, so it needs no JavaScript of its
+ * own and cannot fall out of step with the panel it belongs to.
+ */
+function PlusMinus() {
+  return (
+    <span
+      aria-hidden
+      className="relative grid size-6 shrink-0 place-items-center rounded-full border border-border text-ink/50 transition-colors duration-200 group-hover:border-ink/20 group-hover:text-ink/70"
+    >
+      <span className="absolute h-px w-2.5 rounded-full bg-current" />
+      <span className="absolute h-px w-2.5 rotate-90 rounded-full bg-current transition-transform duration-300 ease-[var(--ease-emphasized)] group-data-[state=open]:rotate-0" />
+    </span>
+  );
+}
 
 /**
  * The last objection and the close, on one band.
@@ -19,13 +39,22 @@ import { getFaqsByTag } from "@/lib/content";
  * The blueprint sets the questions beside the call to action rather than above
  * it, and that is the better arrangement: a merchant working through the FAQ
  * is resolving their final doubt, and the install should be in view the moment
- * it resolves rather than one scroll further on.
+ * it resolves rather than one scroll further on. The split is roughly a third
+ * to two thirds, because the questions are a list of one-line prompts and the
+ * close carries a video.
  *
  * Questions are drawn from the single tagged pool by tag, so an answer written
  * once appears on the homepage, the pricing page and the relevant control page
- * without being retyped (§11). Answers stay in the DOM when collapsed, which
- * is what makes them crawlable and findable with in-page search rather than
- * hidden behind a click.
+ * without being retyped (§11). Not one word of them is authored here.
+ *
+ * Answers stay in the DOM when collapsed, which is what makes them crawlable
+ * and findable with in-page search rather than hidden behind a click.
+ *
+ * Each question is its own bordered card rather than a row in a ruled list.
+ * A hairline drawn across a column tells the eye these are one continuous
+ * thing to get through; separate cards say they are five independent questions
+ * of which you probably only care about one — which is true, and is the
+ * difference between a section that gets read and one that gets scrolled.
  */
 export function Faq() {
   const faqs = getFaqsByTag("home");
@@ -33,29 +62,48 @@ export function Faq() {
   return (
     <SectionShell
       tone="muted"
+      size="compact"
       seam="top"
       ariaLabel="Questions, and getting started"
     >
-      <div className="grid items-stretch gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:gap-12">
+      {/*
+        One panel, one rule down the middle.
+
+        The blueprint draws a single bordered surface across the whole band
+        rather than two cards side by side, and that is what makes the
+        questions and the close read as one footer instead of two things that
+        happen to be adjacent. So the border lives here and nothing inside
+        draws another.
+
+        Nothing is stretched and nothing is centred: both halves hang from the
+        same top edge, so the FAQ heading, the CTA heading and the player all
+        start on one line.
+      */}
+      <div className="grid gap-8 rounded-[20px] border border-border bg-card p-6 lg:grid-cols-[minmax(0,0.34fr)_minmax(0,0.66fr)] lg:gap-10 lg:p-8">
         <div>
-          <p className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.14em] text-brand uppercase">
-            <span aria-hidden className="h-px w-6 bg-brand/40" />
-            Before you install
-          </p>
-          <h2 className="mt-4 text-[1.9rem] leading-[1.08] font-semibold tracking-[-0.025em] text-balance lg:text-[2.4rem]">
-            The questions merchants actually ask
+          <h2 className="text-[1.4rem] leading-[1.15] font-semibold tracking-[-0.03em] text-balance text-ink sm:text-[1.5rem]">
+            Frequently asked questions
           </h2>
 
           {faqs.length > 0 ? (
-            <BlurFade inView className="mt-8">
-              <Accordion type="single" collapsible defaultValue={faqs[0]?.id}>
+            <BlurFade inView className="mt-4">
+              <Accordion type="single" collapsible className="space-y-2">
                 {faqs.map((faq) => (
-                  <AccordionItem key={faq.id} value={faq.id}>
-                    <AccordionTrigger className="py-5 text-base">
+                  <AccordionItem
+                    key={faq.id}
+                    value={faq.id}
+                    /* `last:border-b` restores the bottom edge the primitive
+                       drops for a ruled list, which these are not. */
+                    className="rounded-2xl border border-border bg-card px-4 transition-colors duration-200 last:border-b hover:border-ink/12"
+                  >
+                    <AccordionTrigger
+                      indicator={<PlusMinus />}
+                      className="group gap-3 py-2.5 text-[14px] leading-snug font-medium text-ink hover:text-ink"
+                    >
                       {faq.question}
                     </AccordionTrigger>
-                    <AccordionContent className="pb-5">
-                      <p className="max-w-xl text-sm leading-relaxed text-muted-foreground">
+                    <AccordionContent className="pb-3.5">
+                      <p className="text-[13px] leading-relaxed text-muted-foreground">
                         {faq.answer}
                       </p>
                     </AccordionContent>
@@ -64,41 +112,14 @@ export function Faq() {
               </Accordion>
             </BlurFade>
           ) : null}
-
-          <div className="mt-8 flex items-start gap-3 rounded-2xl border border-border bg-card p-5">
-            <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-brand-soft">
-              <MessageCircleQuestion
-                aria-hidden
-                className="size-4 text-brand"
-              />
-            </span>
-            <div>
-              <p className="text-sm leading-relaxed text-muted-foreground">
-                Still unsure about something?
-              </p>
-              <Link
-                href={routes.help}
-                className="group mt-1 inline-flex items-center gap-1.5 rounded-md text-sm font-medium text-brand transition-colors outline-none hover:text-brand-deep focus-visible:ring-2 focus-visible:ring-ring/60"
-              >
-                Visit the Help Center
-                <ArrowRight
-                  aria-hidden
-                  className="size-3.5 transition-transform duration-300 group-hover:translate-x-0.5"
-                />
-              </Link>
-            </div>
-          </div>
         </div>
 
-        {/*
-          The close sits in the second column and stays there while the
-          questions scroll past it, so the action is in view at the moment a
-          merchant runs out of objections rather than below the fold.
-        */}
-        <BlurFade delay={0.08} inView className="h-full">
-          <div className="lg:sticky lg:top-[calc(var(--spacing-header)+2rem)]">
-            <FinalCta />
-          </div>
+        <BlurFade
+          delay={0.08}
+          inView
+          className="lg:border-l lg:border-border lg:pl-8"
+        >
+          <FinalCta />
         </BlurFade>
       </div>
     </SectionShell>

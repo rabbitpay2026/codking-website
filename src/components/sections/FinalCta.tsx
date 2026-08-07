@@ -1,37 +1,25 @@
-import { Check } from "lucide-react";
-
-import { ShopifyLockup } from "@/components/brand/ShopifyMarks";
+import { ShopifyMark } from "@/components/brand/ShopifyMarks";
 import { ActionLink } from "@/components/layout/ActionLink";
-import { BorderBeam } from "@/components/ui/border-beam";
-import { DotPattern } from "@/components/ui/dot-pattern";
-import { cn } from "@/lib/utils";
+import { CtaVideo } from "@/components/sections/cta/CtaVideo";
 import { getProofMetrics, getUtilityActions } from "@/lib/content";
 
 const numberFormat = new Intl.NumberFormat("en");
 
-const REASSURANCES = [
-  "7-day free trial",
-  "No credit card required",
-  "Cancel anytime",
-];
-
 /**
- * The close, as a card rather than a band.
+ * The close — words on the left, player on the right, both starting at the top.
  *
- * The blueprint sets it beside the questions instead of below them, and that
- * is the better arrangement: a merchant reading the FAQ is resolving the last
- * objection, and the action they need next should be in view when they finish
- * rather than one scroll further on. So this renders a surface with no section
- * shell of its own — `Faq` owns the band both halves sit on.
+ * It renders no surface of its own. The blueprint draws one bordered panel
+ * across the whole band with a rule down the middle, so `Faq` owns that panel
+ * and this is the right-hand half of its contents. A card in here would be a
+ * second border inside the first, which is what made the previous version read
+ * as a large box floating in a larger one.
  *
- * Nothing new is introduced. By this point the merchant has seen the loss, the
- * system, the proof and the price, and the only job left is to make the action
- * easy.
+ * Nothing is vertically centred. The heading, the line under it, the buttons
+ * and the player all hang from the same top edge, which is the only reason the
+ * three columns of the band line up on one baseline.
  *
- * It is the one card on the page carrying a beam. That is deliberate and it is
- * the only place it appears: a moving edge is the strongest attention signal
- * the design system has, so spending it anywhere else would cost it the weight
- * it needs here.
+ * The merchant count comes from the proof repository (§11.1), never a literal,
+ * so the number closing the page is the number that opened it.
  */
 export async function FinalCta() {
   const proof = await getProofMetrics();
@@ -40,73 +28,60 @@ export async function FinalCta() {
   const demoAction = actions.find((action) => action.variant === "secondary");
 
   return (
-    <div className="relative isolate flex h-full flex-col overflow-hidden rounded-[1.75rem] border border-brand/15 bg-gradient-to-b from-white via-sky-100 to-sky-200 p-8 text-center shadow-card lg:p-10">
-      <div
-        aria-hidden
-        className="absolute inset-0 -z-10"
-        style={{
-          backgroundImage:
-            "radial-gradient(60% 55% at 50% 0%, color-mix(in oklab, var(--brand) 14%, transparent), transparent 72%)",
-        }}
-      />
-      <DotPattern
-        width={26}
-        height={26}
-        cr={1}
-        className={cn(
-          "absolute inset-0 -z-10 h-full fill-brand/20",
-          "[mask-image:radial-gradient(60%_55%_at_50%_40%,white,transparent)]",
-        )}
-      />
-      {/* The violet accent, as a single cool body behind the heading. */}
-      <div
-        aria-hidden
-        className="absolute -top-24 left-1/2 -z-10 size-96 -translate-x-1/2 rounded-full bg-brand-violet/10 blur-[110px]"
-      />
-      <BorderBeam
-        size={180}
-        duration={11}
-        colorFrom="var(--brand)"
-        colorTo="var(--brand-accent)"
-      />
-
-      <ShopifyLockup title="Shopify" className="mx-auto h-8 text-ink/80" />
-
-      <h2 className="mx-auto mt-6 max-w-md text-[1.75rem] leading-[1.08] font-semibold tracking-[-0.03em] text-balance sm:text-[2.15rem]">
-        Your next cash order can be a verified one
+    /*
+      One column, one rhythm. `gap-5` sets the distance between every pair in
+      the stack — heading to line, line to buttons, buttons to player — so the
+      four elements read as one descending block rather than as a paragraph
+      with things appended to it. Nothing carries its own top margin, which is
+      what keeps that spacing from drifting when any one of them changes.
+    */
+    <div className="flex flex-col items-start gap-5">
+      <h2 className="text-[1.4rem] leading-[1.15] font-semibold tracking-[-0.03em] text-balance text-ink sm:text-[1.55rem]">
+        Ready to stop losing money on fake COD orders?
       </h2>
 
-      <p className="mx-auto mt-4 max-w-sm leading-relaxed text-pretty text-muted-foreground">
-        Join {numberFormat.format(proof.merchantCount)}+ Shopify stores that
-        stopped treating cash on delivery as a cost of doing business.
+      <p className="text-[13.5px] leading-relaxed text-muted-foreground">
+        Join {numberFormat.format(proof.merchantCount)}+ Shopify merchants who
+        trust COD King.
       </p>
 
-      <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+      {/*
+        Wraps rather than overflows. Both labels are `whitespace-nowrap` by
+        contract, so a row that cannot fit them does not shrink them — it
+        pushes the second one outside the column.
+      */}
+      <div className="flex w-full flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
         {installAction ? (
+          /*
+              The hero's install button, to the pixel. Ink rather than brand,
+              with Shopify's mark as the only colour on it — the most useful
+              thing this button can say is which platform it runs on, and the
+              mark says it faster than the label does.
+            */
           <ActionLink
-            action={{ ...installAction, label: "Install free on Shopify" }}
-            size="lg"
-            className="shadow-[0_14px_36px_-12px_var(--brand)]"
+            action={{ ...installAction, label: "Install Free on Shopify" }}
+            size="md"
+            icon={<ShopifyMark className="size-[19px]" />}
+            className="gap-2.5 bg-ink px-4 text-[14px] font-semibold text-white shadow-[0_1px_2px_rgba(11,27,54,0.24),0_10px_28px_-12px_rgba(11,27,54,0.7)] hover:bg-ink/90"
           />
         ) : null}
 
         {demoAction ? (
           <ActionLink
             action={demoAction}
-            size="lg"
-            className="border-white/80 bg-white/70 backdrop-blur-md"
+            size="md"
+            className="border-ink/10 px-4 text-[14px] font-semibold text-ink/80 hover:border-ink/16 hover:bg-accent hover:text-ink"
           />
         ) : null}
       </div>
 
-      <ul className="mt-auto flex flex-wrap items-center justify-center gap-x-5 gap-y-2 pt-8 text-[13px] text-muted-foreground">
-        {REASSURANCES.map((item) => (
-          <li key={item} className="inline-flex items-center gap-1.5">
-            <Check aria-hidden className="size-4 text-brand-check" />
-            {item}
-          </li>
-        ))}
-      </ul>
+      {/*
+        Full width, at the foot of the stack. Beside the words it was a small
+        rectangle competing with them for the same line; underneath it is the
+        last thing the block says, and at the column's full measure it is
+        finally large enough to be worth pressing play on.
+      */}
+      <CtaVideo className="w-full" />
     </div>
   );
 }

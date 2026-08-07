@@ -5,7 +5,7 @@ import { Accordion as AccordionPrimitive } from "radix-ui";
 
 import { cn } from "@/lib/utils";
 
-import type { ComponentProps } from "react";
+import type { ComponentProps, ReactNode } from "react";
 
 /**
  * Disclosure primitive, wrapping Radix Accordion.
@@ -44,8 +44,20 @@ export function AccordionItem({
 export function AccordionTrigger({
   className,
   children,
+  indicator,
   ...props
-}: ComponentProps<typeof AccordionPrimitive.Trigger>) {
+}: ComponentProps<typeof AccordionPrimitive.Trigger> & {
+  /**
+   * Replaces the chevron.
+   *
+   * Optional so every existing disclosure keeps the chevron it has, and so a
+   * caller that wants a different affordance — the homepage FAQ draws a plus
+   * that unfolds into a minus — does not need a second accordion. The
+   * open-state rotation below is scoped to `svg`, which the chevron is and a
+   * custom indicator generally is not, so the two cannot collide.
+   */
+  readonly indicator?: ReactNode;
+}) {
   return (
     <AccordionPrimitive.Header className="flex">
       <AccordionPrimitive.Trigger
@@ -61,10 +73,12 @@ export function AccordionTrigger({
         {...props}
       >
         {children}
-        <ChevronDown
-          aria-hidden
-          className="size-4 shrink-0 text-muted-foreground transition-transform duration-200 ease-[var(--ease-emphasized)]"
-        />
+        {indicator ?? (
+          <ChevronDown
+            aria-hidden
+            className="size-4 shrink-0 text-muted-foreground transition-transform duration-200 ease-[var(--ease-emphasized)]"
+          />
+        )}
       </AccordionPrimitive.Trigger>
     </AccordionPrimitive.Header>
   );
