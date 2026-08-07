@@ -2,8 +2,6 @@ import "./globals.css";
 
 import { Geist_Mono, Poppins } from "next/font/google";
 
-import { Footer } from "@/components/layout/Footer";
-import { Navbar } from "@/components/layout/Navbar";
 import { siteConfig } from "@/constants/site";
 
 import type { Metadata, Viewport } from "next";
@@ -43,20 +41,24 @@ export const viewport: Viewport = {
 /**
  * Root layout: the only place that owns the document shell.
  *
- * Every route renders Navbar -> page content -> Footer. `flex-1` on `<main>`
- * keeps the footer at the bottom of short pages.
+ * Its responsibility stops at the document — language, fonts, and the flex
+ * column that lets a shell pin its footer to the bottom of short pages. The
+ * marketing chrome belongs to the `(site)` layout, so a route that should not
+ * carry it can opt out by living outside that group.
+ *
+ * `data-scroll-behavior="smooth"` is required because `globals.css` sets
+ * `scroll-behavior: smooth` on `<html>`: from Next.js 16, the router no longer
+ * neutralises that during navigation unless this attribute is present, which
+ * would otherwise make every route change animate its scroll to the top.
  */
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang={siteConfig.lang}
+      data-scroll-behavior="smooth"
       className={`${poppins.variable} ${geistMono.variable} h-full`}
     >
-      <body className="flex min-h-full flex-col">
-        <Navbar />
-        <main className="flex-1">{children}</main>
-        <Footer />
-      </body>
+      <body className="flex min-h-full flex-col">{children}</body>
     </html>
   );
 }

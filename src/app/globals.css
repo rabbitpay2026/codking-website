@@ -5,62 +5,94 @@
 
 /* ---------------------------------------------------------------------------
    Design tokens — light theme.
-   Values are intentionally neutral. Product branding is applied in a later
-   phase by overriding these custom properties only.
+
+   The site runs on a very light blue design language: white and three tints
+   of blue (#f8fbff, #f4f8ff, #eef6ff) carry every surface, and a single
+   saturated blue carries every action. The violet the brand was previously
+   built on is kept as `--brand-violet` and used the way an accent should be
+   used — sparingly, on a highlight or an interactive state — never as a
+   background field.
+
+   Everything else is tuned around those two, so applying the brand remains
+   what the foundation intended: overriding these custom properties and
+   nothing else.
 --------------------------------------------------------------------------- */
 :root {
   --radius: 0.75rem;
 
   --background: hsl(0 0% 100%);
-  --foreground: hsl(222 47% 11%);
+  --foreground: hsl(217 40% 13%);
   --card: hsl(0 0% 100%);
-  --card-foreground: hsl(222 47% 11%);
+  --card-foreground: hsl(217 40% 13%);
   --popover: hsl(0 0% 100%);
-  --popover-foreground: hsl(222 47% 11%);
-  --primary: hsl(218 92% 53%);
+  --popover-foreground: hsl(217 40% 13%);
+  --primary: hsl(221 83% 53%);
   --primary-foreground: hsl(0 0% 100%);
-  --secondary: hsl(220 14% 96%);
-  --secondary-foreground: hsl(222 47% 11%);
-  --muted: hsl(220 14% 96%);
-  --muted-foreground: hsl(215 16% 47%);
-  --accent: hsl(217 95% 63%);
-  --accent-foreground: hsl(0 0% 100%);
+  --secondary: hsl(214 60% 97%);
+  --secondary-foreground: hsl(217 40% 13%);
+  --muted: hsl(214 45% 96%);
+  --muted-foreground: hsl(215 16% 45%);
+  /* Hover/active surface, not a brand colour — shadcn semantics. */
+  --accent: hsl(216 100% 98%);
+  --accent-foreground: hsl(221 65% 32%);
   --destructive: hsl(0 84% 60%);
   --destructive-foreground: hsl(0 0% 98%);
-  --border: hsl(220 13% 91%);
-  --input: hsl(220 13% 91%);
-  --ring: hsl(218 92% 53%);
+  --border: hsl(214 32% 91%);
+  --input: hsl(214 32% 91%);
+  --ring: hsl(221 83% 53%);
 
-  --brand: #196bf5;
-  --brand-deep: #0d4cb3;
-  --brand-accent: #4a8cfa;
-  --brand-soft: #e8f1fe;
-  --ink: #0f172a;
-  --cloud: #fafaff;
+  --brand: #2563eb;
+  --brand-deep: #1d4ed8;
+  --brand-accent: #60a5fa;
+  --brand-soft: #eef6ff;
+  /* Page tints, named for what they are so a section can pick its own step. */
+  --sky-50: #f8fbff;
+  --sky-100: #f4f8ff;
+  --sky-200: #eef6ff;
+  /*
+   * The accent, and only ever an accent. Highlights, hover states, the second
+   * stop of a gradient. Never a section background.
+   */
+  --brand-violet: #6d4aff;
+  /*
+   * The logo's green. Accents, icons and fills only: at 1.8:1 against white
+   * it must never be used for text on a light surface.
+   */
+  --brand-check: #22c55e;
+  --ink: #0b1b36;
+  --cloud: #f8fbff;
 }
 
 /* Dark theme is opt-in via a `.dark` class on <html>, so a theme provider can
    be added later without touching component code. */
 .dark {
-  --background: hsl(224 71% 4%);
-  --foreground: hsl(210 40% 98%);
-  --card: hsl(222 47% 6%);
-  --card-foreground: hsl(210 40% 98%);
-  --popover: hsl(224 71% 4%);
-  --popover-foreground: hsl(210 40% 98%);
-  --primary: hsl(218 92% 60%);
+  --background: hsl(222 47% 5%);
+  --foreground: hsl(214 30% 97%);
+  --card: hsl(222 44% 8%);
+  --card-foreground: hsl(214 30% 97%);
+  --popover: hsl(222 44% 8%);
+  --popover-foreground: hsl(214 30% 97%);
+  /* Lifted a step so white on it still clears AA on the darker surface. */
+  --primary: hsl(217 91% 60%);
   --primary-foreground: hsl(0 0% 100%);
-  --secondary: hsl(217 33% 12%);
-  --secondary-foreground: hsl(210 40% 98%);
-  --muted: hsl(217 33% 12%);
-  --muted-foreground: hsl(215 20% 65%);
-  --accent: hsl(217 95% 68%);
-  --accent-foreground: hsl(0 0% 100%);
+  --secondary: hsl(220 35% 13%);
+  --secondary-foreground: hsl(214 30% 97%);
+  --muted: hsl(220 35% 13%);
+  --muted-foreground: hsl(215 18% 65%);
+  --accent: hsl(220 45% 16%);
+  --accent-foreground: hsl(214 30% 97%);
   --destructive: hsl(0 63% 31%);
   --destructive-foreground: hsl(210 40% 98%);
-  --border: hsl(217 33% 14%);
-  --input: hsl(217 33% 14%);
-  --ring: hsl(218 92% 60%);
+  --border: hsl(220 30% 16%);
+  --input: hsl(220 30% 16%);
+  --ring: hsl(217 91% 68%);
+
+  --brand-soft: hsl(220 45% 14%);
+  --sky-50: hsl(222 44% 7%);
+  --sky-100: hsl(222 42% 9%);
+  --sky-200: hsl(220 44% 12%);
+  --ink: hsl(214 30% 97%);
+  --cloud: hsl(222 47% 7%);
 }
 
 /* ---------------------------------------------------------------------------
@@ -75,6 +107,11 @@
   --color-brand-deep: var(--brand-deep);
   --color-brand-accent: var(--brand-accent);
   --color-brand-soft: var(--brand-soft);
+  --color-brand-check: var(--brand-check);
+  --color-brand-violet: var(--brand-violet);
+  --color-sky-50: var(--sky-50);
+  --color-sky-100: var(--sky-100);
+  --color-sky-200: var(--sky-200);
   --color-ink: var(--ink);
   --color-cloud: var(--cloud);
 
@@ -102,17 +139,113 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+  --animate-marquee: marquee var(--duration) infinite linear;
+  --animate-marquee-vertical: marquee-vertical var(--duration) linear infinite;
+  --animate-shiny-text: shiny-text 8s infinite;
+  --animate-orbit: orbit calc(var(--duration) * 1s) linear infinite;
+  @keyframes marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(calc(-100% - var(--gap)));
+    }
+  }
+  @keyframes marquee-vertical {
+    from {
+      transform: translateY(0);
+    }
+    to {
+      transform: translateY(calc(-100% - var(--gap)));
+    }
+  }
+  @keyframes shiny-text {
+    0%,
+    90%,
+    100% {
+      background-position: calc(-100% - var(--shiny-width)) 0;
+    }
+    30%,
+    60% {
+      background-position: calc(100% + var(--shiny-width)) 0;
+    }
+  }
+  @keyframes orbit {
+    0% {
+      transform: rotate(calc(var(--angle) * 1deg))
+        translateY(calc(var(--radius) * 1px)) rotate(calc(var(--angle) * -1deg));
+    }
+    100% {
+      transform: rotate(calc(var(--angle) * 1deg + 360deg))
+        translateY(calc(var(--radius) * 1px))
+        rotate(calc((var(--angle) * -1deg) - 360deg));
+    }
+  }
+  --animate-meteor: meteor 5s linear infinite;
+  --animate-ripple: ripple var(--duration, 2s) ease calc(var(--i, 0) * 0.2s)
+    infinite;
+  @keyframes meteor {
+    0% {
+      transform: rotate(var(--angle)) translateX(0);
+      opacity: 1;
+    }
+    70% {
+      opacity: 1;
+    }
+    100% {
+      transform: rotate(var(--angle)) translateX(-500px);
+      opacity: 0;
+    }
+  }
+  @keyframes ripple {
+    0%,
+    100% {
+      transform: translate(-50%, -50%) scale(1);
+    }
+    50% {
+      transform: translate(-50%, -50%) scale(0.9);
+    }
+  }
 }
 
 @theme {
-  /* Page shells — consumed by the <Container> component.
-     72rem matches the `max-w-6xl` used by every RabbitPay section. */
+  /* Page shells — consumed by the <Container> component, which is the only
+     place these are applied. Retuned in the design-system phase. */
   --container-page: 72rem;
   --container-prose: 45rem;
 
-  /* Vertical rhythm for page sections. */
-  --spacing-section: 6rem;
-  --spacing-section-sm: 4rem;
+  /*
+   * Vertical rhythm.
+   *
+   * These are per-side values, so the seam a reader perceives between two
+   * sections is roughly double them — which is exactly the trap. Padding that
+   * looks correct in isolation compounds at every join, and thirteen sections
+   * each politely leaving room turn into a page of corridors.
+   *
+   * So the scale is set against the *combined* seam, and it is deliberately
+   * tighter than a section-in-isolation would want. The page buys its air back
+   * elsewhere: by letting elements cross the join, by fading one surface into
+   * the next, and by pulling the following section up under something that
+   * overhangs. Connection, not distance, is what separates the sections here.
+   *
+   * `SectionShell` is the only place they are applied, so the rhythm cannot
+   * drift section by section.
+   */
+  --spacing-section-sm: 2.25rem;
+  --spacing-section: 3rem;
+  --spacing-section-lg: 4rem;
+
+  /*
+   * The distance between a section's heading and the composition under it.
+   * One value, so every section opens at the same tempo.
+   */
+  --spacing-lede: 2.75rem;
+
+  /* Shell metrics. Owned here so the header, the scroll-margin that keeps
+     anchored headings clear of it, and the spacer that stops the mobile
+     action bar covering content can never disagree. */
+  --spacing-header: 4rem;
+  --spacing-action-bar: 3.75rem;
 
   /* Display sizes that sit above Tailwind's default text scale. */
   --text-display: 3.5rem;
@@ -127,6 +260,230 @@
   --shadow-overlay: 0 8px 32px -8px oklch(0 0 0 / 0.16);
 
   --ease-emphasized: cubic-bezier(0.2, 0, 0, 1);
+
+  /* Disclosure motion. Radix publishes the measured height as a custom
+     property, so the accordion can animate to `auto` without JavaScript. */
+  --animate-accordion-down: accordion-down 220ms var(--ease-emphasized);
+  --animate-accordion-up: accordion-up 180ms var(--ease-emphasized);
+
+  /*
+   * Ambient motion.
+   *
+   * Long, slow and looping. Background movement should be something a visitor
+   * notices only if they stop and look for it — anything faster reads as a
+   * page that will not sit still, which is the opposite of confident.
+   */
+  --animate-aurora: aurora-drift 26s ease-in-out infinite;
+  --animate-float: float-y 7s ease-in-out infinite;
+  /* Draws attention to one element without moving it. */
+  --animate-halo: halo 3.2s ease-in-out infinite;
+  /* Travels a connector line from a callout toward what it points at. */
+  --animate-trace: trace 2.6s linear infinite;
+  /*
+   * A rule of light crossing a surface once per cycle. Used on the flagship
+   * demos to say "this is evaluating", which is a thing the product does and
+   * therefore worth animating; it is never used as decoration.
+   */
+  --animate-scan: scan 3.4s var(--ease-emphasized) infinite;
+  /* A caret that blinks in a field the demo is currently filling. */
+  --animate-caret: caret 1.1s steps(1) infinite;
+
+  @keyframes scan {
+    0% {
+      transform: translateY(-8%);
+      opacity: 0;
+    }
+    12%,
+    72% {
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(760%);
+      opacity: 0;
+    }
+  }
+
+  @keyframes caret {
+    0%,
+    49% {
+      opacity: 1;
+    }
+    50%,
+    100% {
+      opacity: 0;
+    }
+  }
+
+  @keyframes halo {
+    0%,
+    100% {
+      opacity: 0.35;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.85;
+      transform: scale(1.015);
+    }
+  }
+
+  @keyframes trace {
+    to {
+      stroke-dashoffset: -16;
+    }
+  }
+
+  @keyframes aurora-drift {
+    0%,
+    100% {
+      transform: translate3d(0, 0, 0) scale(1);
+    }
+    33% {
+      transform: translate3d(4%, -6%, 0) scale(1.09);
+    }
+    66% {
+      transform: translate3d(-5%, 4%, 0) scale(0.95);
+    }
+  }
+
+  @keyframes float-y {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-9px);
+    }
+  }
+
+  @keyframes accordion-down {
+    from {
+      height: 0;
+      opacity: 0;
+    }
+    to {
+      height: var(--radix-accordion-content-height);
+      opacity: 1;
+    }
+  }
+
+  @keyframes accordion-up {
+    from {
+      height: var(--radix-accordion-content-height);
+      opacity: 1;
+    }
+    to {
+      height: 0;
+      opacity: 0;
+    }
+  }
+}
+
+/*
+ * Film grain.
+ *
+ * A single tiling SVG turbulence, applied at very low opacity over gradient
+ * surfaces. Large flat gradients band visibly on 8-bit displays; a little
+ * noise breaks the banding up and is most of why an expensive-looking
+ * background looks expensive. It costs no network request.
+ */
+@utility bg-noise {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/*
+ * The standard raised surface.
+ *
+ * Defined once so every card on the site lifts by the same amount, on the
+ * same curve, and warms its border by the same degree. Inconsistent hover
+ * behaviour between sections is one of the clearest tells that a page was
+ * assembled by more than one hand.
+ */
+/*
+ * Scroll-linked entrance that fails visible.
+ *
+ * The registry's reveal component sets `opacity: 0` inline and relies on
+ * JavaScript to undo it, which means a failed chunk, a blocked script, a slow
+ * hydration, a print, or any tool that does not scroll leaves the page blank
+ * below the fold. Content that is invisible by default is a correctness
+ * problem wearing a design costume.
+ *
+ * This does the same job in CSS. The animation only exists inside the
+ * `@supports` block, so a browser without scroll-driven animations never
+ * applies it and simply renders the finished state — visible. Reduced motion
+ * takes the same path.
+ */
+@utility reveal {
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: view()) {
+      animation: reveal-in linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 22%;
+    }
+  }
+}
+
+@keyframes reveal-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/*
+ * A screen drawn at a fixed design size, scaled to whatever glass it lands in.
+ *
+ * The device mockups are laid out in real pixels — an 11px price, a 9px
+ * caption — because that is the only way to control an interface that dense.
+ * But the device itself is a percentage of its column, so the same markup is
+ * asked to fit a screen two-thirds the width it was drawn for on a phone, and
+ * the bottom of the checkout falls off.
+ *
+ * `100cqw` is the glass's own width, so dividing it by the design width gives
+ * the exact scale factor with no resize listener and no JavaScript. Dividing a
+ * length by a length is CSS Values 4 and recent, hence the `@supports` gate:
+ * a browser without it simply gets the screen at glass size, which is what
+ * this did before and is correct at desktop widths.
+ *
+ * `--screen-w` and `--screen-h` are set by the device component.
+ */
+@utility screen-fit {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transform-origin: top left;
+
+  @supports (width: calc(100cqw / 320px * 1px)) {
+    width: var(--screen-w);
+    height: var(--screen-h);
+    transform: scale(calc(100cqw / var(--screen-w)));
+  }
+}
+
+@utility surface-card {
+  @apply rounded-2xl border border-border bg-card shadow-card;
+  @apply transition-[transform,box-shadow,border-color] duration-300;
+  transition-timing-function: var(--ease-emphasized);
+
+  &:hover {
+    @apply -translate-y-1 border-brand/25 shadow-overlay;
+  }
+}
+
+/** The same surface, as glass — for cards sitting over a colour field. */
+@utility surface-glass {
+  @apply rounded-2xl border border-white/60 bg-card/70 shadow-card backdrop-blur-xl;
+  @apply transition-[transform,box-shadow,border-color] duration-300;
+  transition-timing-function: var(--ease-emphasized);
+
+  &:hover {
+    @apply -translate-y-1 border-brand/30 shadow-overlay;
+  }
 }
 
 @layer base {
@@ -136,6 +493,18 @@
 
   html {
     @apply scroll-smooth antialiased;
+    /* Keep anchored content clear of the sticky header. */
+    scroll-padding-top: calc(var(--spacing-header) + 1rem);
+  }
+
+  /*
+   * Set before first paint by the inline script in the site layout, which
+   * reads the dismissal from localStorage. Hiding the bar in CSS rather than
+   * after hydration means a merchant who has already dismissed it never sees
+   * it flash in and collapse.
+   */
+  [data-announcement="dismissed"] [data-slot="announcement-bar"] {
+    display: none;
   }
 
   body {
@@ -154,5 +523,21 @@
 
   p {
     @apply text-pretty;
+  }
+
+  /*
+   * Honoured globally rather than per component, so a new animation cannot
+   * ship without a reduced-motion path. Content is never hidden by this —
+   * only its movement is removed.
+   */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 }
