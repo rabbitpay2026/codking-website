@@ -10,46 +10,15 @@ import { Button } from "@/components/ui/button";
 import { routes } from "@/constants/routes";
 import { cn } from "@/lib/utils";
 import { getPricingPlans, getUtilityActions } from "@/lib/content";
-
-import type { PlanPrice } from "@/types";
-
-/**
- * Formats a plan price for display.
- *
- * Held here rather than in the data, so the amount stays a number that can be
- * compared and re-formatted per locale instead of a string that has to be
- * parsed back apart.
- */
-function formatPrice(price: PlanPrice | null): {
-  amount: string;
-  period: string | null;
-} {
-  if (!price) return { amount: "—", period: null };
-
-  switch (price.kind) {
-    case "free":
-      return { amount: "Free", period: null };
-    case "custom":
-      return { amount: "Custom", period: null };
-    case "fixed":
-      return {
-        amount: new Intl.NumberFormat("en", {
-          style: "currency",
-          currency: price.currency,
-          minimumFractionDigits: price.amount % 1 === 0 ? 0 : 2,
-        }).format(price.amount),
-        period: `per ${price.period}`,
-      };
-  }
-}
+import { formatPlanPrice } from "@/utils/price";
 
 /**
  * Pricing preview (§5.1 #9).
  *
  * Cost appears before the merchant is asked to install, so it is never a
- * surprise later. The per-message note is on every plan because for a COD
- * store the message bill is the real running cost, and a plan price quoted
- * without it would be misleading.
+ * surprise later. Plans, prices and highlights are read from the pricing
+ * repository — the same declaration the pricing page renders — so the teaser
+ * can never quote a price the page it links to contradicts.
  *
  * The recommended plan is raised, beamed and given a solid surface; the other
  * two stay quiet. One emphasised card in three is a recommendation — three
@@ -88,7 +57,7 @@ export function PricingPreview() {
       */}
       <div className="mt-lede grid items-stretch gap-5 lg:grid-cols-3">
         {plans.map((plan, index) => {
-          const { amount, period } = formatPrice(plan.price);
+          const { amount, period } = formatPlanPrice(plan.price);
 
           return (
             // The lift belongs on the grid item, not on the card inside it.
@@ -146,17 +115,20 @@ export function PricingPreview() {
                 </p>
 
                 <p className="relative mt-2.5 text-sm text-muted-foreground">
-                  {plan.messageRate}
+                  {plan.tagline}
                 </p>
 
                 <ul className="relative mt-7 flex-1 space-y-3 border-t border-border pt-7">
                   {plan.highlights.map((highlight) => (
-                    <li key={highlight} className="flex items-start gap-3">
+                    <li
+                      key={highlight.label}
+                      className="flex items-start gap-3"
+                    >
                       <span className="mt-0.5 grid size-4 shrink-0 place-items-center rounded-full bg-brand-check/20">
                         <Check aria-hidden className="size-2.5 text-ink/70" />
                       </span>
                       <span className="text-sm leading-relaxed text-foreground/85">
-                        {highlight}
+                        {highlight.label}
                       </span>
                     </li>
                   ))}
