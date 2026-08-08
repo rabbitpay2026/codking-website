@@ -32,12 +32,56 @@ export const faqs: readonly FaqItem[] = [
       "When a customer places a COD order, COD King sends them a one-time password over SMS or WhatsApp. The order is only confirmed once they enter the correct code, which blocks bots, random entries, and fake buyers instantly.",
     tags: ["home", "control:otp-verification"],
   },
+  /*
+    The Partial COD Payment set (§6.3), in the order the feature page reads
+    them: what it is, how it runs, and then the three questions a merchant asks
+    once they have decided they want it.
+
+    Answers are assembled from what the product already states elsewhere in
+    this repository — the control's own `outcome` and `benefits` in
+    `src/data/controls.ts`, and the answer immediately below — rather than
+    written fresh, so the feature page cannot describe the control differently
+    from the mega-menu or the Features index. Nothing here claims a capability
+    the control record does not list.
+
+    `partial-what` is declared before `partial-payment` because the pool is
+    read in array order and the feature page leads with the definition. It
+    carries no `home` tag, so the homepage's own set is unchanged by it.
+  */
+  {
+    id: "partial-what",
+    question: "What is partial payment?",
+    answer:
+      "Partial payment lets you collect a small token amount — a fixed sum or a percentage of the cart — from the customer at checkout, and collect the remaining balance on delivery. It filters out buyers who were never going to accept the parcel, which reduces fake orders and RTO while bringing some of your money in earlier.",
+    tags: ["control:partial-cod-payment"],
+  },
   {
     id: "partial-payment",
     question: "Can I collect a partial payment on COD orders?",
     answer:
       "Yes. You can collect any amount — a fixed sum or a percentage — as an advance payment at checkout. Customers pay it securely through Shopify's payment gateway, and the balance is collected on delivery.",
     tags: ["home", "calculator", "control:partial-cod-payment"],
+  },
+  {
+    id: "partial-percentage",
+    question: "Can I set the deposit as a percentage?",
+    answer:
+      "Yes. The deposit can be a fixed amount or a percentage of the cart value, and you can set it for your whole store or only for specific products, collections or tags.",
+    tags: ["control:partial-cod-payment"],
+  },
+  {
+    id: "partial-shipping",
+    question: "Can I collect only the shipping charges upfront?",
+    answer:
+      "Yes. Setting the deposit to your shipping cost means a refused parcel no longer leaves you paying freight out and freight back — the delivery is already covered before the order ships.",
+    tags: ["control:partial-cod-payment"],
+  },
+  {
+    id: "partial-gateways",
+    question: "Does it work with my payment gateway?",
+    answer:
+      "The deposit is taken through Shopify Payments or whichever gateway your store already uses, so there is nothing new to connect. The balance is still collected as cash on delivery exactly as it is today.",
+    tags: ["control:partial-cod-payment"],
   },
   {
     id: "checkout-impact",

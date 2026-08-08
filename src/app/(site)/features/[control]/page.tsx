@@ -19,9 +19,12 @@ import type { Metadata } from "next";
  * output for the same path — one that no request will ever reach, and one more
  * page to keep in step with a template it no longer uses.
  *
- * The five remaining feature pages join this list as they land.
+ * The remaining feature pages join this list as they land.
  */
-const DEDICATED_PAGES: readonly ControlSlug[] = ["otp-verification"];
+const DEDICATED_PAGES: readonly ControlSlug[] = [
+  "otp-verification",
+  "partial-cod-payment",
+];
 
 /**
  * The remaining control pages are generated from the controls repository
