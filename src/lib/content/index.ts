@@ -22,6 +22,7 @@ export * from "./integrations";
 export * from "./legal";
 export * from "./navigation";
 export * from "./otpVerification";
+export * from "./partialCodPayment";
 export * from "./pricing";
 export * from "./proof";
 export * from "./resources";
