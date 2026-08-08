@@ -4,6 +4,7 @@ import { ArrowRight, ChevronDown } from "lucide-react";
 import Link from "next/link";
 import { NavigationMenu } from "radix-ui";
 
+import { FeatureMark } from "@/components/features/FeatureMark";
 import { cn } from "@/lib/utils";
 
 import type { FeaturesMegaMenu, NavItem, PrimaryNavItem } from "@/types";
@@ -73,39 +74,54 @@ export function DesktopNav({ items, megaMenu, resources }: DesktopNavProps) {
                   />
                 </NavigationMenu.Trigger>
 
-                <NavigationMenu.Content className="absolute inset-x-0 top-full mt-2">
-                  <div className={panelClass}>
-                    <div className="grid grid-cols-4 gap-x-6 gap-y-8">
-                      {megaMenu.columns.map((column) => (
-                        <div key={column.title}>
-                          <p className="px-2.5 text-[0.6875rem] font-semibold tracking-[0.08em] text-muted-foreground uppercase">
-                            {column.title}
-                          </p>
+                {/*
+                  Sized and centred rather than stretched.
 
-                          <ul className="mt-2 space-y-0.5">
-                            {column.items.map((control) => (
-                              <li key={control.href}>
-                                <NavigationMenu.Link asChild>
-                                  <Link
-                                    href={control.href}
-                                    className={itemLinkClass}
-                                  >
-                                    <span className="block text-sm font-medium text-foreground transition-colors group-hover:text-brand">
-                                      {control.label}
-                                    </span>
-                                    {control.description ? (
-                                      <span className="mt-0.5 line-clamp-2 block text-xs leading-snug text-muted-foreground">
-                                        {control.description}
-                                      </span>
-                                    ) : null}
-                                  </Link>
-                                </NavigationMenu.Link>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
+                  `inset-x-0` cannot work here: Radix wraps the list in its own
+                  `position: relative` indicator track, and an inline style
+                  cannot be overridden from a class — so an edge-to-edge panel
+                  resolves against the width of the nav items instead of the
+                  page, which is what squeezed six features into 420px. Giving
+                  the panel its own measure and centring it on the trigger is
+                  independent of that box, and the `100vw` clamp keeps it on
+                  screen at every width the desktop nav appears at.
+                */}
+                <NavigationMenu.Content className="absolute top-full left-1/2 mt-2 w-[min(47rem,calc(100vw-2rem))] -translate-x-1/2">
+                  <div className={panelClass}>
+                    {/*
+                      Two across, three down. The Features page's own order,
+                      read as a menu: each row is one feature with its mark, so
+                      the set is scanned by icon and name rather than read as
+                      four headed lists of ten.
+                    */}
+                    <ul className="grid grid-cols-2 gap-1">
+                      {megaMenu.items.map((feature) => (
+                        <li key={feature.href}>
+                          <NavigationMenu.Link asChild>
+                            <Link
+                              href={feature.href}
+                              className={cn(itemLinkClass, "flex gap-3 p-2.5")}
+                            >
+                              <FeatureMark
+                                slug={feature.slug}
+                                className="size-9 rounded-lg"
+                              />
+
+                              <span className="min-w-0">
+                                <span className="block text-sm font-medium text-foreground transition-colors group-hover:text-brand">
+                                  {feature.label}
+                                </span>
+                                {feature.description ? (
+                                  <span className="mt-0.5 line-clamp-2 block text-xs leading-snug text-muted-foreground">
+                                    {feature.description}
+                                  </span>
+                                ) : null}
+                              </span>
+                            </Link>
+                          </NavigationMenu.Link>
+                        </li>
                       ))}
-                    </div>
+                    </ul>
 
                     <div className="mt-6 flex items-center justify-between gap-4 border-t border-border pt-4">
                       {megaMenu.footerLinks.map((link, index) => (

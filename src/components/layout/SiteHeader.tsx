@@ -78,7 +78,7 @@ export function SiteHeader({
 
           <MobileNav
             items={items}
-            controlGroups={megaMenu.columns}
+            features={megaMenu.items}
             resources={resources}
             utilityActions={utilityActions}
           />

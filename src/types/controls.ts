@@ -46,6 +46,39 @@ export const CONTROL_SLUGS = [
 
 export type ControlSlug = (typeof CONTROL_SLUGS)[number];
 
+/**
+ * How much of the Features page one control gets (§6.2).
+ *
+ * The page is a hierarchy rather than a list: one control leads it with a
+ * working demonstration, two carry what they do in full, and three close it
+ * as a row. Which control sits in which tier is an editorial decision, so it
+ * is declared with the selection rather than inferred in markup.
+ */
+export type FeatureEmphasis = "lead" | "highlight" | "supporting";
+
+/**
+ * One row of the Features index selection (§6.2).
+ *
+ * A slug, its tier, and — where this page's headline differs from the
+ * control's name — an override for it. Nothing else: the outcome line, the
+ * benefits and the route stay on the `Control` record, so the index can
+ * reorder or re-rank a feature without becoming a second place the product is
+ * described.
+ */
+export interface FeatureIndexEntry {
+  readonly slug: ControlSlug;
+  readonly emphasis: FeatureEmphasis;
+  /** Defaults to the control's own `name` when absent. */
+  readonly title?: string;
+}
+
+/** A resolved index entry: the control record, its tier, and its title. */
+export interface FeatureIndexItem {
+  readonly control: Control;
+  readonly title: string;
+  readonly emphasis: FeatureEmphasis;
+}
+
 export interface Control {
   readonly slug: ControlSlug;
   /** Display name, e.g. "OTP Verification". */

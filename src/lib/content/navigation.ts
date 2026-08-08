@@ -10,11 +10,16 @@ import {
   primaryNav,
   utilityActions,
 } from "@/data/navigation";
-import { getControlsByStage, getOrderStages } from "@/lib/content/controls";
+import {
+  getControlsByStage,
+  getFeatureIndex,
+  getOrderStages,
+} from "@/lib/content/controls";
 import { getResourceSections } from "@/lib/content/resources";
 
 import type {
   Control,
+  FeatureNavItem,
   FeaturesMegaMenu,
   NavGroup,
   NavItem,
@@ -61,9 +66,9 @@ export function getMobileActions(): readonly UtilityAction[] {
 /**
  * The controls grouped by order stage — one group per stage, in stage order.
  *
- * Shared by the mega-menu columns (§4.1), the mobile drawer's accordion
- * (§4.4) and the footer's Features column (§4.5). All three render the same
- * grouping because all three read this.
+ * The footer's Features column (§4.5), which is the site's full index and the
+ * one surface where the stage model is worth teaching. The header menus list
+ * the six the site leads with instead; see `getFeatureNavItems()`.
  */
 export function getControlNavGroups(): readonly NavGroup[] {
   return getOrderStages().map((stage) => ({
@@ -73,15 +78,34 @@ export function getControlNavGroups(): readonly NavGroup[] {
 }
 
 /**
- * Four columns by order stage, plus the closing row (§4.1).
+ * The six features the header offers, in the order the Features page ranks
+ * them (§4.1).
  *
- * Shares `getControlNavGroups()` with the mobile drawer and the footer, so the
- * control set is built once and — because this is what the header hands
- * across the server-client boundary — sent once.
+ * Read from the same selection the Features page renders, so the menu is a
+ * table of contents for the page it opens onto rather than a second, longer
+ * list a merchant has to reconcile with it. The label is the page's own
+ * headline for the feature and the description is the control's outcome line —
+ * neither is authored here.
+ */
+export function getFeatureNavItems(): readonly FeatureNavItem[] {
+  return getFeatureIndex().map(({ control, title }) => ({
+    slug: control.slug,
+    label: title,
+    href: routeFor.control(control.slug),
+    description: control.outcome,
+  }));
+}
+
+/**
+ * The Features menu: the six, plus the closing row (§4.1).
+ *
+ * Built once here and handed to both the desktop menu and the mobile drawer,
+ * so the two cannot list different features and the set crosses the
+ * server-client boundary a single time.
  */
 export function getFeaturesMegaMenu(): FeaturesMegaMenu {
   return {
-    columns: getControlNavGroups(),
+    items: getFeatureNavItems(),
     footerLinks: megaMenuFooterLinks,
   };
 }

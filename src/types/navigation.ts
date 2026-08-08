@@ -1,3 +1,5 @@
+import type { ControlSlug } from "@/types/controls";
+
 import type { Route } from "next";
 
 /**
@@ -33,16 +35,29 @@ export interface PrimaryNavItem extends NavItem {
 }
 
 /**
- * The Features mega-menu: one column per order stage, plus a footer row (§4.1).
+ * One feature in the Features menu.
  *
- * Assembled from the controls repository, so it can never drift from the
- * feature pages or the footer. Columns are plain `NavGroup`s rather than
- * carrying the whole `OrderStage`: the menu renders only the stage's label,
- * and this object crosses the server-client boundary on every page, so the
- * stage's problem statement would be payload nobody reads.
+ * Carries its slug as well as its URL so the menu can draw the same mark the
+ * Features page draws for it. Deriving the mark from the href would mean
+ * parsing a path back into an identifier the record already has.
+ */
+export interface FeatureNavItem extends NavItem {
+  readonly slug: ControlSlug;
+}
+
+/**
+ * The Features menu: the six features this site leads with, plus a footer row
+ * (§4.1).
+ *
+ * A flat set rather than a column per order stage. The stage grouping is how
+ * the controls are *modelled* (§6.1) and it still organises the footer, but a
+ * menu is read in one glance and four headed columns of ten make a merchant
+ * classify their problem before they can find it. The six are the same six the
+ * Features page shows, in the same order, assembled from the same selection —
+ * so the menu and the page it opens onto cannot disagree.
  */
 export interface FeaturesMegaMenu {
-  readonly columns: readonly NavGroup[];
+  readonly items: readonly FeatureNavItem[];
   readonly footerLinks: readonly NavItem[];
 }
 
