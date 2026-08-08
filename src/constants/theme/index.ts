@@ -1,5 +1,6 @@
 export * from "./colors";
 export * from "./container";
+export * from "./interaction";
 export * from "./radius";
 export * from "./shadow";
 export * from "./spacing";

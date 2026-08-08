@@ -12,6 +12,15 @@ import type { WithClassName } from "@/types";
 const VIDEO_ID = "gq2C3A0pbXY";
 
 /**
+ * The same recording on YouTube itself.
+ *
+ * Exported so a "watch the full demo" action anywhere on the site points at
+ * the video this component embeds, rather than at a URL typed out a second
+ * time that can drift from it.
+ */
+export const demoVideoUrl = `https://www.youtube.com/watch?v=${VIDEO_ID}`;
+
+/**
  * Player parameters.
  *
  * `autoplay=0` is stated rather than left to the default: a video that starts
