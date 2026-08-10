@@ -40,7 +40,7 @@ const CHECKLIST: readonly { slug: ControlSlug; label?: string }[] = [
   { slug: "partial-cod-payment" },
   { slug: "cod-fees" },
   { slug: "cod-rules", label: "Smart COD Rules" },
-  { slug: "prepaid-nudge", label: "Prepaid Discount" },
+  { slug: "cod-to-prepaid", label: "Prepaid Discount" },
   { slug: "messaging-gateways", label: "WhatsApp & SMS" },
   { slug: "abandoned-cart-recovery" },
   { slug: "analytics", label: "Analytics & Insights" },

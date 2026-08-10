@@ -28,7 +28,7 @@ export const featureIndexEntries: readonly FeatureIndexEntry[] = [
     emphasis: "highlight",
     title: "Partial COD Payment – Upfront Payments",
   },
-  { slug: "prepaid-nudge", emphasis: "highlight" },
+  { slug: "cod-to-prepaid", emphasis: "highlight" },
   { slug: "abandoned-cart-recovery", emphasis: "supporting" },
   {
     slug: "cod-rules",

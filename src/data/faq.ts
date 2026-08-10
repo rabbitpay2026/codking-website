@@ -83,6 +83,55 @@ export const faqs: readonly FaqItem[] = [
       "The deposit is taken through Shopify Payments or whichever gateway your store already uses, so there is nothing new to connect. The balance is still collected as cash on delivery exactly as it is today.",
     tags: ["control:partial-cod-payment"],
   },
+  /*
+    The COD to Prepaid set (§6.3), in the order the feature page reads them:
+    what it is, how the discount is configured, who receives it, when the
+    customer sees it, and how tax is handled.
+
+    Assembled from what the product already states — the control's own
+    `outcome` and `benefits` in `src/data/controls.ts`, and the four key
+    features published on codking.tech/cod-to-prepaid — rather than written
+    fresh, so the feature page cannot describe the control differently from the
+    mega-menu or the Features index. Nothing here claims a capability the
+    control record does not list, and nothing here quotes a figure.
+
+    None carries the `home` tag, so the homepage's own set is unchanged.
+  */
+  {
+    id: "prepaid-what",
+    question: "What is COD to Prepaid?",
+    answer:
+      "COD to Prepaid nudges cash-on-delivery buyers to pay fully online instead. COD King shows a banner offering them a discount and sends a reminder carrying a payment link, so more of your orders arrive already paid rather than travelling as cash.",
+    tags: ["control:cod-to-prepaid"],
+  },
+  {
+    id: "prepaid-rules",
+    question: "Can I set the discount as a percentage?",
+    answer:
+      "Yes. The prepaid discount can be a percentage of the cart or a fixed value, and the rules are fully configurable to your business needs.",
+    tags: ["control:cod-to-prepaid"],
+  },
+  {
+    id: "prepaid-only",
+    question: "Can the discount apply only to prepaid payments?",
+    answer:
+      "Yes. The discount is attached to a specific type of payment option, so only orders paid online receive it and cash-on-delivery orders do not.",
+    tags: ["control:cod-to-prepaid"],
+  },
+  {
+    id: "prepaid-placement",
+    question: "When does the customer see the nudge?",
+    answer:
+      "It can be shown during the checkout flow, or after the order has already been placed — a banner offering the discount, followed by a reminder with a payment link.",
+    tags: ["control:cod-to-prepaid"],
+  },
+  {
+    id: "prepaid-tax",
+    question: "How are taxes handled on a discounted order?",
+    answer:
+      "Flexible tax options let you manage different tax structures, supporting multiple regions and compliance requirements.",
+    tags: ["control:cod-to-prepaid"],
+  },
   {
     id: "checkout-impact",
     question: "Will this affect my existing checkout or store design?",

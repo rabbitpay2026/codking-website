@@ -34,7 +34,7 @@ export interface OrderStage {
 export const CONTROL_SLUGS = [
   "cod-rules",
   "cod-fees",
-  "prepaid-nudge",
+  "cod-to-prepaid",
   "otp-verification",
   "partial-cod-payment",
   "address-validation",

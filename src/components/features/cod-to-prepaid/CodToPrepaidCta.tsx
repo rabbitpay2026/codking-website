@@ -1,6 +1,7 @@
-import { PackageCheck } from "lucide-react";
+import { BadgePercent } from "lucide-react";
 
 import { FeatureCtaBand } from "@/components/features/sections";
+import { getPrepaidPageCopy } from "@/lib/content";
 
 /**
  * The close.
@@ -10,8 +11,8 @@ import { FeatureCtaBand } from "@/components/features/sections";
  * arrived. A page that invents a new button for its last section is telling
  * the merchant this is a different offer.
  */
-export function PartialPaymentCta() {
+export function CodToPrepaidCta() {
   return (
-    <FeatureCtaBand title="Ready to secure more orders?" icon={PackageCheck} />
+    <FeatureCtaBand title={getPrepaidPageCopy().ctaTitle} icon={BadgePercent} />
   );
 }
