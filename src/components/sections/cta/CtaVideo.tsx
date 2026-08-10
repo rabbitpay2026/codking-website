@@ -3,22 +3,20 @@ import { cn } from "@/lib/utils";
 import type { WithClassName } from "@/types";
 
 /**
- * The demo video.
- *
- * The id alone, not a URL — the embed address is built from it below. Taken
- * from the share link's path (`youtu.be/<id>`); the `?si=` parameter YouTube
- * appends is share tracking and is deliberately not carried over.
- */
-const VIDEO_ID = "gq2C3A0pbXY";
-
-/**
- * The same recording on YouTube itself.
+ * A recording on YouTube itself, from the same id the player embeds.
  *
  * Exported so a "watch the full demo" action anywhere on the site points at
- * the video this component embeds, rather than at a URL typed out a second
- * time that can drift from it.
+ * the video beside it rather than at a URL typed out a second time that can
+ * drift from it.
+ *
+ * No id lives in this file. Which recording a surface plays is content, and it
+ * is answered in one place — `getDemoVideoId()` over the registry in
+ * `src/data/demoVideos.ts` (§11). A default here would be a second source for
+ * the same fact, and the one that goes stale is always the one in a component.
  */
-export const demoVideoUrl = `https://www.youtube.com/watch?v=${VIDEO_ID}`;
+export function demoVideoUrlFor(videoId: string): string {
+  return `https://www.youtube.com/watch?v=${videoId}`;
+}
 
 /**
  * Player parameters.
@@ -30,6 +28,20 @@ export const demoVideoUrl = `https://www.youtube.com/watch?v=${VIDEO_ID}`;
  * control bar so the player reads as part of the row it sits in.
  */
 const PLAYER_PARAMS = "autoplay=0&rel=0&modestbranding=1&playsinline=1";
+
+interface CtaVideoProps extends WithClassName {
+  /**
+   * YouTube's id for the recording this surface plays.
+   *
+   * Required, and read from `getDemoVideoId()` rather than typed at the call
+   * site. An optional id would let a surface silently fall back to whatever
+   * this component happened to hardcode, which is exactly the failure the
+   * registry exists to prevent.
+   */
+  readonly videoId: string;
+  /** What this recording is, for the frame's accessible name. */
+  readonly title: string;
+}
 
 /**
  * YouTube's own embed.
@@ -45,8 +57,16 @@ const PLAYER_PARAMS = "autoplay=0&rel=0&modestbranding=1&playsinline=1";
  * the iframe arrives. `loading="lazy"` keeps the player's payload off the
  * critical path — this sits at the very bottom of a long page, and almost
  * nobody who lands at the top pays for it.
+ *
+ * `videoId` is what makes one player serve every page. Each surface has its
+ * own recording, and the alternative — a component per video — would mean six
+ * copies of this markup differing by eleven characters.
+ *
+ * `title` names *this* recording for assistive technology and for the frame's
+ * accessible name. It is not decorative: a page with four embeds all titled
+ * the same thing is four identically-labelled frames in a screen reader's list.
  */
-export function CtaVideo({ className }: WithClassName) {
+export function CtaVideo({ videoId, title, className }: CtaVideoProps) {
   return (
     <div
       className={cn(
@@ -55,8 +75,8 @@ export function CtaVideo({ className }: WithClassName) {
       )}
     >
       <iframe
-        src={`https://www.youtube.com/embed/${VIDEO_ID}?${PLAYER_PARAMS}`}
-        title="How COD King works"
+        src={`https://www.youtube.com/embed/${videoId}?${PLAYER_PARAMS}`}
+        title={title}
         loading="lazy"
         allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
         allowFullScreen

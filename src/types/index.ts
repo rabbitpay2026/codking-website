@@ -8,6 +8,7 @@ export * from "./homepage";
 export * from "./integration";
 export * from "./legal";
 export * from "./feature";
+export * from "./media";
 export * from "./navigation";
 export * from "./pricing";
 export * from "./proof";

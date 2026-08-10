@@ -1,7 +1,11 @@
 import { ShopifyMark } from "@/components/brand/ShopifyMarks";
 import { ActionLink } from "@/components/layout/ActionLink";
 import { CtaVideo } from "@/components/sections/cta/CtaVideo";
-import { getProofMetrics, getUtilityActions } from "@/lib/content";
+import {
+  getDemoVideoId,
+  getProofMetrics,
+  getUtilityActions,
+} from "@/lib/content";
 
 const numberFormat = new Intl.NumberFormat("en");
 
@@ -80,8 +84,16 @@ export async function FinalCta() {
         rectangle competing with them for the same line; underneath it is the
         last thing the block says, and at the column's full measure it is
         finally large enough to be worth pressing play on.
+
+        The recording is read from the demo registry by surface (§11) rather
+        than left to the player's fallback, so the homepage's video is changed
+        in the same file every other page's is.
       */}
-      <CtaVideo className="w-full" />
+      <CtaVideo
+        videoId={getDemoVideoId("home")}
+        title="How COD King works"
+        className="w-full"
+      />
     </div>
   );
 }

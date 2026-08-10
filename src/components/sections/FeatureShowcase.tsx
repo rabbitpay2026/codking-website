@@ -28,7 +28,7 @@ const iconFor: Record<string, LucideIcon> = {
   "partial-cod-payment": Wallet,
   "cod-fees": BadgeIndianRupee,
   "cod-rules": SlidersHorizontal,
-  "prepaid-nudge": BadgePercent,
+  "cod-to-prepaid": BadgePercent,
   "messaging-gateways": MessageSquareText,
   analytics: ChartNoAxesCombined,
   "abandoned-cart-recovery": ShoppingCart,

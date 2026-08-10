@@ -5,8 +5,23 @@ import { SectionShell } from "@/components/sections/SectionShell";
 import { BlurFade } from "@/components/ui/blur-fade";
 import { Button } from "@/components/ui/button";
 import { panelHoverClass } from "@/constants/theme";
-import { getDemoVideoId, getOtpDemoPoints } from "@/lib/content";
 import { cn } from "@/lib/utils";
+
+import type { FeatureCheckpoint } from "@/types";
+
+interface FeatureDemoSplitProps {
+  readonly title: string;
+  readonly description: string;
+  readonly points: readonly FeatureCheckpoint[];
+  /**
+   * YouTube's id for this page's recording, from `getDemoVideoId()`.
+   *
+   * Every feature page shows its own demo, so this is the one thing about the
+   * player a page decides — and it decides it by naming its surface to the
+   * registry, not by typing an id here.
+   */
+  readonly videoId: string;
+}
 
 /**
  * The product demo — player on the left, the case for pressing play on the
@@ -14,36 +29,36 @@ import { cn } from "@/lib/utils";
  *
  * The embed is the site's existing `CtaVideo`, untouched: YouTube's own player
  * rather than a bespoke one, lazily loaded, with its box reserved by a 16:9
- * ratio so the row does not jump when the iframe arrives. A custom player here
- * would mean owning buffering, captions, quality switching and the keyboard
- * interface to end up somewhere behind what YouTube ships for free.
+ * ratio so the row does not jump when the iframe arrives. One component across
+ * every feature page, so a merchant moving between them meets one player —
+ * with a different recording inside it, named by the page.
  *
- * The four points beside it are captions rather than benefits. A checklist next
- * to a player is read as a description of the recording, so every line names
- * something a visitor will actually see in it — a list of advantages the video
- * does not show is worse than no list at all.
+ * The points beside it are captions rather than benefits. A checklist next to
+ * a player is read as a description of the recording, so every line should
+ * name something the merchant will actually see configured in it.
  *
  * Both columns hang from the same top edge. Vertically centring the text
  * against a 16:9 box leaves the heading floating in the middle of the row at
  * exactly one viewport width and nowhere else.
  */
-export function OtpVerificationDemo() {
-  const videoId = getDemoVideoId("otp-verification");
-
+export function FeatureDemoSplit({
+  title,
+  description,
+  points,
+  videoId,
+}: FeatureDemoSplitProps) {
   return (
-    <SectionShell tone="muted" size="compact">
+    <SectionShell size="compact" className="border-t border-ink/[0.07]">
       <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-12">
         <BlurFade>
           {/*
-            The player answers the cursor like every other card on the page,
-            but through `panelHoverClass` rather than `cardHoverClass`: this is
-            a surface someone is about to press play on, and a target that
-            moves three pixels as the pointer arrives is a target that has to
-            be aimed at twice.
+            `panelHoverClass`, not `cardHoverClass`: this is a surface someone
+            is about to press play on, and a target that moves three pixels as
+            the pointer arrives is a target that has to be aimed at twice.
           */}
           <CtaVideo
             videoId={videoId}
-            title="See OTP verification in action"
+            title={title}
             className={cn(
               "w-full shadow-[0_1px_2px_rgba(11,27,54,0.05),0_18px_44px_-24px_rgba(11,27,54,0.4)]",
               panelHoverClass,
@@ -59,16 +74,15 @@ export function OtpVerificationDemo() {
             </p>
 
             <h2 className="mt-4 text-[1.6rem] leading-[1.12] font-semibold tracking-[-0.028em] text-balance text-ink sm:text-[1.9rem]">
-              See OTP verification in action
+              {title}
             </h2>
 
             <p className="mt-3.5 max-w-md text-[14px] leading-relaxed text-pretty text-ink/55">
-              Two minutes of the real thing: a cash-on-delivery order placed, a
-              code sent, and what happens to the orders nobody confirms.
+              {description}
             </p>
 
             <ul className="mt-5 space-y-2.5">
-              {getOtpDemoPoints().map((point) => (
+              {points.map((point) => (
                 <li key={point.id} className="flex items-start gap-2.5">
                   <span
                     aria-hidden

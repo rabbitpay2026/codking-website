@@ -7,7 +7,7 @@ import type { ControlSlug } from "@/types";
 const demos: Partial<Record<ControlSlug, () => React.ReactElement>> = {
   "cod-rules": RulesConsole,
   "otp-verification": OtpFlow,
-  "prepaid-nudge": PrepaidChoice,
+  "cod-to-prepaid": PrepaidChoice,
 };
 
 /**

@@ -26,7 +26,7 @@ import type { LucideIcon } from "lucide-react";
 export const featureIcons: Partial<Record<ControlSlug, LucideIcon>> = {
   "otp-verification": ShieldCheck,
   "partial-cod-payment": Wallet,
-  "prepaid-nudge": BadgePercent,
+  "cod-to-prepaid": BadgePercent,
   "abandoned-cart-recovery": ShoppingCart,
   "cod-rules": SlidersHorizontal,
   "cod-fees": BadgeIndianRupee,

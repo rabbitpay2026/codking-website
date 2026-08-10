@@ -66,7 +66,7 @@ export const controls: readonly Control[] = [
     featured: false,
   },
   {
-    slug: "prepaid-nudge",
+    slug: "cod-to-prepaid",
     name: "COD to Prepaid",
     stage: "before-the-order",
     outcome: "Convert COD users with smart discounts during the checkout flow.",
