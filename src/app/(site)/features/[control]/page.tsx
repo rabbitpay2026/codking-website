@@ -25,6 +25,7 @@ const DEDICATED_PAGES: readonly ControlSlug[] = [
   "otp-verification",
   "partial-cod-payment",
   "cod-to-prepaid",
+  "abandoned-cart-recovery",
 ];
 
 /**

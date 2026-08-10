@@ -11,6 +11,7 @@
  * The functions are thin today because the data is local. That is the point —
  * the indirection exists to be swapped, not to add behaviour.
  */
+export * from "./abandonedCartRecovery";
 export * from "./announcement";
 export * from "./announcement";
 export * from "./calculator";

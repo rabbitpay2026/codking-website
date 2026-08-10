@@ -3,6 +3,7 @@ import { ArrowRight, ShieldCheck } from "lucide-react";
 import { FeatureEyebrow } from "@/components/features/FeatureEyebrow";
 import { SectionShell } from "@/components/sections/SectionShell";
 import { BlurFade } from "@/components/ui/blur-fade";
+import { cn } from "@/lib/utils";
 
 import type { FeatureFlowStep } from "@/types";
 
@@ -49,6 +50,23 @@ function StepConnector() {
     </>
   );
 }
+
+/**
+ * The rail's width at `lg`, keyed by how many beats there are.
+ *
+ * Written out rather than interpolated, because a class name assembled at
+ * runtime is a class name the compiler never sees and therefore never emits.
+ * Anything outside this range falls back to four across and wraps, which is
+ * ragged rather than broken.
+ *
+ * Five is the widest a flow should get. Past that the columns are narrower
+ * than the marks they hold, and a sequence nobody can read across is a list.
+ */
+const columnsClass: Record<number, string> = {
+  3: "lg:grid-cols-3",
+  4: "lg:grid-cols-4",
+  5: "lg:grid-cols-5",
+};
 
 interface FeatureFlowPanelProps {
   readonly eyebrow: string;
@@ -120,7 +138,13 @@ export function FeatureFlowPanel({
             heights. Sharing the tracks is what holds the row level at every
             width rather than at the one it was checked on.
           */}
-          <ol className="mt-8 grid gap-x-10 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 lg:grid-rows-[auto_auto_auto] lg:gap-y-0">
+          <ol
+            className={cn(
+              "mt-8 grid gap-x-10 gap-y-10 sm:grid-cols-2",
+              columnsClass[steps.length] ?? "lg:grid-cols-4",
+              "lg:grid-rows-[auto_auto_auto] lg:gap-y-0",
+            )}
+          >
             {steps.map((step, index) => {
               const Icon = iconFor[step.id] ?? fallbackIcon;
 
