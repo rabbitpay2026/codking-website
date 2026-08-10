@@ -132,6 +132,54 @@ export const faqs: readonly FaqItem[] = [
       "Flexible tax options let you manage different tax structures, supporting multiple regions and compliance requirements.",
     tags: ["control:cod-to-prepaid"],
   },
+  /*
+    The Abandoned Cart Recovery set (§6.3), in the order the feature page reads
+    them: what it is, which channel carries it, how many messages, how the
+    buyer gets back, and what it costs.
+
+    This control is thinly documented — the product publishes one sentence for
+    it — so every answer below is assembled from that sentence, the control's
+    own `benefits` in `src/data/controls.ts`, and the plan matrix in
+    `src/data/pricing.ts`. Nothing here states a recovery rate or a message
+    count, because the product states neither.
+
+    None carries the `home` tag, so the homepage's own set is unchanged.
+  */
+  {
+    id: "cart-what",
+    question: "What is abandoned cart recovery?",
+    answer:
+      "It recovers lost sales by sending timely SMS or WhatsApp reminders to COD buyers who started checkout and did not complete it. Each reminder carries a link straight back to the cart, so the buyer can finish the order they had already begun.",
+    tags: ["control:abandoned-cart-recovery"],
+  },
+  {
+    id: "cart-channels",
+    question: "Are reminders sent over SMS or WhatsApp?",
+    answer:
+      "Either — whichever your buyers prefer. Both are sent from COD King, and local SMS provider integration is available in most countries so you can route messages through a regional provider.",
+    tags: ["control:abandoned-cart-recovery"],
+  },
+  {
+    id: "cart-sequence",
+    question: "How many reminders does a customer get?",
+    answer:
+      "Recovery runs as an automated multi-step sequence rather than a single message, so a buyer who misses the first reminder still hears from you. The sequence runs on its own once it is switched on.",
+    tags: ["control:abandoned-cart-recovery"],
+  },
+  {
+    id: "cart-link",
+    question: "Does the customer have to rebuild their cart?",
+    answer:
+      "No. Every reminder includes a direct checkout link, so the buyer returns to the cart they already filled rather than searching for the products again.",
+    tags: ["control:abandoned-cart-recovery"],
+  },
+  {
+    id: "cart-plans",
+    question: "Which plans include abandoned cart recovery?",
+    answer:
+      "Every plan, including the free Standard plan. There is no separate charge for the feature itself — you pay only for the messages you send.",
+    tags: ["control:abandoned-cart-recovery"],
+  },
   {
     id: "checkout-impact",
     question: "Will this affect my existing checkout or store design?",

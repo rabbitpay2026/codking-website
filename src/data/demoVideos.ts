@@ -44,4 +44,5 @@ export const demoVideos: DemoVideoRegistry = {
   home: "I22U3fj6vKo",
   "otp-verification": "yCPBjrO2tFA",
   "partial-cod-payment": "gq2C3A0pbXY",
+  "abandoned-cart-recovery": "XoTkeO4d2KU",
 };

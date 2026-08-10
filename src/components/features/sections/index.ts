@@ -20,3 +20,4 @@ export { FeatureDemoSplit } from "./FeatureDemoSplit";
 export { FeatureFlowPanel } from "./FeatureFlowPanel";
 export { FeatureHero } from "./FeatureHero";
 export { FeatureOutcomeGrid } from "./FeatureOutcomeGrid";
+export { FeatureTestimonialRail } from "./FeatureTestimonialRail";
