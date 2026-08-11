@@ -39,6 +39,13 @@ export const generalDemoVideoId = "gq2C3A0pbXY";
  * general one. The remaining feature pages join this map as their recordings
  * are made.
  * ──────────────────────────────────────────────────────────────────────────
+ *
+ * ── One recording, two surfaces ───────────────────────────────────────────
+ * `cod-fees` and `cod-show-hide` are both assigned `m9-7seS1Yg8`, which is the
+ * recording the COD Fees page brief names explicitly. Two surfaces sharing an
+ * id is legal and this map is exactly where such a thing should be visible;
+ * when a COD Fees recording of its own exists, this is the one line to change.
+ * ──────────────────────────────────────────────────────────────────────────
  */
 export const demoVideos: DemoVideoRegistry = {
   home: "I22U3fj6vKo",
@@ -46,4 +53,5 @@ export const demoVideos: DemoVideoRegistry = {
   "partial-cod-payment": "gq2C3A0pbXY",
   "abandoned-cart-recovery": "XoTkeO4d2KU",
   "cod-show-hide": "m9-7seS1Yg8",
+  "cod-fees": "m9-7seS1Yg8",
 };

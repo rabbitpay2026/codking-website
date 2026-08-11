@@ -15,6 +15,7 @@ export * from "./abandonedCartRecovery";
 export * from "./announcement";
 export * from "./announcement";
 export * from "./calculator";
+export * from "./codFees";
 export * from "./codShowHide";
 export * from "./codToPrepaid";
 export * from "./controls";

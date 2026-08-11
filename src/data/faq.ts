@@ -237,12 +237,70 @@ export const faqs: readonly FaqItem[] = [
       "Show/hide COD rules are included on the Professional and Enterprise plans. Every plan comes with a 7-day free trial and no credit card is required, so you can build a rule and watch it run before committing.",
     tags: ["control:cod-show-hide"],
   },
+  /*
+    The COD Fees set (§6.3), in the order the feature page reads them: what it
+    is, how it is configured, what the customer sees, and then the two
+    questions a merchant asks once they have decided they want it.
+
+    Answers are assembled from what the product already states — a fixed or
+    percentage-based COD fee, the fee displayed clearly at checkout, fees set
+    by weight and price range, reducing COD adoption without disabling it —
+    together with what this repository already records: the control's own
+    `outcome` in `src/data/controls.ts`, the plan availability in
+    `src/data/pricing.ts`, and the `checkout-impact` answer immediately below.
+    Nothing here claims a capability the source does not list, and no answer
+    quotes a fee amount: the amount is the merchant's, not the product's.
+
+    None carries the `home` tag, so the homepage's own set is unchanged.
+  */
+  {
+    id: "cod-fees-what",
+    question: "What is a COD fee?",
+    answer:
+      "It is an additional fee charged on an order when the customer chooses cash on delivery. It goes toward the logistics costs a COD order carries and a prepaid one does not, and it gives the customer a reason to pay online instead. Collecting a small additional fee on COD orders is the norm in the industry — more than 70% of merchants already do it.",
+    tags: ["control:cod-fees"],
+  },
+  {
+    id: "cod-fees-amount",
+    question: "Can I charge a fixed amount or a percentage?",
+    answer:
+      "Both. You can set a fixed COD fee applied to every cash-on-delivery order, or a percentage-based fee calculated from the order value so larger baskets carry a larger fee. You choose the amount — COD King applies whatever you set.",
+    tags: ["control:cod-fees"],
+  },
+  {
+    id: "cod-fees-visible",
+    question: "Will the customer see the COD fee?",
+    answer:
+      "Yes, and that is the point. The fee is displayed clearly at checkout as its own line, so the customer has complete visibility while placing the order and sees the final total before they confirm it.",
+    tags: ["control:cod-fees"],
+  },
+  {
+    id: "cod-fees-rules",
+    question: "Can the fee change from one order to another?",
+    answer:
+      "Yes. COD fees can be set based on weight and price range, so a heavy parcel or a high-value basket can carry a different fee from a small, light one rather than every order paying the same amount.",
+    tags: ["control:cod-fees"],
+  },
+  {
+    id: "cod-fees-adoption",
+    question: "Will a COD fee stop customers ordering?",
+    answer:
+      "It is designed to reduce COD adoption naturally rather than to block it. Cash on delivery stays on your checkout; the customer simply sees what it costs and can switch to online payment, which is how a COD fee also increases prepaid conversions.",
+    tags: ["control:cod-fees"],
+  },
   {
     id: "checkout-impact",
     question: "Will this affect my existing checkout or store design?",
     answer:
       "No. COD King works within your existing Shopify checkout. There are no visual changes to your theme unless you choose to add COD fee labels or messaging, and even those are fully customisable.",
     tags: ["home", "control:cod-fees"],
+  },
+  {
+    id: "cod-fees-plans",
+    question: "Which plans include COD Fees?",
+    answer:
+      "COD fees are included on the Professional and Enterprise plans. Every plan comes with a 7-day free trial and no credit card is required, so you can set a fee and watch it reach your checkout before committing.",
+    tags: ["control:cod-fees"],
   },
   {
     id: "free-trial",
