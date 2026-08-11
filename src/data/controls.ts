@@ -46,7 +46,7 @@ export const orderStages: readonly OrderStage[] = [
  */
 export const controls: readonly Control[] = [
   {
-    slug: "cod-rules",
+    slug: "cod-show-hide",
     name: "COD Rules",
     stage: "before-the-order",
     outcome: "Restrict COD based on zip codes, cart value, or customer risk.",

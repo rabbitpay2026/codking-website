@@ -18,12 +18,22 @@ const nextConfig: NextConfig = {
    * The old path is kept alive permanently rather than left to 404: it was
    * reachable, crawlable and linkable, and a renamed page that drops its
    * previous address throws away whatever reached the old one.
+   *
+   * `cod-rules` moved for exactly the same reason. The product markets this
+   * control as "COD Show/Hide" and publishes it at a URL of that name, and the
+   * Features index has always titled it so; the slug now agrees with both, and
+   * every internal link follows from the controls repository automatically.
    */
   async redirects() {
     return [
       {
         source: "/features/prepaid-nudge",
         destination: "/features/cod-to-prepaid",
+        permanent: true,
+      },
+      {
+        source: "/features/cod-rules",
+        destination: "/features/cod-show-hide",
         permanent: true,
       },
     ];

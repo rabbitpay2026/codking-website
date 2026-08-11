@@ -27,7 +27,7 @@ const iconFor: Record<string, LucideIcon> = {
   "otp-verification": ShieldCheck,
   "partial-cod-payment": Wallet,
   "cod-fees": BadgeIndianRupee,
-  "cod-rules": SlidersHorizontal,
+  "cod-show-hide": SlidersHorizontal,
   "cod-to-prepaid": BadgePercent,
   "messaging-gateways": MessageSquareText,
   analytics: ChartNoAxesCombined,

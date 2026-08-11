@@ -180,6 +180,63 @@ export const faqs: readonly FaqItem[] = [
       "Every plan, including the free Standard plan. There is no separate charge for the feature itself — you pay only for the messages you send.",
     tags: ["control:abandoned-cart-recovery"],
   },
+  /*
+    The COD Show/Hide set (§6.3), in the order the feature page reads them:
+    what it is, and then the four conditions a merchant asks whether they can
+    build a rule from, followed by what it costs.
+
+    Assembled from what the product already states — the control's own
+    `outcome` and `benefits` in `src/data/controls.ts`, the capabilities and
+    use cases published on codking.tech for this control, and the plan matrix
+    in `src/data/pricing.ts` — rather than written fresh, so the feature page
+    cannot describe the control differently from the mega-menu or the Features
+    index. Nothing here claims a parameter the control record does not list,
+    and the only figure quoted is the product's own "15+".
+
+    None carries the `home` tag, so the homepage's own set is unchanged.
+  */
+  {
+    id: "cod-rules-what",
+    question: "What is COD Show/Hide?",
+    answer:
+      "It lets you decide where, when and to whom cash on delivery is offered. You set the conditions — order value, pin code, customer history, product type and more, from 15+ parameters in all — and COD King shows or hides the cash-on-delivery option at your Shopify checkout accordingly.",
+    tags: ["control:cod-show-hide"],
+  },
+  {
+    id: "cod-rules-pincode",
+    question: "Can I hide COD for certain pin codes?",
+    answer:
+      "Yes. A rule can hide cash on delivery for high-risk pin codes or for whole regions — which is what stores do when a courier will not collect cash in an area, or when parcels sent there keep coming back.",
+    tags: ["control:cod-show-hide"],
+  },
+  {
+    id: "cod-rules-product",
+    question: "Can I hide COD on specific products?",
+    answer:
+      "Yes. COD can be enabled or disabled per product or per collection. The usual reason is custom or made-to-order items, which cannot simply go back on the shelf if the parcel is refused.",
+    tags: ["control:cod-show-hide"],
+  },
+  {
+    id: "cod-rules-value",
+    question: "Can I show COD only above or below a cart value?",
+    answer:
+      "Yes. A rule can offer cash on delivery only above or only below a cart value, so the baskets you would rather not send out as cash are paid for online instead.",
+    tags: ["control:cod-show-hide"],
+  },
+  {
+    id: "cod-rules-customer",
+    question: "Can I stop a specific customer from using COD?",
+    answer:
+      "Yes. You can blacklist specific phone numbers or email addresses, and segment rules by customer tag or order history, so a buyer who has refused parcels before does not see the option again.",
+    tags: ["control:cod-show-hide"],
+  },
+  {
+    id: "cod-rules-plans",
+    question: "Which plans include COD Show/Hide?",
+    answer:
+      "Show/hide COD rules are included on the Professional and Enterprise plans. Every plan comes with a 7-day free trial and no credit card is required, so you can build a rule and watch it run before committing.",
+    tags: ["control:cod-show-hide"],
+  },
   {
     id: "checkout-impact",
     question: "Will this affect my existing checkout or store design?",

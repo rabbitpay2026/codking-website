@@ -31,7 +31,7 @@ export const featureIndexEntries: readonly FeatureIndexEntry[] = [
   { slug: "cod-to-prepaid", emphasis: "highlight" },
   { slug: "abandoned-cart-recovery", emphasis: "supporting" },
   {
-    slug: "cod-rules",
+    slug: "cod-show-hide",
     emphasis: "supporting",
     title: "COD Show/Hide – Configure Flexible Rules",
   },

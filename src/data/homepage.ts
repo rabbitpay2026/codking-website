@@ -103,7 +103,7 @@ export const homepageControlSlugs: readonly ControlSlug[] = [
   "otp-verification",
   "partial-cod-payment",
   "cod-fees",
-  "cod-rules",
+  "cod-show-hide",
   "cod-to-prepaid",
   "messaging-gateways",
   "analytics",
@@ -184,7 +184,7 @@ export const controlBoard: readonly ControlBoardCard[] = [
     blurb: "Add COD charges to reduce non-serious orders.",
   },
   {
-    slug: "cod-rules",
+    slug: "cod-show-hide",
     label: "Smart COD Rules",
     blurb: "Show or hide COD based on location, cart value and customer.",
   },
