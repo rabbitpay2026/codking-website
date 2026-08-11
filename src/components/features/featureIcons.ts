@@ -28,7 +28,7 @@ export const featureIcons: Partial<Record<ControlSlug, LucideIcon>> = {
   "partial-cod-payment": Wallet,
   "cod-to-prepaid": BadgePercent,
   "abandoned-cart-recovery": ShoppingCart,
-  "cod-rules": SlidersHorizontal,
+  "cod-show-hide": SlidersHorizontal,
   "cod-fees": BadgeIndianRupee,
 };
 

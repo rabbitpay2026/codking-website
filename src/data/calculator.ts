@@ -16,7 +16,7 @@ export const calculatorDefinitions: readonly CalculatorDefinition[] = [
     title: "Savings Calculator",
     purpose:
       "Show how much COD is costing the merchant now, and how much COD King can save.",
-    targetControlSlugs: ["otp-verification", "cod-rules"],
+    targetControlSlugs: ["otp-verification", "cod-show-hide"],
   },
   {
     id: "cod-fee",

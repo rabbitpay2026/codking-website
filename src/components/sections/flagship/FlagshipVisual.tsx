@@ -5,7 +5,7 @@ import { RulesConsole } from "@/components/sections/flagship/RulesConsole";
 import type { ControlSlug } from "@/types";
 
 const demos: Partial<Record<ControlSlug, () => React.ReactElement>> = {
-  "cod-rules": RulesConsole,
+  "cod-show-hide": RulesConsole,
   "otp-verification": OtpFlow,
   "cod-to-prepaid": PrepaidChoice,
 };

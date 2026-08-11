@@ -32,7 +32,7 @@ export interface OrderStage {
  * link, a related-control reference or a plan mapping is a compile error.
  */
 export const CONTROL_SLUGS = [
-  "cod-rules",
+  "cod-show-hide",
   "cod-fees",
   "cod-to-prepaid",
   "otp-verification",

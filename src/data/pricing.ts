@@ -45,7 +45,7 @@ export const pricingPlans: readonly PricingPlan[] = [
     tagline: "For growing businesses",
     price: { kind: "fixed", amount: 7.99, currency: "USD", period: "month" },
     recommended: true,
-    controlSlugs: ["cod-fees", "cod-rules", "cod-to-prepaid"],
+    controlSlugs: ["cod-fees", "cod-show-hide", "cod-to-prepaid"],
     highlights: [
       { label: "Everything in Standard" },
       { label: "Partial Payment", feature: "partial-payment", showValue: true },
