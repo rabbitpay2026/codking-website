@@ -27,6 +27,7 @@ const DEDICATED_PAGES: readonly ControlSlug[] = [
   "cod-to-prepaid",
   "abandoned-cart-recovery",
   "cod-show-hide",
+  "cod-fees",
 ];
 
 /**
