@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight, Menu, X } from "lucide-react";
+import { ArrowRight, ArrowUpRight, Menu, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Dialog } from "radix-ui";
@@ -8,16 +8,23 @@ import { useState } from "react";
 
 import { ActionLink } from "@/components/layout/ActionLink";
 import { Logo } from "@/components/layout/Logo";
+import { NavLink } from "@/components/layout/NavLink";
+import { resourceNavIcons } from "@/components/layout/resourceNavIcons";
 import { Button } from "@/components/ui/button";
 import { routes } from "@/constants/routes";
 import { cn } from "@/lib/utils";
 
-import type { NavItem, PrimaryNavItem, UtilityAction } from "@/types";
+import type {
+  NavItem,
+  PrimaryNavItem,
+  ResourceNavItem,
+  UtilityAction,
+} from "@/types";
 
 interface MobileNavProps {
   readonly items: readonly PrimaryNavItem[];
   readonly features: readonly NavItem[];
-  readonly resources: readonly NavItem[];
+  readonly resources: readonly ResourceNavItem[];
   readonly utilityActions: readonly UtilityAction[];
 }
 
@@ -69,6 +76,12 @@ export function MobileNav({
   );
   const installAction = utilityActions.find(
     (action) => action.variant === "primary",
+  );
+  // Book a Demo has no place on the persistent bottom bar (§4.4 gives its two
+  // slots to Install and WhatsApp), so the drawer is the only surface where a
+  // merchant on a phone can find it.
+  const demoAction = utilityActions.find(
+    (action) => action.variant === "secondary",
   );
 
   return (
@@ -158,16 +171,30 @@ export function MobileNav({
                 Resources
               </p>
               <div className="mt-1">
-                {resources.map((resource) => (
-                  <Link
-                    key={resource.href}
-                    href={resource.href}
-                    onClick={close}
-                    className={cn(rowClass, "text-sm font-normal")}
-                  >
-                    {resource.label}
-                  </Link>
-                ))}
+                {resources.map((resource) => {
+                  const Icon = resourceNavIcons[resource.icon];
+
+                  return (
+                    <NavLink
+                      key={resource.href}
+                      item={resource}
+                      onClick={close}
+                      className={cn(rowClass, "text-sm font-normal")}
+                    >
+                      <span className="flex items-center gap-2.5">
+                        <Icon
+                          aria-hidden
+                          className="size-4 shrink-0 text-muted-foreground"
+                        />
+                        {resource.label}
+                      </span>
+                      <ArrowUpRight
+                        aria-hidden
+                        className="size-4 shrink-0 text-muted-foreground"
+                      />
+                    </NavLink>
+                  );
+                })}
               </div>
             </div>
           </nav>
@@ -175,6 +202,15 @@ export function MobileNav({
           <div className="shrink-0 border-t border-border bg-background px-4 py-4">
             {installAction ? (
               <ActionLink action={installAction} size="lg" block />
+            ) : null}
+
+            {demoAction ? (
+              <ActionLink
+                action={demoAction}
+                size="md"
+                block
+                className="mt-2"
+              />
             ) : null}
 
             {loginAction ? (

@@ -33,10 +33,37 @@ export const routes = {
 
   about: "/about",
   contact: "/contact",
+
+  /**
+   * The four legal documents (§3), each at its own top-level path.
+   *
+   * Top-level rather than nested under `/legal`, because these are the URLs a
+   * merchant is sent to from an app listing, an invoice or a support reply, and
+   * those are the paths every other Shopify app publishes them at.
+   */
+  privacyPolicy: "/privacy-policy",
+  termsAndConditions: "/terms-and-conditions",
+  refundPolicy: "/refund-policy",
+  cookies: "/cookies",
 } as const satisfies Record<string, Route>;
 
 export type RouteKey = keyof typeof routes;
 export type StaticRoute = (typeof routes)[RouteKey];
+
+/**
+ * Each legal slug's own static route.
+ *
+ * A lookup rather than a template string, because these four are real static
+ * segments rather than one dynamic one — which means the mapping needs no
+ * `Route` assertion at all, and adding a fifth document without adding its page
+ * will not compile.
+ */
+const LEGAL_ROUTES: Record<LegalSlug, Route> = {
+  "privacy-policy": routes.privacyPolicy,
+  "terms-and-conditions": routes.termsAndConditions,
+  "refund-policy": routes.refundPolicy,
+  cookies: routes.cookies,
+};
 
 /**
  * Builders for the dynamic segments.
@@ -50,9 +77,9 @@ export type StaticRoute = (typeof routes)[RouteKey];
  * type argument that branch collapses to `never`, so no dynamic path can be
  * assigned to a plain `Route` field such as `NavItem.href`. Rather than widen
  * that field and lose link checking everywhere, the assertion is confined to
- * these six lines, and the safety that actually matters — that the slug refers
- * to something real — is enforced by the parameter types: a control or legal
- * page that does not exist will not compile.
+ * these few lines, and the safety that actually matters — that the slug refers
+ * to something real — is enforced by the parameter types: a control page that
+ * does not exist will not compile.
  */
 export const routeFor = {
   /** A single control page, e.g. `/features/otp-verification` (§6.3). */
@@ -63,5 +90,5 @@ export const routeFor = {
   doc: (path: string): Route => `${routes.docs}/${path}` as Route,
   helpArticle: (slug: string): Route => `${routes.help}/${slug}` as Route,
   /** Privacy · Terms · Refund · Cookies (§3). */
-  legal: (slug: LegalSlug): Route => `/legal/${slug}` as Route,
+  legal: (slug: LegalSlug): Route => LEGAL_ROUTES[slug],
 } as const;

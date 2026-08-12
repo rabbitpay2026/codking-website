@@ -10,15 +10,15 @@ import { cn } from "@/lib/utils";
 
 import type {
   FeaturesMegaMenu,
-  NavItem,
   PrimaryNavItem,
+  ResourceNavItem,
   UtilityAction,
 } from "@/types";
 
 interface SiteHeaderProps {
   readonly items: readonly PrimaryNavItem[];
   readonly megaMenu: FeaturesMegaMenu;
-  readonly resources: readonly NavItem[];
+  readonly resources: readonly ResourceNavItem[];
   readonly utilityActions: readonly UtilityAction[];
 }
 
@@ -60,13 +60,14 @@ export function SiteHeader({
       )}
     >
       <Container className="relative flex h-header items-center justify-between gap-4">
-        <div className="flex items-center gap-6">
+        {/* Tighter below `xl`, where the bar is at its narrowest. */}
+        <div className="flex items-center gap-4 xl:gap-6">
           <Logo priority />
           <DesktopNav items={items} megaMenu={megaMenu} resources={resources} />
         </div>
 
         <div className="flex items-center gap-2">
-          <div className="hidden items-center gap-2 lg:flex">
+          <div className="hidden items-center gap-1.5 lg:flex xl:gap-2">
             {utilityActions.map((action) => (
               <ActionLink
                 key={action.label}
