@@ -38,23 +38,23 @@ export function AboutCapabilities({
       tone={tone}
       size="compact"
       className="border-t border-ink/[0.07]"
-      containerClassName="py-10 md:py-14"
+      containerClassName="py-9 md:py-11"
     >
       <BlurFade>
         <div className="max-w-2xl">
           <FeatureEyebrow>{copy.eyebrow}</FeatureEyebrow>
 
-          <h2 className="mt-4 text-[1.65rem] leading-[1.12] font-semibold tracking-[-0.03em] text-pretty text-ink sm:text-[2rem]">
+          <h2 className="mt-3.5 text-[1.65rem] leading-[1.12] font-semibold tracking-[-0.03em] text-pretty text-ink sm:text-[1.9rem]">
             {copy.title}
           </h2>
 
-          <p className="mt-4 text-[15px] leading-relaxed text-pretty text-ink/55">
+          <p className="mt-3 text-[15px] leading-relaxed text-pretty text-ink/55">
             {copy.description}
           </p>
         </div>
       </BlurFade>
 
-      <ul className="mt-9 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      <ul className="mt-7 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {features.map((feature, index) => (
           <li key={feature.href}>
             <BlurFade delay={index * 0.05} className="h-full">
@@ -97,7 +97,7 @@ export function AboutCapabilities({
       <BlurFade>
         <Link
           href={routes.features}
-          className="mt-6 inline-flex items-center gap-1.5 rounded-sm py-1.5 text-[13.5px] font-medium text-brand transition-colors duration-200 hover:text-brand-deep focus-visible:ring-2 focus-visible:ring-ring/60 focus-visible:outline-none"
+          className="mt-5 inline-flex items-center gap-1.5 rounded-sm py-1.5 text-[13.5px] font-medium text-brand transition-colors duration-200 hover:text-brand-deep focus-visible:ring-2 focus-visible:ring-ring/60 focus-visible:outline-none"
         >
           See all features
           <ArrowRight aria-hidden className="size-3.5" />

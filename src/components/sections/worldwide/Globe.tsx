@@ -13,13 +13,26 @@ const CX = SIZE / 2;
 const CY = SIZE / 2;
 const RADIUS = 128;
 
+/**
+ * Rounded to three places, and that is a correctness fix rather than tidiness.
+ *
+ * `Math.sin` and `Math.cos` are implementation-defined in ECMAScript, so the
+ * server and the browser can disagree in the last ulp — `286.04604636087834`
+ * against `286.0460463608784`. React compares the serialised attribute against
+ * the client value and reports a hydration mismatch for every marker on the
+ * globe. Three decimals is a thousandth of an SVG unit on a 360-unit viewBox,
+ * which is far below a pixel at any size this renders at, and it makes the two
+ * environments agree exactly.
+ */
+const place = (value: number) => Math.round(value * 1000) / 1000;
+
 function project(country: Country) {
   const lat = (country.lat * Math.PI) / 180;
   const lng = ((country.lng + 20) * Math.PI) / 180;
 
   return {
-    x: CX + Math.cos(lat) * Math.sin(lng) * RADIUS * 0.94,
-    y: CY - Math.sin(lat) * RADIUS * 0.92,
+    x: place(CX + Math.cos(lat) * Math.sin(lng) * RADIUS * 0.94),
+    y: place(CY - Math.sin(lat) * RADIUS * 0.92),
   };
 }
 
@@ -58,11 +71,19 @@ export function Globe({ countries, activeCountryId, className }: GlobeProps) {
         </defs>
 
         <g clipPath="url(#worldwide-globe-clip)">
-          <circle cx={CX} cy={CY} r={RADIUS} fill="url(#worldwide-globe-glow)" />
+          <circle
+            cx={CX}
+            cy={CY}
+            r={RADIUS}
+            fill="url(#worldwide-globe-glow)"
+          />
 
           <g
             className="origin-center animate-spin"
-            style={{ animationDuration: "42s", animationTimingFunction: "linear" }}
+            style={{
+              animationDuration: "42s",
+              animationTimingFunction: "linear",
+            }}
           >
             <circle
               cx={CX}
@@ -137,7 +158,9 @@ export function Globe({ countries, activeCountryId, className }: GlobeProps) {
                     cx={x}
                     cy={y}
                     r={active ? 7.5 : 5}
-                    fill={active ? "rgba(255,255,255,0.32)" : "rgba(37,99,235,0.18)"}
+                    fill={
+                      active ? "rgba(255,255,255,0.32)" : "rgba(37,99,235,0.18)"
+                    }
                     className={cn(
                       "transition-all duration-300",
                       dimmed && "opacity-45",
@@ -173,7 +196,10 @@ export function Globe({ countries, activeCountryId, className }: GlobeProps) {
                     fill="none"
                     stroke="rgba(96,165,250,0.16)"
                     strokeWidth="1"
-                    className={cn("transition-all duration-300", active && "animate-pulse")}
+                    className={cn(
+                      "transition-all duration-300",
+                      active && "animate-pulse",
+                    )}
                     style={{ animationDuration: "5.5s" }}
                   />
                   {!active ? null : (

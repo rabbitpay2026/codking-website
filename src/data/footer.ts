@@ -26,6 +26,7 @@ export const footerProductColumn: NavGroup = {
     { label: "All Features", href: routes.features },
     { label: "Pricing", href: routes.pricing },
     { label: "COD Calculator", href: routes.codCalculator },
+    { label: "Integrations", href: routes.integrations },
   ],
 };
 
@@ -74,12 +75,24 @@ export const footerCompanyColumn: NavGroup = {
 };
 
 /**
- * The bottom bar's legal row (§4.5).
+ * The legal links, in the bottom bar beside the copyright (§4.5).
  *
- * These sit beside the copyright rather than in a column of their own. They are
- * the links a visitor goes looking for deliberately and never browses, so
- * giving them a heading among the product columns would spend the footer's most
- * scanned row on its least read pages.
+ * A row rather than a headed column, and the column that used to be here is
+ * gone. Five link columns for a four-page site section is a heading spent on
+ * two links, and it left the bottom bar holding nothing but a copyright line —
+ * a footer with an empty last row above the one place every reader's eye lands.
+ *
+ * What that column was protecting against was the *old* row: `text-xs`, muted,
+ * squeezed under a copyright. That is a drawing problem, not a placement one.
+ * Drawn at the size and weight of a real link, with a hover of their own, these
+ * are as findable in the bottom bar as they were in a column of their own —
+ * and the bottom bar is where a merchant, a Shopify reviewer and every other
+ * site on the web already look for them.
+ *
+ * Two, not four. Refund and Cookies stay published and stay linked from the
+ * bottom of every legal document, but the footer's job here is the two
+ * documents a merchant actually goes looking for; the other two arriving
+ * alongside them dilutes both.
  *
  * Full names rather than the one-word forms. "Terms" beside "Privacy" reads as
  * a label; a merchant checking what they are agreeing to before installing is
@@ -88,6 +101,4 @@ export const footerCompanyColumn: NavGroup = {
 export const footerLegalLinks: readonly NavItem[] = [
   { label: "Privacy Policy", href: routeFor.legal("privacy-policy") },
   { label: "Terms & Conditions", href: routeFor.legal("terms-and-conditions") },
-  { label: "Refund Policy", href: routeFor.legal("refund-policy") },
-  { label: "Cookies", href: routeFor.legal("cookies") },
 ];

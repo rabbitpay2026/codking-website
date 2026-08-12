@@ -64,7 +64,11 @@ export function PricingComparison() {
   const features = getPricingFeatures();
 
   return (
-    <SectionShell id="compare" size="compact" className="border-t border-ink/10">
+    <SectionShell
+      id="compare"
+      size="compact"
+      className="border-t border-ink/10"
+    >
       <h2 className="text-center text-[1.4rem] leading-[1.15] font-semibold tracking-[-0.025em] text-balance text-ink sm:text-[1.6rem]">
         Compare all features
       </h2>

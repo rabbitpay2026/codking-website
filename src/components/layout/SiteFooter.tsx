@@ -1,12 +1,11 @@
-import { ArrowUpRight, Star } from "lucide-react";
+import { ArrowUpRight, Mail, Star } from "lucide-react";
 
 import { ShopifyMark } from "@/components/brand/ShopifyMarks";
-import { WhatsAppMark } from "@/components/brand/SocialMarks";
 import { Logo } from "@/components/layout/Logo";
 import { NavLink } from "@/components/layout/NavLink";
 import { SocialLinks } from "@/components/layout/SocialLinks";
 import { Container } from "@/components/shared/Container";
-import { externalLinks, whatsappDisplayNumber } from "@/constants/external";
+import { externalLinks } from "@/constants/external";
 import { routes } from "@/constants/routes";
 import { siteConfig } from "@/constants/site";
 import {
@@ -38,6 +37,14 @@ const numberFormat = new Intl.NumberFormat("en");
  * navigation config, so the footer's Resources column and the header's
  * Resources dropdown resolve to the same two subdomains by construction.
  *
+ * Privacy and Terms sit in the bottom bar rather than in a headed column of
+ * their own. That is where every reader already looks for them, and a heading
+ * spent on two links left the last row of the footer holding a copyright line
+ * and nothing else. What made the old row wrong was its drawing — 12px, muted,
+ * crushed under the copyright — so here they take the size, weight and hover of
+ * a real link, which is the part that decides whether a merchant or an App
+ * Store reviewer can find them.
+ *
  * The rating and review count are read from the proof repository. §11.1 forbids
  * typing a live number into page copy, so these render from the same source the
  * homepage and pricing page use.
@@ -50,9 +57,9 @@ const numberFormat = new Intl.NumberFormat("en");
 export async function SiteFooter() {
   const proof = await getProofMetrics();
   const featureLinks = getFooterFeatureLinks();
-  const columns = getFooterColumns();
+  const tracks = getFooterColumns();
   const legalLinks = getFooterLegalLinks();
-  const whatsappHref = externalLinks.whatsapp;
+  const supportEmail = externalLinks.supportEmail;
   const year = new Date().getFullYear();
 
   return (
@@ -116,21 +123,25 @@ export async function SiteFooter() {
               <FooterHeading>Get in touch</FooterHeading>
 
               {/*
-                The number, readable, and the page — in that order. A merchant
-                with a question about a COD rule wants the thread, not a form,
-                and every market this product sells into answers on WhatsApp.
+                The mailbox, readable, and the page — in that order. It is the
+                address the published legal documents answer on, so it is the one
+                a merchant can quote back at us; a chat thread is neither
+                addressable nor a record. WhatsApp is still one tap away from the
+                row of profiles beside this column and from the mobile action
+                bar, which is where a merchant who wants a conversation looks.
               */}
               <div className="mt-4 flex flex-col items-start gap-2.5">
-                {whatsappHref ? (
+                {supportEmail ? (
                   <a
-                    href={whatsappHref}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group inline-flex items-center gap-2 rounded-sm py-1 text-sm font-medium text-foreground transition-colors duration-200 ease-[var(--ease-emphasized)] outline-none hover:text-brand focus-visible:text-brand focus-visible:ring-2 focus-visible:ring-ring/60"
+                    href={`mailto:${supportEmail}`}
+                    className="group inline-flex items-center gap-2 rounded-sm py-1 text-sm font-medium break-all text-foreground transition-colors duration-200 ease-[var(--ease-emphasized)] outline-none hover:text-brand focus-visible:text-brand focus-visible:ring-2 focus-visible:ring-ring/60"
                   >
-                    <WhatsAppMark className="size-4 shrink-0 text-ink/40 transition-colors duration-200 group-hover:text-brand" />
-                    {whatsappDisplayNumber}
-                    <span className="sr-only"> (opens in a new tab)</span>
+                    <Mail
+                      aria-hidden
+                      className="size-4 shrink-0 text-ink/40 transition-colors duration-200 group-hover:text-brand"
+                      strokeWidth={1.8}
+                    />
+                    {supportEmail}
                   </a>
                 ) : null}
 
@@ -143,7 +154,7 @@ export async function SiteFooter() {
         </div>
 
         {/*
-          One grid, five headings, no second band.
+          One grid, four headings, no second band.
 
           Features holds six links against two to five in the others, and its
           labels are the longest on the site — "Partial COD Payment – Upfront
@@ -155,10 +166,10 @@ export async function SiteFooter() {
           holding a rectangle of empty page.
 
           The steps follow from that. At `lg` the six tracks are Features twice
-          plus the four columns, all on one row. At `sm` the four columns wrap
-          beneath Features, two and two. Below `sm` the sub-columns collapse so
-          each feature keeps a full-width line to itself — two columns of 140px
-          is where those labels start breaking mid-word.
+          plus Product, Solutions, Company and Resources, all on one row. At `sm`
+          those four wrap beneath Features, two and two. Below `sm` the
+          sub-columns collapse so each feature keeps a full-width line to itself
+          — two columns of 140px is where those labels start breaking mid-word.
 
           Those sub-columns are CSS multi-column and not a nested grid, which is
           not a stylistic preference. A two-track grid sizes each row to its
@@ -181,36 +192,71 @@ export async function SiteFooter() {
             />
           </div>
 
-          {columns.map((column) => (
-            <div key={column.title}>
-              <FooterHeading>{column.title}</FooterHeading>
-              <FooterLinkList items={column.items} className="mt-4" />
+          {/*
+            A track can hold more than one heading, though none does today —
+            Legal used to share the fourth with Company. Which headings share a
+            column is decided in the navigation config beside the groups
+            themselves, so this only has to draw them.
+
+            `contents` is what keeps any such pairing a desktop-only
+            arrangement. Below `lg` the wrapper takes itself out of the layout
+            and its headings become grid items in their own right, which matters
+            at the four-column step: a track holding two stacked headings there
+            is one tall column beside three short ones and two empty cells, when
+            the same groups laid flat fill the row. At `lg` the wrapper becomes a
+            block again and a pair stacks as intended.
+          */}
+          {tracks.map((track) => (
+            <div
+              key={track[0]?.title}
+              className="contents lg:block lg:space-y-8"
+            >
+              {track.map((column) => (
+                <div key={column.title}>
+                  <FooterHeading>{column.title}</FooterHeading>
+                  <FooterLinkList items={column.items} className="mt-4" />
+                </div>
+              ))}
             </div>
           ))}
         </nav>
 
         {/*
-          The legal bar. These pages are kept out of the columns above because
-          they are looked up deliberately and never browsed — a heading among
-          the product columns would spend the footer's most scanned row on its
-          least read pages.
+          The bottom bar: the copyright, and the two documents a merchant reads
+          before installing.
 
-          The order reverses below `sm`: on a phone the copyright is the last
-          thing on a very long page, and the four links a merchant might
-          actually be scrolling for should not sit under it.
+          Drawn at `text-sm` with a real hover rather than as the 12px small
+          print this row usually holds — that treatment is what made a Legal
+          column look necessary in the first place. The underline is a scaled
+          pseudo-element rather than `hover:underline` so it grows from the left
+          instead of appearing, and it costs no layout.
         */}
-        <div className="mt-12 flex flex-col-reverse gap-4 border-t border-ink/[0.07] pt-6 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
+        <div className="mt-12 flex flex-col gap-4 border-t border-ink/[0.07] pt-6 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
           <p className="text-xs text-muted-foreground">
             © {year} {siteConfig.name}. All rights reserved.
           </p>
 
-          <ul className="flex flex-wrap items-center gap-x-5 gap-y-0.5">
-            {legalLinks.map((item) => (
-              <li key={item.href}>
-                <FooterLink item={item} size="xs" />
-              </li>
-            ))}
-          </ul>
+          <nav aria-label="Legal">
+            <ul className="flex flex-wrap items-center gap-x-6 gap-y-1">
+              {legalLinks.map((item) => (
+                <li key={item.href}>
+                  <NavLink
+                    item={item}
+                    className={cn(
+                      "relative inline-flex rounded-sm py-1.5 text-sm font-medium text-muted-foreground",
+                      "transition-colors duration-200 ease-[var(--ease-emphasized)] outline-none",
+                      "hover:text-brand focus-visible:text-brand focus-visible:ring-2 focus-visible:ring-ring/60",
+                      "after:absolute after:inset-x-0 after:bottom-1 after:h-px after:origin-left after:scale-x-0 after:bg-brand/60",
+                      "after:transition-transform after:duration-200 after:ease-[var(--ease-emphasized)]",
+                      "hover:after:scale-x-100 focus-visible:after:scale-x-100",
+                    )}
+                  >
+                    {item.label}
+                  </NavLink>
+                </li>
+              ))}
+            </ul>
+          </nav>
         </div>
       </Container>
     </footer>
@@ -253,21 +299,14 @@ function FooterLinkList({
  * it points on hover. That is the entire animation — a footer of forty links
  * that all move is a footer that never sits still.
  */
-function FooterLink({
-  item,
-  size = "sm",
-}: {
-  readonly item: NavDestination;
-  readonly size?: "sm" | "xs";
-}) {
+function FooterLink({ item }: { readonly item: NavDestination }) {
   return (
     <NavLink
       item={item}
       className={cn(
-        "group inline-flex items-center gap-1 rounded-sm py-1 text-muted-foreground",
+        "group inline-flex items-center gap-1 rounded-sm py-1 text-sm text-muted-foreground",
         "transition-colors duration-200 ease-[var(--ease-emphasized)] outline-none",
         "hover:text-brand focus-visible:text-brand focus-visible:ring-2 focus-visible:ring-ring/60",
-        size === "sm" ? "text-sm" : "text-xs",
       )}
     >
       {item.label}

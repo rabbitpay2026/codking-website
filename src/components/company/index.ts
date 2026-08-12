@@ -1,5 +1,6 @@
 export * from "./AboutCapabilities";
 export * from "./AboutHero";
+export * from "./AboutHeroVisual";
 export * from "./AboutStats";
 export * from "./CompanyHero";
 export * from "./CompanyPointGrid";

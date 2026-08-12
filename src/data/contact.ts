@@ -1,4 +1,4 @@
-import { externalLinks, whatsappDisplayNumber } from "@/constants/external";
+import { externalLinks } from "@/constants/external";
 
 import type { CompanySectionCopy, ContactChannel, ContactField } from "@/types";
 
@@ -30,11 +30,14 @@ export const contactHeroCopy: CompanySectionCopy = {
  * treated differently: it is the one channel that opens a conversation
  * immediately, in every market this product sells into, and the page leads with
  * it rather than listing it third.
+ *
+ * The number itself is not part of the record. The card's value is the thread it
+ * opens with the message already written; a printed number invites a merchant to
+ * bypass that and start a blank chat instead. `href` carries it either way.
  */
 export const contactWhatsApp = {
   title: "Chat on WhatsApp",
   body: "The fastest way to reach us. Your message is already written — press send and the team picks it up.",
-  number: whatsappDisplayNumber,
   href: externalLinks.whatsapp,
   actionLabel: "Open WhatsApp",
 } as const;
