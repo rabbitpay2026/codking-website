@@ -1,5 +1,7 @@
+export * from "./about";
 export * from "./announcement";
 export * from "./calculator";
+export * from "./contact";
 export * from "./controls";
 export * from "./customers";
 export * from "./faq";

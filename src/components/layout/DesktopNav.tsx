@@ -1,23 +1,41 @@
 "use client";
 
-import { ArrowRight, ChevronDown } from "lucide-react";
+import { ArrowRight, ArrowUpRight, ChevronDown } from "lucide-react";
 import Link from "next/link";
 import { NavigationMenu } from "radix-ui";
 
 import { FeatureMark } from "@/components/features/FeatureMark";
+import { NavLink } from "@/components/layout/NavLink";
+import { resourceNavIcons } from "@/components/layout/resourceNavIcons";
 import { cn } from "@/lib/utils";
 
-import type { FeaturesMegaMenu, NavItem, PrimaryNavItem } from "@/types";
+import type {
+  FeaturesMegaMenu,
+  PrimaryNavItem,
+  ResourceNavItem,
+} from "@/types";
 
 interface DesktopNavProps {
   readonly items: readonly PrimaryNavItem[];
   readonly megaMenu: FeaturesMegaMenu;
-  readonly resources: readonly NavItem[];
+  readonly resources: readonly ResourceNavItem[];
 }
 
+/**
+ * `whitespace-nowrap` and the tighter padding below `xl` are one decision.
+ *
+ * The bar carries five items and three actions, and at exactly 1024 — the
+ * width this nav first appears at — the natural set is about 40px wider than
+ * the container. Flex resolved that by shrinking the widest item until "COD
+ * Calculator" broke across two lines inside a 40px pill, which is the one
+ * failure a header must not have. Taking four pixels of padding off each item
+ * below `xl` buys back more than the deficit, and the `nowrap` makes the
+ * guarantee explicit: these labels are single-line at every width, and any
+ * future item that does not fit fails loudly instead of wrapping quietly.
+ */
 const triggerClass = cn(
-  "group inline-flex h-10 items-center gap-1 rounded-full px-3",
-  "text-sm font-medium text-foreground/80",
+  "group inline-flex h-10 items-center gap-1 rounded-full px-2 xl:px-3",
+  "text-sm font-medium whitespace-nowrap text-foreground/80",
   "transition-colors duration-200 ease-[var(--ease-emphasized)]",
   "hover:bg-accent hover:text-accent-foreground",
   "data-[state=open]:bg-accent data-[state=open]:text-accent-foreground",
@@ -61,7 +79,7 @@ export function DesktopNav({ items, megaMenu, resources }: DesktopNavProps) {
       aria-label="Primary"
       delayDuration={80}
     >
-      <NavigationMenu.List className="flex items-center gap-0.5">
+      <NavigationMenu.List className="flex items-center gap-0 xl:gap-0.5">
         {items.map((item) => {
           if (item.behaviour === "mega-menu") {
             return (
@@ -159,24 +177,55 @@ export function DesktopNav({ items, megaMenu, resources }: DesktopNavProps) {
                   />
                 </NavigationMenu.Trigger>
 
-                <NavigationMenu.Content className="absolute top-full left-0 mt-5 w-[24rem]">
-                  <ul className={cn(panelClass, "space-y-0.5 p-3")}>
-                    {resources.map((resource) => (
-                      <li key={resource.href}>
-                        <NavigationMenu.Link asChild>
-                          <Link href={resource.href} className={itemLinkClass}>
-                            <span className="block text-sm font-medium text-foreground transition-colors group-hover:text-brand">
-                              {resource.label}
-                            </span>
-                            {resource.description ? (
-                              <span className="mt-0.5 block text-xs leading-snug text-muted-foreground">
-                                {resource.description}
+                {/*
+                  Two rows, so the panel is sized to its contents rather than to
+                  a grid it does not fill. `left-0` anchors it under the word
+                  that opened it, and at 19rem it cannot reach either edge of
+                  the viewport at any width the desktop nav appears at.
+                */}
+                <NavigationMenu.Content className="absolute top-full left-0 mt-5 w-[19rem]">
+                  <ul className={cn(panelClass, "space-y-0.5 p-2")}>
+                    {resources.map((resource) => {
+                      const Icon = resourceNavIcons[resource.icon];
+
+                      return (
+                        <li key={resource.href}>
+                          <NavigationMenu.Link asChild>
+                            <NavLink
+                              item={resource}
+                              className={cn(itemLinkClass, "flex gap-3 p-2.5")}
+                            >
+                              <span
+                                aria-hidden
+                                className="grid size-9 shrink-0 place-items-center rounded-lg border border-ink/[0.08] bg-brand-soft text-brand transition-colors group-hover:border-brand/25"
+                              >
+                                <Icon className="size-4.5" />
                               </span>
-                            ) : null}
-                          </Link>
-                        </NavigationMenu.Link>
-                      </li>
-                    ))}
+
+                              <span className="min-w-0">
+                                <span className="flex items-center gap-1 text-sm font-medium text-foreground transition-colors group-hover:text-brand">
+                                  {resource.label}
+                                  {/*
+                                    Marks the destination as off-site. It moves
+                                    a pixel on hover in the direction it points,
+                                    which is the whole animation.
+                                  */}
+                                  <ArrowUpRight
+                                    aria-hidden
+                                    className="size-3.5 text-muted-foreground transition-[transform,color] duration-200 ease-[var(--ease-emphasized)] group-hover:translate-x-px group-hover:-translate-y-px group-hover:text-brand"
+                                  />
+                                </span>
+                                {resource.description ? (
+                                  <span className="mt-0.5 block text-xs leading-snug text-muted-foreground">
+                                    {resource.description}
+                                  </span>
+                                ) : null}
+                              </span>
+                            </NavLink>
+                          </NavigationMenu.Link>
+                        </li>
+                      );
+                    })}
                   </ul>
                 </NavigationMenu.Content>
               </NavigationMenu.Item>

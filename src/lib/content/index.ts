@@ -18,6 +18,7 @@ export * from "./calculator";
 export * from "./codFees";
 export * from "./codShowHide";
 export * from "./codToPrepaid";
+export * from "./company";
 export * from "./controls";
 export * from "./demoVideos";
 export * from "./customers";
