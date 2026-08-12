@@ -1,9 +1,4 @@
-import {
-  ArrowDown,
-  IndianRupee,
-  PackageX,
-  Wallet,
-} from "lucide-react";
+import { ArrowDown, IndianRupee, PackageX, Wallet } from "lucide-react";
 
 import { SectionHeading } from "@/components/sections/SectionHeading";
 import { SectionShell } from "@/components/sections/SectionShell";
@@ -55,12 +50,16 @@ export function Results() {
     >
       <SectionHeading title="Results Our Merchants Achieve" />
 
-      <div className="mt-lede grid gap-4 md:grid-cols-2 lg:grid-cols-4 md:auto-rows-fr">
+      <div className="mt-lede grid gap-4 md:auto-rows-fr md:grid-cols-2 lg:grid-cols-4">
         {RESULTS.map((result, index) => {
           const Icon = result.icon;
 
           return (
-            <BlurFade key={result.title} delay={0.06 * index} className="h-full">
+            <BlurFade
+              key={result.title}
+              delay={0.06 * index}
+              className="h-full"
+            >
               <article className="group flex h-[118px] items-center rounded-[1.05rem] border border-[#E5E7EB] bg-white p-5 shadow-[0_1px_2px_rgba(15,23,42,0.03)] transition-[transform,box-shadow,border-color] duration-300 ease-[var(--ease-emphasized)] hover:-translate-y-0.5 hover:border-[#D9DFE8] hover:shadow-[0_6px_18px_-16px_rgba(15,23,42,0.12)] sm:p-6">
                 <div className="flex w-full items-center gap-4">
                   <Icon

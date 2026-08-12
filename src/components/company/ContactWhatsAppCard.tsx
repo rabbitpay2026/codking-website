@@ -68,8 +68,17 @@ export function ContactWhatsAppCard() {
             {whatsapp.body}
           </p>
 
-          <p className="mt-4 inline-flex items-center gap-2 rounded-full border border-ink/[0.08] bg-white/70 px-3 py-1.5 text-[13px] font-semibold text-ink tabular-nums backdrop-blur-sm">
-            {whatsapp.number}
+          {/*
+            The action, where the number used to be.
+
+            Publishing the number on the card gave a merchant a second, worse
+            way to use it: copy the digits, open WhatsApp, type the question
+            from scratch — arriving in a thread with none of the context the
+            pre-filled message carries. The card already opens that thread; what
+            it needed at the foot was something that says so.
+          */}
+          <p className="mt-4 inline-flex items-center gap-2 rounded-full border border-ink/[0.08] bg-white/70 px-3 py-1.5 text-[13px] font-semibold text-ink backdrop-blur-sm transition-colors duration-300 ease-emphasized group-hover:border-brand/25 group-hover:text-brand">
+            {whatsapp.actionLabel}
           </p>
         </div>
       </div>

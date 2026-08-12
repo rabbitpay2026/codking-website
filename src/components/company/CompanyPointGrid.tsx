@@ -49,17 +49,17 @@ export function CompanyPointGrid({
       tone={tone}
       size="compact"
       className="border-t border-ink/[0.07]"
-      containerClassName="py-10 md:py-14"
+      containerClassName="py-9 md:py-11"
     >
       <BlurFade>
         <div className="max-w-2xl">
           <FeatureEyebrow>{copy.eyebrow}</FeatureEyebrow>
 
-          <h2 className="mt-4 text-[1.65rem] leading-[1.12] font-semibold tracking-[-0.03em] text-pretty text-ink sm:text-[2rem]">
+          <h2 className="mt-3.5 text-[1.65rem] leading-[1.12] font-semibold tracking-[-0.03em] text-pretty text-ink sm:text-[1.9rem]">
             {copy.title}
           </h2>
 
-          <p className="mt-4 text-[15px] leading-relaxed text-pretty text-ink/55">
+          <p className="mt-3 text-[15px] leading-relaxed text-pretty text-ink/55">
             {copy.description}
           </p>
         </div>
@@ -67,7 +67,7 @@ export function CompanyPointGrid({
 
       <ul
         className={cn(
-          "mt-9 grid gap-3 sm:grid-cols-2",
+          "mt-7 grid gap-3 sm:grid-cols-2",
           columns === 3 && "lg:grid-cols-3",
         )}
       >

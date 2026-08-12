@@ -51,7 +51,7 @@ function CountryRow({
         onMouseEnter={onActivate}
         onFocus={onActivate}
         className={cn(
-          "group flex w-full items-center gap-3 rounded-2xl border px-3.5 py-2.5 text-left outline-none transition-all duration-300 focus-visible:ring-2 focus-visible:ring-brand/25 focus-visible:ring-offset-2 focus-visible:ring-offset-white",
+          "group flex w-full items-center gap-3 rounded-2xl border px-3.5 py-2.5 text-left transition-all duration-300 outline-none focus-visible:ring-2 focus-visible:ring-brand/25 focus-visible:ring-offset-2 focus-visible:ring-offset-white",
           active
             ? "border-brand/20 bg-brand-soft/80 shadow-[0_8px_24px_-16px_rgba(37,99,235,0.35)]"
             : "border-border/80 bg-white/80 hover:border-brand/15 hover:bg-sky-50/80 hover:shadow-[0_8px_24px_-18px_rgba(37,99,235,0.16)]",
@@ -74,7 +74,7 @@ function CountryRow({
 
         <span
           className={cn(
-            "rounded-full border px-2.5 py-0.75 text-[10px] font-semibold uppercase tracking-[0.12em] transition-colors sm:text-[11px]",
+            "rounded-full border px-2.5 py-0.75 text-[10px] font-semibold tracking-[0.12em] uppercase transition-colors sm:text-[11px]",
             active
               ? "border-brand/20 bg-white text-brand"
               : "border-border bg-sky-50 text-muted-foreground group-hover:border-brand/10 group-hover:text-brand",
@@ -109,7 +109,7 @@ function HighlightRow() {
           </div>
         </div>
 
-        <span className="rounded-full border border-brand/20 bg-white px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-brand sm:text-[11px]">
+        <span className="rounded-full border border-brand/20 bg-white px-2.5 py-1 text-[10px] font-semibold tracking-[0.14em] text-brand uppercase sm:text-[11px]">
           Global scale
         </span>
       </div>
@@ -141,14 +141,14 @@ export function WorldwideShowcase({
         <div className="relative flex h-full flex-col justify-center">
           <div className="mb-3 flex items-center justify-between gap-3">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand">
+              <p className="text-xs font-semibold tracking-[0.16em] text-brand uppercase">
                 Operating regions
               </p>
               <h3 className="mt-2 text-[1rem] font-semibold tracking-[-0.02em] text-foreground sm:text-[1.05rem]">
                 A calm globe that reads as real coverage
               </h3>
             </div>
-            <span className="hidden rounded-full border border-brand/15 bg-brand-soft px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-brand sm:inline-flex">
+            <span className="hidden rounded-full border border-brand/15 bg-brand-soft px-3 py-1 text-[11px] font-semibold tracking-[0.14em] text-brand uppercase sm:inline-flex">
               Live footprint
             </span>
           </div>
@@ -164,14 +164,14 @@ export function WorldwideShowcase({
       <div className="h-full rounded-[1.75rem] border border-brand/15 bg-white p-4 shadow-[0_18px_48px_-32px_rgba(37,99,235,0.22)] sm:p-5">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand">
+            <p className="text-xs font-semibold tracking-[0.16em] text-brand uppercase">
               Supported countries
             </p>
             <h3 className="mt-2 text-[1rem] font-semibold tracking-[-0.02em] text-foreground sm:text-[1.05rem]">
               Country-level proof, not generic global copy
             </h3>
           </div>
-          <span className="rounded-full border border-brand/15 bg-sky-50 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-brand sm:text-[11px]">
+          <span className="rounded-full border border-brand/15 bg-sky-50 px-2.5 py-1 text-[10px] font-semibold tracking-[0.14em] text-brand uppercase sm:text-[11px]">
             Shopify ready
           </span>
         </div>
@@ -180,7 +180,9 @@ export function WorldwideShowcase({
           className="mt-4 grid gap-2 sm:grid-cols-2"
           onMouseLeave={() => setActiveCountryId(null)}
           onBlurCapture={(event) => {
-            if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+            if (
+              !event.currentTarget.contains(event.relatedTarget as Node | null)
+            ) {
               setActiveCountryId(null);
             }
           }}
@@ -202,7 +204,7 @@ export function WorldwideShowcase({
         <div className="mt-3.5 rounded-[1.4rem] border border-border bg-gradient-to-b from-sky-50 to-white p-3.5">
           <div className="mb-4 flex items-center justify-between gap-3">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand">
+              <p className="text-xs font-semibold tracking-[0.16em] text-brand uppercase">
                 Performance
               </p>
               <h4 className="mt-2 text-[0.92rem] font-semibold tracking-[-0.02em] text-foreground sm:text-sm">

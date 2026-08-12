@@ -53,6 +53,23 @@ const WHATSAPP_MESSAGE =
 const WHATSAPP_CONTACT = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`;
 
 /**
+ * The company behind the product, and the mailbox its legal pages publish.
+ *
+ * Both are read off the Terms & Conditions and Privacy Policy published on
+ * codking.tech, which name Notifik Technologies as the operator and
+ * `support@notifiktech.com` as the address for questions about either
+ * document. They live here rather than in the legal copy for the reason every
+ * other destination does: a mailbox retyped in two documents is a mailbox that
+ * eventually differs between them.
+ *
+ * The registered address and the contracting entity's full legal name are
+ * deliberately absent — the published documents do not state them, and a legal
+ * page is the last place to guess.
+ */
+export const legalEntityName = "Notifik Technologies";
+const SUPPORT_EMAIL = "support@notifiktech.com";
+
+/**
  * The social profiles.
  *
  * Published destinations, so they are the fallback rather than a blank — the
@@ -90,6 +107,12 @@ export const externalLinks = {
   login: externalUrl(process.env.NEXT_PUBLIC_APP_LOGIN_URL),
   /** Secondary action on the persistent mobile bar (§4.4). */
   whatsapp: externalUrl(process.env.NEXT_PUBLIC_WHATSAPP_URL, WHATSAPP_CONTACT),
+
+  /** The address the published legal documents answer on. */
+  supportEmail: externalUrl(
+    process.env.NEXT_PUBLIC_SUPPORT_EMAIL,
+    SUPPORT_EMAIL,
+  ),
 
   /** Setup and configuration reference, on its own subdomain (§7). */
   docs: externalUrl(process.env.NEXT_PUBLIC_DOCS_URL, DOCS_SITE),

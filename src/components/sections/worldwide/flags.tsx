@@ -30,7 +30,14 @@ export function IndiaFlag({ className }: FlagProps) {
       <rect width="32" height="8" fill="#FF9933" />
       <rect y="8" width="32" height="8" fill="#FFFFFF" />
       <rect y="16" width="32" height="8" fill="#138808" />
-      <circle cx="16" cy="12" r="3" fill="none" stroke="#1D4ED8" strokeWidth="0.8" />
+      <circle
+        cx="16"
+        cy="12"
+        r="3"
+        fill="none"
+        stroke="#1D4ED8"
+        strokeWidth="0.8"
+      />
       <g stroke="#1D4ED8" strokeWidth="0.45" strokeLinecap="round">
         {Array.from({ length: 12 }, (_, index) => {
           const angle = (index * 30 * Math.PI) / 180;
@@ -51,9 +58,18 @@ export function PhilippinesFlag({ className }: FlagProps) {
       <polygon points="0,0 13,12 0,24" fill="#FFFFFF" />
       <circle cx="4.2" cy="12" r="2.2" fill="#FCD116" />
       <g fill="#FCD116">
-        <polygon points="1.8,4.5 2.3,5.8 3.7,5.8 2.6,6.6 3.0,7.9 1.8,7.1 0.6,7.9 1.0,6.6 -0.1,5.8 1.3,5.8" transform="translate(0.8 1.2)" />
-        <polygon points="1.8,4.5 2.3,5.8 3.7,5.8 2.6,6.6 3.0,7.9 1.8,7.1 0.6,7.9 1.0,6.6 -0.1,5.8 1.3,5.8" transform="translate(4 0.2)" />
-        <polygon points="1.8,4.5 2.3,5.8 3.7,5.8 2.6,6.6 3.0,7.9 1.8,7.1 0.6,7.9 1.0,6.6 -0.1,5.8 1.3,5.8" transform="translate(3.9 4.5)" />
+        <polygon
+          points="1.8,4.5 2.3,5.8 3.7,5.8 2.6,6.6 3.0,7.9 1.8,7.1 0.6,7.9 1.0,6.6 -0.1,5.8 1.3,5.8"
+          transform="translate(0.8 1.2)"
+        />
+        <polygon
+          points="1.8,4.5 2.3,5.8 3.7,5.8 2.6,6.6 3.0,7.9 1.8,7.1 0.6,7.9 1.0,6.6 -0.1,5.8 1.3,5.8"
+          transform="translate(4 0.2)"
+        />
+        <polygon
+          points="1.8,4.5 2.3,5.8 3.7,5.8 2.6,6.6 3.0,7.9 1.8,7.1 0.6,7.9 1.0,6.6 -0.1,5.8 1.3,5.8"
+          transform="translate(3.9 4.5)"
+        />
       </g>
     </FlagFrame>
   );

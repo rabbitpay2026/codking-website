@@ -15,9 +15,13 @@ const numberFormat = new Intl.NumberFormat("en");
  * exactly where a hand-typed "over 12,000 merchants" gets written and then
  * never updated, which is what that rule exists to prevent.
  *
- * A rail rather than four cards. This sits directly under the hero copy, and
+ * A rail rather than four cards. This closes the hero across both tracks, and
  * four bordered boxes there would compete with the headline above them;
  * hairline dividers give the same reading order at a fraction of the weight.
+ * The hairline along the top is the same rule the feature pages set between
+ * sections, so the rail reads as the hero's last line rather than as a fifth
+ * thing floating under it — and it runs the full measure, which is what stops
+ * the row ending in a quarter-page of nothing.
  *
  * A four-track grid rather than a wrapping flex row, and that is the whole
  * reason it is a grid: the dividers key off position in the list, so a row that
@@ -53,7 +57,7 @@ export async function AboutStats() {
   ];
 
   return (
-    <dl className="mt-9 grid max-w-3xl grid-cols-2 gap-x-6 gap-y-7 md:grid-cols-4 md:gap-x-0">
+    <dl className="mt-9 grid grid-cols-2 gap-x-6 gap-y-6 border-t border-ink/[0.07] pt-7 md:grid-cols-4 md:gap-x-0">
       {stats.map((stat, index) => (
         <div
           key={stat.id}

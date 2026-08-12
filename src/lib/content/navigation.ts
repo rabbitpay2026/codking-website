@@ -97,7 +97,12 @@ export function getFooterFeatureLinks(): readonly NavItem[] {
 }
 
 /**
- * The footer's link columns other than Features (§4.5).
+ * The footer's tracks other than Features (§4.5).
+ *
+ * A track is a column of the grid, and a column can hold more than one heading
+ * — hence the nesting, which every track happens to use singly today. Returning
+ * groups flat would make the footer decide which headings share a column, and
+ * that decision belongs here rather than in the markup that draws them.
  *
  * Features is returned separately by `getFooterFeatureLinks()` because the
  * footer gives it two column widths rather than one — six labels at the width
@@ -108,16 +113,30 @@ export function getFooterFeatureLinks(): readonly NavItem[] {
  * in a second place, and a footer that can drift from the header is a footer
  * that eventually does.
  */
-export function getFooterColumns(): readonly NavGroup[] {
+export function getFooterColumns(): readonly (readonly NavGroup[])[] {
   return [
-    footerProductColumn,
-    footerSolutionsColumn,
-    { title: "Resources", items: getResourcesNav() },
-    footerCompanyColumn,
+    [footerProductColumn],
+    [footerSolutionsColumn],
+    [footerCompanyColumn],
+    /*
+      Resources last, and that is a layout decision rather than a ranking. It is
+      the shortest group on the row at two links, and a short column between two
+      long ones punches a hole in the middle of the footer; at the end it reads
+      as the row tapering off. The order it is scanned in barely changes — Docs
+      and Blog are looked up by name, not browsed to.
+    */
+    [{ title: "Resources", items: getResourcesNav() }],
   ];
 }
 
-/** Privacy · Terms · Refund · Cookies, for the footer's bottom bar (§4.5). */
+/**
+ * Privacy and Terms, for the footer's bottom bar (§4.5).
+ *
+ * Not a column and not part of `getFooterColumns()`: these two sit beside the
+ * copyright rather than under a heading of their own. Read through the
+ * repository like every other destination so the two documents are declared
+ * once, next to the routes that resolve them.
+ */
 export function getFooterLegalLinks(): readonly NavItem[] {
   return footerLegalLinks;
 }

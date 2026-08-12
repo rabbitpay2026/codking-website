@@ -1,4 +1,5 @@
 import { ShopifyMark } from "@/components/brand/ShopifyMarks";
+import { AboutHeroVisual } from "@/components/company/AboutHeroVisual";
 import { AboutStats } from "@/components/company/AboutStats";
 import { CompanyHero } from "@/components/company/CompanyHero";
 import { ActionLink } from "@/components/layout/ActionLink";
@@ -15,6 +16,10 @@ import { getAboutHero, getUtilityActions } from "@/lib/content";
  * its own call to action is telling the visitor this is a different offer, and
  * the install button here is the same object it has been on every page since
  * they arrived — ink, not brand, with Shopify's mark as its only colour.
+ *
+ * The stat rail is passed as `rail` rather than as a child, so it closes the
+ * hero across both tracks instead of being squeezed into the text column beside
+ * the visual. Four figures at 130px each is four figures whose labels wrap.
  */
 export async function AboutHero() {
   const hero = getAboutHero();
@@ -35,8 +40,10 @@ export async function AboutHero() {
         </>
       }
       description={hero.description}
+      visual={<AboutHeroVisual />}
+      rail={<AboutStats />}
     >
-      <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
+      <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:items-center">
         {installAction ? (
           <ActionLink
             action={{ ...installAction, label: "Install on Shopify" }}
@@ -54,8 +61,6 @@ export async function AboutHero() {
           />
         ) : null}
       </div>
-
-      <AboutStats />
     </CompanyHero>
   );
 }

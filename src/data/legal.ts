@@ -1,141 +1,164 @@
+import { externalLinks, legalEntityName } from "@/constants/external";
+
 import type { LegalDocument } from "@/types";
+
+const SUPPORT_EMAIL = externalLinks.supportEmail;
 
 /**
  * The four legal documents (§3).
  *
- * What is written here and what is deliberately not written here are two
- * different decisions.
+ * Privacy and Terms are not drafted here. They reproduce the documents
+ * Notifik Technologies already publishes for COD King on codking.tech, clause
+ * for clause and in the published order — the account terms, the eighteen
+ * general conditions, the payment terms, the tax line, the refund position and
+ * the support address. The wording is set for this site's typography rather
+ * than pasted as one wall of text, but no obligation has been added, softened
+ * or dropped, because a website that states different terms from the ones the
+ * business publishes is worse than a website with no terms at all.
  *
- * Written: everything that follows from what the product observably is — a
- * Shopify app that reads store and order data, sends an OTP over SMS or
- * WhatsApp, takes an upfront payment through the merchant's own gateway,
- * messages abandoned carts, and reports on the result. Those practices are
- * described from the product itself rather than from a template, because a
- * privacy policy that does not match the app is not a policy.
+ * Refund and Cookies have no published counterpart, so those two are still
+ * described from what the product observably does.
  *
- * Not written: anything only the business can state — the registered entity and
- * its address, the governing jurisdiction, retention periods, the named
- * sub-processors, refund windows, liability caps. None of it is guessed and
- * none of it is filled with a plausible-looking default. Each such item is
- * listed in its section's `confirm` array, which the page renders as a visible
- * open item, so publishing is a matter of replacing arrays rather than
+ * What is deliberately absent everywhere is anything only the business can
+ * state: the registered address, the courts with exclusive jurisdiction,
+ * retention periods, named sub-processors, certifications. None of it is
+ * guessed and none of it is filled with a plausible-looking default. Each such
+ * item sits in its section's `confirm` array, which the page renders as a
+ * visible open item, so publishing is a matter of deleting arrays rather than
  * proofreading paragraphs for invented facts.
  *
- * `lastUpdated` stays `null` and `status` stays `draft` for the same reason: a
- * legal page showing a fabricated revision date is worse than one showing none.
+ * `lastUpdated` stays `null` for the same reason: the published documents carry
+ * no revision date, and a legal page showing a fabricated one is worse than one
+ * showing none.
+ *
+ * `**like this**` marks a phrase for emphasis, rendered as `<strong>` by
+ * `LegalText`. It is the only formatting these strings carry, and it is
+ * presentation rather than content: the marks fall on the part of a sentence a
+ * merchant is bound by — the age limit, the payment window, "does not issue
+ * refunds" — and never on a phrase the published document does not contain. No
+ * clause has been added, softened or reordered to make room for one.
  */
 export const legalDocuments: readonly LegalDocument[] = [
   {
     slug: "privacy-policy",
     title: "Privacy Policy",
-    summary:
-      "What COD King collects when you install the app, why we hold it, and what we do with the order data that passes through it.",
+    summary: `How ${legalEntityName} collects, uses and safeguards your information when you use the COD King website, app and related services.`,
     lastUpdated: null,
     status: "draft",
+    notice: `The sections below reproduce the Privacy Policy ${legalEntityName} publishes for COD King. A small number of details the published policy does not state — retention periods, processing regions, the registered address — are listed inside the section they belong to rather than left as gaps in the text.`,
+    facts: [
+      { id: "operator", label: "Operated by", value: legalEntityName },
+      {
+        id: "applies",
+        label: "Applies to",
+        value: "The COD King website, app and related services",
+      },
+      ...(SUPPORT_EMAIL
+        ? [
+            {
+              id: "contact",
+              label: "Privacy questions",
+              value: SUPPORT_EMAIL,
+              href: `mailto:${SUPPORT_EMAIL}`,
+            },
+          ]
+        : []),
+    ],
     sections: [
       {
-        id: "scope",
-        heading: "1. Scope",
+        id: "introduction",
+        heading: "1. Introduction",
         body: [
-          "This policy covers the COD King application installed on a Shopify store, this website, and the support channels we answer on. It explains what we collect, why we hold it, and how long it stays with us.",
-          "It does not cover Shopify itself, nor the payment gateways, messaging providers or courier services a merchant connects their store to. Those are separate services under their own policies, and a merchant's relationship with them is their own.",
+          `This Privacy Policy explains how ${legalEntityName} ("we", "our", "us") collects, uses and safeguards your personal information when you access our website, our applications and the related services we operate — including COD King, our Shopify application. Together these are referred to below as **the Services**.`,
+          "**By using the Services you agree to the terms set out here.** If you do not agree, please discontinue use of our website and Services.",
         ],
         confirm: [
-          "The legal entity that operates COD King, and its registered address",
+          `The full registered name and address of ${legalEntityName}, and the domains this policy formally covers`,
         ],
       },
       {
-        id: "what-we-collect",
+        id: "information-we-collect",
         heading: "2. Information we collect",
         body: [
-          "COD King is installed by a merchant onto their own Shopify store, so most of what we hold is either the merchant's account information or the store data Shopify grants the app access to at install time.",
+          "We collect the following categories of information when you register for, configure and use the Services.",
         ],
         points: [
-          "Merchant account details — the store domain, the contact name and address Shopify provides, and the plan you are on.",
-          "Store and order data — orders, line items, cart values, delivery addresses, order status and fulfilment state, read through Shopify's APIs under the permissions granted at install.",
-          "Shopper contact details — the phone number or email address on an order, used to send an OTP, an upfront-payment link, or an abandoned-cart reminder.",
-          "Configuration — the COD rules, fees, discounts and message templates you set up in the app.",
-          "Support correspondence — the messages you send us and our replies.",
-          "Website usage — pages viewed on this site and the general information a browser sends with every request. See the Cookie Policy for the detail.",
+          "**Personal information** — name, email address, phone number and other identifiable details.",
+          "**Account data** — login credentials, and third-party account information where you have linked one.",
+          "**Payment information** — card details, bank account information and compliance documents.",
+          "**Customer information** — the addresses, email addresses, mobile numbers and wallet details attached to your customers' orders.",
+          "**User activity** — pages visited, searches, IP address, device and browser details, and timestamps.",
         ],
       },
       {
         id: "how-we-use-it",
-        heading: "3. How we use it",
+        heading: "3. How we use your information",
+        body: ["We use the information above to:"],
+        points: [
+          "Provide and improve our Services.",
+          "Enable secure transactions.",
+          "Detect fraud and errors.",
+          "Communicate updates, offers and notifications.",
+          "Personalise your experience of the Services.",
+        ],
+      },
+      {
+        id: "merchant-accounts",
+        heading: "4. Merchant account information",
         body: [
-          "Every use below exists because a feature of the app requires it. We do not sell data, and we do not use shopper contact details to market anything of our own.",
+          "If you register as a merchant, we may request additional details — financial information, compliance documents and similar — in order to give you full access to the Services.",
         ],
         points: [
-          "Verifying orders — sending a one-time password over SMS or WhatsApp and recording whether it was confirmed.",
-          "Collecting upfront payments — generating the partial-payment request and recording whether it was paid.",
-          "Applying COD rules and fees — evaluating a cart against the rules you configured to decide whether COD is offered and at what charge.",
-          "Recovering abandoned carts and converting COD to prepaid — sending the reminder or offer you configured to the contact on the cart or order.",
-          "Reporting — producing the verification, RTO and prepaid figures shown in your dashboard.",
-          "Running the service — billing, support, security monitoring, and fixing faults.",
+          "**Email** may be used to send you updates, newsletters and important notices.",
+          "**SMS and WhatsApp** may be used for transaction alerts and reminders.",
+          "**You can unsubscribe at any time** by following the links in our communications.",
         ],
       },
       {
-        id: "controller-and-processor",
-        heading: "4. Who controls the data",
+        id: "no-sale",
+        heading: "5. We do not sell your information",
         body: [
-          "For shopper data, the merchant is the controller and COD King is the processor: the data reaches us because a merchant installed the app on their store, and we act on it to deliver the features that merchant switched on. We do not use it for our own purposes.",
-          "For a merchant's own account and billing information, COD King is the controller.",
-          "A merchant is responsible for having a lawful basis to contact their own customers, including consent where their market requires it before sending an SMS or WhatsApp message.",
+          "**We do not sell your information**, and we do not publicly disclose it.",
         ],
       },
       {
-        id: "sharing",
-        heading: "5. Sharing and sub-processors",
+        id: "customer-information",
+        heading: "6. Customer information",
         body: [
-          "Delivering the app means passing some data to the services that carry it. A phone number reaches a messaging provider so an OTP can be delivered; an amount and an order reference reach a payment gateway so an upfront payment can be taken.",
-          "We share data with a service only where a feature requires it, and only the fields that feature needs. We also disclose data where the law compels us to.",
-        ],
-        confirm: [
-          "The current list of sub-processors — hosting, messaging and payment providers — and the region each operates in",
-          "The process and notice period for notifying merchants of a change to that list",
+          "Customer data — contact details, payment methods and similar — is **only shared with businesses if the customer consents**.",
+          `${legalEntityName} **is not liable for misuse of that data by third-party businesses**.`,
         ],
       },
       {
-        id: "retention",
-        heading: "6. Retention",
+        id: "user-activity",
+        heading: "7. User activity data",
         body: [
-          "Configuration and reporting data stay for as long as the app is installed. Uninstalling the app from a Shopify store ends our access to that store's data, and Shopify's own webhooks notify us to begin deletion.",
+          "We collect technical and behavioural data — browser, device, IP address and usage patterns — in order to:",
         ],
-        confirm: [
-          "How long order and verification records are kept after uninstall",
-          "How long support correspondence and billing records are kept",
+        points: [
+          "Maintain website security.",
+          "Improve the user experience.",
+          "Conduct aggregated statistical analysis.",
         ],
       },
       {
         id: "security",
-        heading: "7. Security",
+        heading: "8. Security and data deletion",
         body: [
-          "Data is encrypted in transit. Access to production systems is limited to the people who need it to operate the service, and API credentials are scoped to the permissions Shopify granted at install rather than to the whole store.",
-          "No service can promise that a breach is impossible. What we can commit to is that access is minimised by design and that a security issue is treated as an incident rather than a ticket.",
+          "We implement **industry-standard safeguards** to protect your data, but **no service can guarantee complete security** over the internet.",
+          "**You may request deletion of your data at any time**, and we will erase it from our systems.",
         ],
         confirm: [
-          "Certifications or audits to reference, if any",
-          "The breach-notification window offered to merchants",
+          "How long account, order and support records are kept before deletion is requested",
+          "The regions data is stored and processed in, and the sub-processors relied on",
+          "Any certifications or audits to reference, and the breach-notification window offered",
         ],
       },
       {
-        id: "your-rights",
-        heading: "8. Your rights",
+        id: "intellectual-property",
+        heading: "9. Intellectual property",
         body: [
-          "Depending on where you are, you may have the right to ask for a copy of the data we hold about you, to have it corrected, to have it deleted, or to object to how it is used.",
-          "A shopper asking about data held because of an order should contact the store they ordered from — that merchant is the controller. Where we receive such a request directly, we pass it to the merchant and assist them in answering it.",
-          "A merchant can raise any of these requests with us through the contact page.",
-        ],
-      },
-      {
-        id: "transfers",
-        heading: "9. International transfers",
-        body: [
-          "COD King serves merchants in COD-heavy markets across several regions, so data may be processed outside the country an order was placed in.",
-        ],
-        confirm: [
-          "The regions data is stored and processed in",
-          "The transfer mechanism relied on for cross-border processing",
+          `All content and intellectual property on ${legalEntityName} properties **remain our sole property**. Downloading or otherwise using our materials **does not transfer any ownership right** in them.`,
         ],
       },
       {
@@ -149,17 +172,19 @@ export const legalDocuments: readonly LegalDocument[] = [
         id: "changes",
         heading: "11. Changes to this policy",
         body: [
-          "When this policy changes, the revision date at the top of the page changes with it. Where a change materially affects how merchant or shopper data is handled, we notify merchants in the app before it takes effect.",
+          "When this policy changes, the revision date at the top of the page changes with it. Where a change **materially affects how information is handled**, we notify merchants **before it takes effect**.",
         ],
       },
       {
         id: "contact",
-        heading: "12. Contact",
+        heading: "12. Contact us",
         body: [
-          "Questions about this policy, or a request about data we hold, can be sent through the contact page.",
+          SUPPORT_EMAIL
+            ? `If you have any questions about this policy, or a request about data we hold, contact us at **${SUPPORT_EMAIL}**. You can also reach us through the contact page.`
+            : "If you have any questions about this policy, or a request about data we hold, reach us through the contact page.",
         ],
         confirm: [
-          "A dedicated privacy contact address, and whether a data protection officer is appointed",
+          "Whether a dedicated privacy contact or data protection officer is appointed",
         ],
       },
     ],
@@ -168,134 +193,174 @@ export const legalDocuments: readonly LegalDocument[] = [
   {
     slug: "terms-and-conditions",
     title: "Terms & Conditions",
-    summary:
-      "The agreement between COD King and the merchant who installs it — what the service does, what each side is responsible for, and how it ends.",
+    summary: `The agreement between ${legalEntityName} and the merchant using COD King — the account terms, the general conditions, and how fees are paid.`,
     lastUpdated: null,
     status: "draft",
+    notice: `The clauses below reproduce the Terms & Conditions ${legalEntityName} publishes for COD King, in the published order. The few points the published text leaves open — the registered address, the courts with exclusive jurisdiction — are listed inside the section they belong to rather than answered here.`,
+    facts: [
+      { id: "operator", label: "Agreement with", value: legalEntityName },
+      {
+        id: "applies",
+        label: "Applies to",
+        value: "The COD King website, app and related services",
+      },
+      ...(SUPPORT_EMAIL
+        ? [
+            {
+              id: "contact",
+              label: "Questions",
+              value: SUPPORT_EMAIL,
+              href: `mailto:${SUPPORT_EMAIL}`,
+            },
+          ]
+        : []),
+    ],
     sections: [
       {
         id: "agreement",
         heading: "1. The agreement",
         body: [
-          "These terms govern the use of the COD King application and this website. Installing the app on a Shopify store means accepting them, on behalf of the business that owns the store.",
+          `These Terms & Conditions govern your use of COD King and the related services operated by ${legalEntityName} (the "Service"). **You must read, agree to and accept all terms** set out in this User Agreement and in the Privacy Policy **before becoming a member** of ${legalEntityName}.`,
         ],
         confirm: [
-          "The legal entity these terms are entered into with, and its registered address",
+          `The full registered name and address of the entity these terms are entered into with — the published site also carries the credit "COD King by Meraki Design Agency", which needs reconciling with ${legalEntityName}`,
         ],
       },
       {
-        id: "the-service",
-        heading: "2. The service",
-        body: [
-          "COD King is an application for Shopify stores that manages cash-on-delivery orders. It verifies orders by one-time password, collects partial payments upfront, adds or removes COD as a checkout option under rules the merchant configures, applies COD fees, offers prepaid conversion, and recovers abandoned carts.",
-          "The app operates within the permissions Shopify grants at install. Features that depend on a third-party service — a messaging provider, a payment gateway — work to the extent that service is available and correctly configured.",
+        id: "account-terms",
+        heading: "2. Account terms",
+        clauses: [
+          "You must be **at least 18 years of age** to access and utilise this Service.",
+          "During registration you are required to provide your **complete legal name, current address, a valid email address**, and any other information necessary to complete your signup.",
+          `**It is your responsibility to ensure the security of your password.** ${legalEntityName} will not be liable for any loss or damage resulting from your failure to protect your account and password.`,
+          `The ${legalEntityName} service **must not be used for any illegal or unauthorised activity**, and you are required to comply with all laws applicable in your jurisdiction, as well as **the laws of India**.`,
+          `**You are accountable for all actions and content** — including data, graphics, images and links — associated with your ${legalEntityName} account.`,
+          "The transmission of any malicious software, virus or destructive code is **strictly prohibited**.",
+          `If any violation of these account terms is identified by ${legalEntityName}, it may lead to the **immediate termination of your services**.`,
         ],
       },
       {
-        id: "accounts",
-        heading: "3. Eligibility and accounts",
+        id: "general-conditions",
+        heading: "3. General conditions",
         body: [
-          "The app is for businesses operating a Shopify store. The merchant is responsible for the accuracy of the store details held in the account, for the security of access to the Shopify admin the app is installed under, and for everything done through their account.",
+          "The following apply to your use of the Service in addition to the account terms above.",
+        ],
+        clauses: [
+          "We retain the right to **modify or discontinue the Service** for any reason at any time **without prior notice**.",
+          "**We may refuse service to anyone**, for any reason, at any time.",
         ],
       },
       {
-        id: "billing",
-        heading: "4. Plans and billing",
-        body: [
-          "Plans are listed on the pricing page. Charges for the app are made through Shopify's billing, so they appear on the store's Shopify invoice rather than being collected separately.",
-          "Some features consume messages or payment-gateway transactions. Where those are charged by a third-party provider a merchant connects themselves, they are billed by that provider directly.",
-        ],
-        confirm: [
-          "The billing cycle, and whether usage above a plan's included volume is charged",
-          "Notice given before a price change takes effect",
+        id: "service-availability",
+        heading: "4. Service availability and limitations",
+        clauses: [
+          'Your use of the Service is **entirely at your own risk**. The Service is offered **"as is" and "as available"**, without any guarantee or warranty, either express or implied.',
+          `${legalEntityName} **does not assure that the Service will be continuous, prompt, secure or free of errors**.`,
+          "The results obtained from using the Service **may not always be accurate or reliable**.",
+          `${legalEntityName} **does not guarantee** that any product, service, information or other material acquired through the Service will meet your expectations, or that any error in the Service will be rectified.`,
         ],
       },
       {
-        id: "merchant-responsibilities",
-        heading: "5. Merchant responsibilities",
-        body: [
-          "COD King sends messages to a merchant's own customers, on that merchant's behalf and under their store's name. The merchant is responsible for the lawfulness of that contact.",
-        ],
-        points: [
-          "Obtaining any consent required in your market before sending an SMS or WhatsApp message to a customer.",
-          "The content of message templates, offers and discounts you configure.",
-          "Complying with consumer, distance-selling and tax law applicable to your store.",
-          "Publishing your own store policies, including how you handle refunds on COD orders.",
+        id: "your-content",
+        heading: "5. Your content and its transmission",
+        clauses: [
+          "You acknowledge that your content — **excluding credit card data** — **may be transmitted unencrypted**, and that this may involve (a) data being sent over various networks, and (b) adaptations required to meet the technical specifications of connecting networks or devices.",
+          "While we may review content, **we are not obliged to do so**. We may **remove content and accounts** that we consider unlawful, offensive, threatening, defamatory or otherwise objectionable, at our discretion.",
+          `${legalEntityName} **does not claim ownership rights** over the materials you provide to our Service.`,
+          `By submitting images and product descriptions to ${legalEntityName}, **you grant permission for other internet users to see this content**, and you agree that we may display, store and review all content submitted to our Service.`,
         ],
       },
       {
-        id: "acceptable-use",
-        heading: "6. Acceptable use",
-        body: [
-          "The app may not be used to send unsolicited bulk messaging, to impersonate another business, to process orders for goods that are unlawful to sell in the destination market, or to attempt to circumvent Shopify's platform rules.",
-          "It may not be reverse engineered, resold as a service of your own, or used to build a competing product.",
-        ],
-      },
-      {
-        id: "third-parties",
-        heading: "7. Third-party services",
-        body: [
-          "Shopify, payment gateways and messaging providers are independent services under their own terms. COD King is not responsible for their availability, their pricing, or for a message a carrier fails to deliver.",
-        ],
-      },
-      {
-        id: "intellectual-property",
-        heading: "8. Intellectual property",
-        body: [
-          "The app, this website, and the COD King name and marks remain ours. Installing the app grants a non-exclusive, non-transferable right to use it while a valid plan is in place, and nothing more.",
-          "A merchant's own data, store content and configuration remain the merchant's.",
-        ],
-      },
-      {
-        id: "warranties",
-        heading: "9. Warranties and disclaimers",
-        body: [
-          "The service is provided as it is. We work to keep it available and correct, but we do not warrant uninterrupted operation, and we do not warrant a commercial outcome.",
-          "Figures published on this site — reduced fake orders, lower RTO, higher prepaid share — describe results merchants have reported. They are not a guarantee of what any particular store will see.",
+        id: "prohibited-activities",
+        heading: "6. Prohibited activities",
+        clauses: [
+          `You agree **not to duplicate, copy, sell, resell or exploit any part of the Service**, or access to it, without obtaining **explicit written permission** from ${legalEntityName}.`,
+          `Any form of abuse — verbal or in writing — aimed at any ${legalEntityName} customer, employee, member or representative **will result in the immediate termination of your account**.`,
+          `**You are prohibited from acquiring search engine or similar pay-per-click keywords** (such as Google Ads keywords), or domain names, that incorporate the ${legalEntityName} name or trademarks, including variations and misspellings.`,
         ],
       },
       {
         id: "liability",
-        heading: "10. Limitation of liability",
+        heading: "7. Limitation of liability",
         body: [
-          "Nothing in these terms limits liability where the law does not allow it to be limited.",
+          `You agree that ${legalEntityName} **will not be held responsible for any direct, indirect, incidental, special, consequential or exemplary damages** — including but not limited to lost profits, goodwill or data — resulting from your use of, or inability to use, the Service.`,
+          `${legalEntityName} and our suppliers **will not be liable for any loss or special damage** arising from the use of our site, our services or this agreement, however the situation arises, **including through negligence**.`,
+        ],
+      },
+      {
+        id: "indemnification",
+        heading: "8. Indemnification",
+        body: [
+          `**You agree to indemnify and hold** ${legalEntityName}, along with our affiliates and employees, **harmless from any claim made by a third party** arising from **your breach of this Agreement** or any related document, or from your violation of any law or third-party right.`,
+        ],
+      },
+      {
+        id: "technical-support",
+        heading: "9. Technical support",
+        body: [
+          "Technical support is available **only to paying account holders**, by email and — where prearranged — through phone and ticketing systems.",
+        ],
+      },
+      {
+        id: "intellectual-property",
+        heading: "10. Intellectual property",
+        body: [
+          `The Service, this website, and the COD King and ${legalEntityName} names and marks **remain ours**. **Nothing in these terms transfers ownership of them to you**, and the restrictions in section 6 apply to any use of them.`,
+          "Materials you provide to the Service remain yours, subject to the permission described in section 5.",
+        ],
+      },
+      {
+        id: "payment-of-fees",
+        heading: "11. Payment of fees",
+        clauses: [
+          `Various payment options are available. **The merchant must pay according to the terms agreed** with ${legalEntityName} — **monthly, quarterly, bi-annually or annually**.`,
+          "Payments should be made **within 7 days of the invoice date**. Beyond that, the merchant risks **potential closure or termination of their online store**.",
         ],
         confirm: [
-          "The liability cap, and the categories of loss excluded",
-          "Whether an indemnity is offered, and on what terms",
+          "Whether charges made through Shopify billing follow this invoice cycle or Shopify's own",
         ],
       },
       {
-        id: "termination",
-        heading: "11. Suspension and termination",
+        id: "taxes",
+        heading: "12. Taxes",
         body: [
-          "A merchant can end the agreement at any time by uninstalling the app from their Shopify store. Uninstalling stops future charges through Shopify billing and ends our access to store data.",
-          "We may suspend or end access where these terms are breached, where use of the app puts the service or another merchant at risk, or where we are required to by law.",
+          "**All fees are subject to state and central taxes**, service charges, sales tax, and any other applicable taxes.",
         ],
       },
       {
-        id: "changes",
-        heading: "12. Changes",
+        id: "refunds",
+        heading: "13. Refunds",
+        body: [`${legalEntityName} **does not issue refunds**.`],
+        confirm: [
+          "Whether any exception applies — a trial period, or a charge for a service that was not delivered",
+        ],
+      },
+      {
+        id: "entire-agreement",
+        heading: "14. Waiver and entire agreement",
         body: [
-          "The app changes as features ship, and these terms change with it. Material changes are notified before they take effect, and continuing to use the app after that point means accepting them.",
+          `If ${legalEntityName} fails to enforce or exercise any right or provision of these terms, that **will not be viewed as a waiver** of the right or provision.`,
+          `These terms represent the **entire understanding** between you and ${legalEntityName} regarding your use of the Service, and **override any prior agreement**, including earlier versions of these Terms.`,
         ],
       },
       {
         id: "governing-law",
-        heading: "13. Governing law",
+        heading: "15. Governing law",
         body: [
-          "These terms, and any dispute arising from them, are governed by a single jurisdiction rather than by the location of each merchant.",
+          "You are required to **comply with all laws applicable in your jurisdiction**, as well as **the laws of India**.",
         ],
         confirm: [
-          "The governing law and the courts with exclusive jurisdiction",
+          "The governing law of the agreement itself, and the courts with exclusive jurisdiction",
           "Whether disputes go to arbitration first, and where",
         ],
       },
       {
         id: "contact",
-        heading: "14. Contact",
+        heading: "16. Contact us",
         body: [
-          "Questions about these terms can be sent through the contact page.",
+          SUPPORT_EMAIL
+            ? `Questions about these terms can be sent to **${SUPPORT_EMAIL}**, or through the contact page.`
+            : "Questions about these terms can be sent through the contact page.",
         ],
       },
     ],
@@ -321,7 +386,7 @@ export const legalDocuments: readonly LegalDocument[] = [
         heading: "2. Before you pay",
         body: [
           "COD King can be installed and set up before any charge applies, and the pricing page states what each plan includes. The COD calculator on this site sizes the saving against your own numbers without an account.",
-          "Evaluating the app on your own store first is the intended path, and it is why most refund requests never need to happen.",
+          "Evaluating the app on your own store first is the intended path, and — given the no-refund clause in the Terms & Conditions — it is the step that matters most.",
         ],
         confirm: [
           "Whether a free plan, a free trial, or both are offered, and the length of the trial",
@@ -332,7 +397,7 @@ export const legalDocuments: readonly LegalDocument[] = [
         heading: "3. How billing works",
         body: [
           "App charges are processed through Shopify's billing rather than collected by us, so they appear on your Shopify invoice and are paid with the payment method on your Shopify account.",
-          "Because Shopify is the biller, a refund is issued back through Shopify to the same account, and appears on a subsequent invoice or as a credit rather than as a separate transfer.",
+          "Where an invoice is raised directly instead, the Terms & Conditions require payment within 7 days of the invoice date.",
         ],
       },
       {
@@ -347,11 +412,12 @@ export const legalDocuments: readonly LegalDocument[] = [
         id: "eligibility",
         heading: "5. When a refund applies",
         body: [
-          "We would rather fix the problem than keep the money. Where the app has not worked as described and support could not resolve it, tell us and we will look at the charge.",
+          `The published Terms & Conditions state that ${legalEntityName} does not issue refunds. Nothing on this page overrides that clause, and it is the position that applies today.`,
+          "Where the app has not worked as described, tell us before the next invoice falls due. Support can usually fix the cause, and uninstalling stops the charge that follows — which is the remedy currently available.",
         ],
         confirm: [
-          "The refund window, and whether it is pro-rated or whole-period",
-          "Which plans and charge types are eligible",
+          "Whether any exception to the no-refund clause is offered in practice, and on what grounds",
+          "If exceptions are offered: the window, whether it is pro-rated, and which plans are eligible",
         ],
       },
       {
@@ -366,13 +432,13 @@ export const legalDocuments: readonly LegalDocument[] = [
       },
       {
         id: "how-to-request",
-        heading: "7. Requesting a refund",
+        heading: "7. Raising a billing problem",
         body: [
-          "Send us the store domain, the charge in question, and what went wrong, through the contact page. We will confirm receipt and tell you the outcome.",
+          SUPPORT_EMAIL
+            ? `Send the store domain, the charge in question and what went wrong to ${SUPPORT_EMAIL}, or through the contact page. We will confirm receipt and tell you the outcome.`
+            : "Send us the store domain, the charge in question, and what went wrong, through the contact page. We will confirm receipt and tell you the outcome.",
         ],
-        confirm: [
-          "The target turnaround for a refund decision, and how long the credit takes to appear",
-        ],
+        confirm: ["The target turnaround for a decision on a billing problem"],
       },
     ],
   },
