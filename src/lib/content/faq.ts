@@ -12,3 +12,17 @@ import type { FaqItem, FaqTag } from "@/types";
 export function getFaqsByTag(tag: FaqTag): readonly FaqItem[] {
   return faqs.filter((faq) => faq.tags.includes(tag));
 }
+
+/**
+ * Named questions, in the order asked for.
+ *
+ * A tag says which questions a surface may show; it cannot say which order to
+ * ask them in, and the pricing page's order is an argument — trial, then bill,
+ * then the two ways out of it. Unknown ids are dropped rather than rendered as
+ * gaps, so removing a question from the pool cannot break a page.
+ */
+export function getFaqsByIds(ids: readonly string[]): readonly FaqItem[] {
+  return ids
+    .map((id) => faqs.find((faq) => faq.id === id))
+    .filter((faq): faq is FaqItem => faq !== undefined);
+}

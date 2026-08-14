@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight, Menu, X } from "lucide-react";
+import { ArrowRight, ArrowUpRight, Menu, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Dialog } from "radix-ui";
@@ -8,22 +8,23 @@ import { useState } from "react";
 
 import { ActionLink } from "@/components/layout/ActionLink";
 import { Logo } from "@/components/layout/Logo";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+import { NavLink } from "@/components/layout/NavLink";
+import { resourceNavIcons } from "@/components/layout/resourceNavIcons";
 import { Button } from "@/components/ui/button";
 import { routes } from "@/constants/routes";
 import { cn } from "@/lib/utils";
 
-import type { NavGroup, NavItem, PrimaryNavItem, UtilityAction } from "@/types";
+import type {
+  NavItem,
+  PrimaryNavItem,
+  ResourceNavItem,
+  UtilityAction,
+} from "@/types";
 
 interface MobileNavProps {
   readonly items: readonly PrimaryNavItem[];
-  readonly controlGroups: readonly NavGroup[];
-  readonly resources: readonly NavItem[];
+  readonly features: readonly NavItem[];
+  readonly resources: readonly ResourceNavItem[];
   readonly utilityActions: readonly UtilityAction[];
 }
 
@@ -37,9 +38,9 @@ const rowClass = cn(
  * Full-screen navigation for phones and small tablets (§4.4).
  *
  * Mobile is the primary experience in COD-heavy markets, so this is a real
- * navigation rather than a reduced copy of the desktop one: the controls are
- * grouped by order stage exactly as they are in the mega-menu, and a merchant
- * can reach any of the ten from here.
+ * navigation rather than a reduced copy of the desktop one: it lists the same
+ * six features the desktop menu offers, in the same order, and closes with the
+ * link to the page carrying all of them.
  *
  * Radix Dialog provides the parts that make a drawer trustworthy — focus is
  * trapped while open and returned to the trigger on close, the page behind
@@ -48,7 +49,7 @@ const rowClass = cn(
  */
 export function MobileNav({
   items,
-  controlGroups,
+  features,
   resources,
   utilityActions,
 }: MobileNavProps) {
@@ -75,6 +76,12 @@ export function MobileNav({
   );
   const installAction = utilityActions.find(
     (action) => action.variant === "primary",
+  );
+  // Book a Demo has no place on the persistent bottom bar (§4.4 gives its two
+  // slots to Install and WhatsApp), so the drawer is the only surface where a
+  // merchant on a phone can find it.
+  const demoAction = utilityActions.find(
+    (action) => action.variant === "secondary",
   );
 
   return (
@@ -121,25 +128,21 @@ export function MobileNav({
             aria-label="Site navigation"
             className="flex-1 overflow-y-auto overscroll-contain px-4 py-4"
           >
-            <Accordion type="multiple">
-              {controlGroups.map((group) => (
-                <AccordionItem key={group.title} value={group.title}>
-                  <AccordionTrigger>{group.title}</AccordionTrigger>
-                  <AccordionContent className="space-y-0.5 pb-3">
-                    {group.items.map((control) => (
-                      <Link
-                        key={control.href}
-                        href={control.href}
-                        onClick={close}
-                        className={cn(rowClass, "py-2.5 text-sm font-normal")}
-                      >
-                        {control.label}
-                      </Link>
-                    ))}
-                  </AccordionContent>
-                </AccordionItem>
+            <p className="px-2 text-[0.6875rem] font-semibold tracking-[0.08em] text-muted-foreground uppercase">
+              Features
+            </p>
+            <div className="mt-1">
+              {features.map((feature) => (
+                <Link
+                  key={feature.href}
+                  href={feature.href}
+                  onClick={close}
+                  className={cn(rowClass, "py-2.5 text-sm font-normal")}
+                >
+                  {feature.label}
+                </Link>
               ))}
-            </Accordion>
+            </div>
 
             <Link
               href={routes.features}
@@ -168,16 +171,30 @@ export function MobileNav({
                 Resources
               </p>
               <div className="mt-1">
-                {resources.map((resource) => (
-                  <Link
-                    key={resource.href}
-                    href={resource.href}
-                    onClick={close}
-                    className={cn(rowClass, "text-sm font-normal")}
-                  >
-                    {resource.label}
-                  </Link>
-                ))}
+                {resources.map((resource) => {
+                  const Icon = resourceNavIcons[resource.icon];
+
+                  return (
+                    <NavLink
+                      key={resource.href}
+                      item={resource}
+                      onClick={close}
+                      className={cn(rowClass, "text-sm font-normal")}
+                    >
+                      <span className="flex items-center gap-2.5">
+                        <Icon
+                          aria-hidden
+                          className="size-4 shrink-0 text-muted-foreground"
+                        />
+                        {resource.label}
+                      </span>
+                      <ArrowUpRight
+                        aria-hidden
+                        className="size-4 shrink-0 text-muted-foreground"
+                      />
+                    </NavLink>
+                  );
+                })}
               </div>
             </div>
           </nav>
@@ -185,6 +202,15 @@ export function MobileNav({
           <div className="shrink-0 border-t border-border bg-background px-4 py-4">
             {installAction ? (
               <ActionLink action={installAction} size="lg" block />
+            ) : null}
+
+            {demoAction ? (
+              <ActionLink
+                action={demoAction}
+                size="md"
+                block
+                className="mt-2"
+              />
             ) : null}
 
             {loginAction ? (

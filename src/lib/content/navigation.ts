@@ -1,53 +1,44 @@
 import { routeFor } from "@/constants/routes";
 import {
   footerCompanyColumn,
-  footerToolsColumn,
-  footerTrustColumn,
+  footerLegalLinks,
+  footerProductColumn,
+  footerSolutionsColumn,
 } from "@/data/footer";
 import {
   megaMenuFooterLinks,
   mobileActions,
   primaryNav,
+  resourcesNav,
   utilityActions,
 } from "@/data/navigation";
-import { getControlsByStage, getOrderStages } from "@/lib/content/controls";
-import { getResourceSections } from "@/lib/content/resources";
+import { socialLinks } from "@/data/social";
+import { getFeatureIndex } from "@/lib/content/controls";
 
 import type {
-  Control,
+  FeatureNavItem,
   FeaturesMegaMenu,
   NavGroup,
   NavItem,
   PrimaryNavItem,
+  ResourceNavItem,
+  SocialLink,
   UtilityAction,
 } from "@/types";
-
-function toNavItem(control: Control): NavItem {
-  return {
-    label: control.name,
-    href: routeFor.control(control.slug),
-    description: control.outcome,
-  };
-}
 
 export function getPrimaryNav(): readonly PrimaryNavItem[] {
   return primaryNav;
 }
 
 /**
- * The Resources dropdown and the footer's Resources column (§4.1, §4.5).
+ * The Resources dropdown — Docs and Blog (§4.1).
  *
- * Derived from the resource sections rather than listed separately, so the
- * four surfaces §7 allows are declared once. Each item carries the section's
- * own purpose line, which is what lets the dropdown say what Docs is for
- * instead of just naming it.
+ * The same two items open the footer's Resources column, so the header and the
+ * footer cannot send a merchant to different places, and both read their URLs
+ * from `constants/external.ts`.
  */
-export function getResourcesNav(): readonly NavItem[] {
-  return getResourceSections().map((section) => ({
-    label: section.title,
-    href: section.href,
-    description: section.purpose,
-  }));
+export function getResourcesNav(): readonly ResourceNavItem[] {
+  return resourcesNav;
 }
 
 export function getUtilityActions(): readonly UtilityAction[] {
@@ -59,44 +50,105 @@ export function getMobileActions(): readonly UtilityAction[] {
 }
 
 /**
- * The controls grouped by order stage — one group per stage, in stage order.
+ * The six features the header and the footer offer, in the order the Features
+ * page ranks them (§4.1).
  *
- * Shared by the mega-menu columns (§4.1), the mobile drawer's accordion
- * (§4.4) and the footer's Features column (§4.5). All three render the same
- * grouping because all three read this.
+ * Read from the same selection the Features page renders, so the menu is a
+ * table of contents for the page it opens onto rather than a second, longer
+ * list a merchant has to reconcile with it. The label is the page's own
+ * headline for the feature and the description is the control's outcome line —
+ * neither is authored here.
  */
-export function getControlNavGroups(): readonly NavGroup[] {
-  return getOrderStages().map((stage) => ({
-    title: stage.label,
-    items: getControlsByStage(stage.id).map(toNavItem),
+export function getFeatureNavItems(): readonly FeatureNavItem[] {
+  return getFeatureIndex().map(({ control, title }) => ({
+    slug: control.slug,
+    label: title,
+    href: routeFor.control(control.slug),
+    description: control.outcome,
   }));
 }
 
 /**
- * Four columns by order stage, plus the closing row (§4.1).
+ * The Features menu: the six, plus the closing row (§4.1).
  *
- * Shares `getControlNavGroups()` with the mobile drawer and the footer, so the
- * control set is built once and — because this is what the header hands
- * across the server-client boundary — sent once.
+ * Built once here and handed to both the desktop menu and the mobile drawer,
+ * so the two cannot list different features and the set crosses the
+ * server-client boundary a single time.
  */
 export function getFeaturesMegaMenu(): FeaturesMegaMenu {
   return {
-    columns: getControlNavGroups(),
+    items: getFeatureNavItems(),
     footerLinks: megaMenuFooterLinks,
   };
 }
 
 /**
- * The footer's link columns other than Features (§4.5).
+ * The footer's Features column (§4.5) — the six features the product ships.
  *
- * Features is returned separately by `getControlNavGroups()` because it is
- * the only column with sub-groups, and the footer lays it out differently.
+ * The same selection the header's mega-menu opens and the Features page ranks,
+ * read from one place. That is the whole point of deriving it: the footer used
+ * to list all ten controls grouped by order stage, which meant it advertised
+ * four pages the site does not have finished, and taught a model the header no
+ * longer teaches. Six links, in the Features page's own order, under the
+ * Features page's own names.
  */
-export function getFooterColumns(): readonly NavGroup[] {
+export function getFooterFeatureLinks(): readonly NavItem[] {
+  return getFeatureNavItems();
+}
+
+/**
+ * The footer's tracks other than Features (§4.5).
+ *
+ * A track is a column of the grid, and a column can hold more than one heading
+ * — hence the nesting, which every track happens to use singly today. Returning
+ * groups flat would make the footer decide which headings share a column, and
+ * that decision belongs here rather than in the markup that draws them.
+ *
+ * Features is returned separately by `getFooterFeatureLinks()` because the
+ * footer gives it two column widths rather than one — six labels at the width
+ * of a Company column is six links wrapping to three lines each.
+ *
+ * Resources is assembled rather than authored: it is the header's Resources
+ * dropdown, unchanged. Authoring it would mean the Docs and Blog URLs existing
+ * in a second place, and a footer that can drift from the header is a footer
+ * that eventually does.
+ */
+export function getFooterColumns(): readonly (readonly NavGroup[])[] {
   return [
-    footerToolsColumn,
-    { title: "Resources", items: getResourcesNav() },
-    footerCompanyColumn,
-    footerTrustColumn,
+    [footerProductColumn],
+    [footerSolutionsColumn],
+    [footerCompanyColumn],
+    /*
+      Resources last, and that is a layout decision rather than a ranking. It is
+      the shortest group on the row at two links, and a short column between two
+      long ones punches a hole in the middle of the footer; at the end it reads
+      as the row tapering off. The order it is scanned in barely changes — Docs
+      and Blog are looked up by name, not browsed to.
+    */
+    [{ title: "Resources", items: getResourcesNav() }],
   ];
+}
+
+/**
+ * Privacy and Terms, for the footer's bottom bar (§4.5).
+ *
+ * Not a column and not part of `getFooterColumns()`: these two sit beside the
+ * copyright rather than under a heading of their own. Read through the
+ * repository like every other destination so the two documents are declared
+ * once, next to the routes that resolve them.
+ */
+export function getFooterLegalLinks(): readonly NavItem[] {
+  return footerLegalLinks;
+}
+
+/**
+ * The social profiles, with unconfigured ones dropped.
+ *
+ * A destination read from the environment can resolve to `null`, and a social
+ * icon that goes nowhere is worse than one icon fewer — it is the one control
+ * in a footer that gives no feedback when it fails, because nothing about a
+ * dead `<a>` looks different from a live one.
+ */
+export function getSocialLinks(): readonly SocialLink[] {
+  return socialLinks.filter((link) => Boolean(link.href));
 }

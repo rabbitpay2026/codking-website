@@ -46,7 +46,7 @@ export const orderStages: readonly OrderStage[] = [
  */
 export const controls: readonly Control[] = [
   {
-    slug: "cod-rules",
+    slug: "cod-show-hide",
     name: "COD Rules",
     stage: "before-the-order",
     outcome: "Restrict COD based on zip codes, cart value, or customer risk.",
@@ -66,7 +66,7 @@ export const controls: readonly Control[] = [
     featured: false,
   },
   {
-    slug: "prepaid-nudge",
+    slug: "cod-to-prepaid",
     name: "COD to Prepaid",
     stage: "before-the-order",
     outcome: "Convert COD users with smart discounts during the checkout flow.",

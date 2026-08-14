@@ -4,5 +4,7 @@ export * from "./DesktopNav";
 export * from "./Logo";
 export * from "./MobileActionBar";
 export * from "./MobileNav";
+export * from "./NavLink";
 export * from "./SiteFooter";
 export * from "./SiteHeader";
+export * from "./SocialLinks";

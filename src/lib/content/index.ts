@@ -11,16 +11,24 @@
  * The functions are thin today because the data is local. That is the point —
  * the indirection exists to be swapped, not to add behaviour.
  */
+export * from "./abandonedCartRecovery";
 export * from "./announcement";
 export * from "./announcement";
 export * from "./calculator";
+export * from "./codFees";
+export * from "./codShowHide";
+export * from "./codToPrepaid";
+export * from "./company";
 export * from "./controls";
+export * from "./demoVideos";
 export * from "./customers";
 export * from "./faq";
 export * from "./homepage";
 export * from "./integrations";
 export * from "./legal";
 export * from "./navigation";
+export * from "./otpVerification";
+export * from "./partialCodPayment";
 export * from "./pricing";
 export * from "./proof";
 export * from "./resources";

@@ -34,7 +34,7 @@ export const painPoints: readonly PainPoint[] = [
     id: "prepaid",
     title: "Low prepaid share",
     body: "Most buyers default to cash, so working capital rides around in a van until the courier settles.",
-    controlSlug: "prepaid-nudge",
+    controlSlug: "cod-to-prepaid",
   },
 ];
 
@@ -103,8 +103,8 @@ export const homepageControlSlugs: readonly ControlSlug[] = [
   "otp-verification",
   "partial-cod-payment",
   "cod-fees",
-  "cod-rules",
-  "prepaid-nudge",
+  "cod-show-hide",
+  "cod-to-prepaid",
   "messaging-gateways",
   "analytics",
   "abandoned-cart-recovery",
@@ -184,12 +184,12 @@ export const controlBoard: readonly ControlBoardCard[] = [
     blurb: "Add COD charges to reduce non-serious orders.",
   },
   {
-    slug: "cod-rules",
+    slug: "cod-show-hide",
     label: "Smart COD Rules",
     blurb: "Show or hide COD based on location, cart value and customer.",
   },
   {
-    slug: "prepaid-nudge",
+    slug: "cod-to-prepaid",
     label: "Prepaid Discount",
     blurb: "Offer discounts to customers who choose prepaid.",
   },

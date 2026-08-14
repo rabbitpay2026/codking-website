@@ -1,6 +1,14 @@
 import { controls, orderStages } from "@/data/controls";
+import { featureIndexEntries } from "@/data/features";
 
-import type { Control, ControlSlug, OrderStage, OrderStageId } from "@/types";
+import type {
+  Control,
+  ControlSlug,
+  FeatureEmphasis,
+  FeatureIndexItem,
+  OrderStage,
+  OrderStageId,
+} from "@/types";
 
 export function getOrderStages(): readonly OrderStage[] {
   return orderStages;
@@ -21,6 +29,37 @@ export function getControlBySlug(slug: string): Control | undefined {
 /** Controls belonging to one stage, in declaration order (§6.1). */
 export function getControlsByStage(stage: OrderStageId): readonly Control[] {
   return controls.filter((control) => control.stage === stage);
+}
+
+/**
+ * The Features index selection, resolved against the controls repository.
+ *
+ * Each entry is joined to its record here rather than in the page, so the
+ * cards read their outcome line and their URL from the same declaration the
+ * mega-menu and the control page use. An entry naming a control that no longer
+ * exists is dropped rather than rendered as an empty card — the same failure
+ * mode `getControlBoard()` chose, for the same reason.
+ */
+export function getFeatureIndex(): readonly FeatureIndexItem[] {
+  return featureIndexEntries.flatMap((entry) => {
+    const control = getControlBySlug(entry.slug);
+    return control
+      ? [
+          {
+            control,
+            title: entry.title ?? control.name,
+            emphasis: entry.emphasis,
+          },
+        ]
+      : [];
+  });
+}
+
+/** One tier of the Features page, in selection order. */
+export function getFeaturesByEmphasis(
+  emphasis: FeatureEmphasis,
+): readonly FeatureIndexItem[] {
+  return getFeatureIndex().filter((item) => item.emphasis === emphasis);
 }
 
 /** The controls highlighted on the homepage (§5.1 #6). */

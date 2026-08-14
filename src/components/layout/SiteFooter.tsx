@@ -1,132 +1,321 @@
-import { Star } from "lucide-react";
-import Link from "next/link";
+import { ArrowUpRight, Mail, Star } from "lucide-react";
 
 import { ShopifyMark } from "@/components/brand/ShopifyMarks";
 import { Logo } from "@/components/layout/Logo";
+import { NavLink } from "@/components/layout/NavLink";
+import { SocialLinks } from "@/components/layout/SocialLinks";
 import { Container } from "@/components/shared/Container";
+import { externalLinks } from "@/constants/external";
+import { routes } from "@/constants/routes";
 import { siteConfig } from "@/constants/site";
 import {
-  getControlNavGroups,
   getFooterColumns,
+  getFooterFeatureLinks,
+  getFooterLegalLinks,
   getProofMetrics,
 } from "@/lib/content";
+import { cn } from "@/lib/utils";
+
+import type { NavDestination } from "@/types";
 
 const numberFormat = new Intl.NumberFormat("en");
 
 /**
  * The global footer (§4.5).
  *
- * The architecture calls the footer the full index of the site and its most
- * under-used SEO surface, so every page in the §3 sitemap is reachable from
- * here. The Features column is generated from the controls repository and
- * keeps the order-stage grouping, which means the footer teaches the same
- * model as the mega-menu rather than flattening it into ten unrelated links.
+ * The architecture calls the footer the full index of the site, so every page
+ * a merchant can actually read is reachable from here — and, just as
+ * deliberately, nothing else is. The Features column is the six features the
+ * product ships, read from the same selection the mega-menu opens, rather than
+ * all ten records in the controls repository: four of those have no finished
+ * page, and a footer that indexes pages the site has not written is an index of
+ * disappointments. Solutions sits beside it as the second door into those same
+ * six, for a merchant who knows their problem but not our name for the control
+ * that solves it.
  *
- * The rating and review count are read from the proof repository. §11.1
- * forbids typing a live number into page copy, so these render from the same
- * source the homepage and pricing page will use.
+ * Nothing here is authored in this file. Every destination comes from the
+ * navigation config, so the footer's Resources column and the header's
+ * Resources dropdown resolve to the same two subdomains by construction.
+ *
+ * Privacy and Terms sit in the bottom bar rather than in a headed column of
+ * their own. That is where every reader already looks for them, and a heading
+ * spent on two links left the last row of the footer holding a copyright line
+ * and nothing else. What made the old row wrong was its drawing — 12px, muted,
+ * crushed under the copyright — so here they take the size, weight and hover of
+ * a real link, which is the part that decides whether a merchant or an App
+ * Store reviewer can find them.
+ *
+ * The rating and review count are read from the proof repository. §11.1 forbids
+ * typing a live number into page copy, so these render from the same source the
+ * homepage and pricing page use.
+ *
+ * The separation from the page above is the hairline the feature pages use
+ * between their own sections — `border-ink/[0.07]` — rather than the heavier
+ * `border-border`. The footer is a change of surface, not a change of document,
+ * and a dark slab under a very light blue page would read as a second website.
  */
 export async function SiteFooter() {
   const proof = await getProofMetrics();
-  const controlGroups = getControlNavGroups();
-  const columns = getFooterColumns();
+  const featureLinks = getFooterFeatureLinks();
+  const tracks = getFooterColumns();
+  const legalLinks = getFooterLegalLinks();
+  const supportEmail = externalLinks.supportEmail;
   const year = new Date().getFullYear();
 
   return (
     <footer
       data-slot="site-footer"
-      className="mt-auto border-t border-border bg-cloud"
+      className="mt-auto border-t border-ink/[0.07] bg-cloud"
     >
-      <Container className="py-14">
+      <Container className="py-14 lg:py-16">
         <h2 className="sr-only">Site footer</h2>
 
-        <div className="flex flex-col gap-8 lg:flex-row lg:items-start lg:justify-between">
-          <div className="max-w-sm">
+        {/*
+          The brand band.
+
+          Identity and description on the left, the two ways to reach a person
+          beside it. Those two belong up here rather than in the columns below
+          for the same reason the legal row belongs in the bottom bar: the
+          columns are for pages, and neither a WhatsApp thread nor an Instagram
+          profile is a page. Putting them in a link column would also have meant
+          a fifth heading and four more rows in a grid already carrying five.
+
+          A twelve-track grid rather than `justify-between`, and that is the
+          fix for the thing that made this band read as unfinished. Pushed to
+          opposite edges, the brand block and the contact block left roughly
+          four hundred pixels of nothing between them at desktop — a hole the
+          eye reads as a missing column. Given explicit spans they distribute
+          across the measure instead, and each block's width is a decision
+          rather than a leftover.
+        */}
+        <div className="grid gap-10 lg:grid-cols-12 lg:gap-8">
+          <div className="max-w-sm lg:col-span-5">
             <Logo />
             <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
               {siteConfig.description}
             </p>
+
+            <ul className="mt-6 flex flex-wrap items-center gap-2">
+              <li className="inline-flex items-center gap-1.5 rounded-full border border-ink/[0.08] bg-background px-3 py-1.5 text-xs font-medium text-foreground">
+                <ShopifyMark className="size-4" />
+                Works with Shopify checkout
+              </li>
+              <li
+                className="inline-flex items-center gap-1.5 rounded-full border border-ink/[0.08] bg-background px-3 py-1.5 text-xs font-medium text-foreground"
+                aria-label={`Rated ${proof.rating} out of 5 from ${numberFormat.format(proof.reviewCount)} reviews on the Shopify App Store`}
+              >
+                <Star aria-hidden className="size-3.5 fill-brand text-brand" />
+                <span aria-hidden>
+                  {proof.rating} · {numberFormat.format(proof.reviewCount)}+
+                  reviews
+                </span>
+              </li>
+            </ul>
           </div>
 
-          <ul className="flex flex-wrap items-center gap-2">
-            <li className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-3 py-1.5 text-xs font-medium text-foreground">
-              <ShopifyMark className="size-4" />
-              Works with Shopify checkout
-            </li>
-            <li
-              className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-3 py-1.5 text-xs font-medium text-foreground"
-              aria-label={`Rated ${proof.rating} out of 5 from ${numberFormat.format(proof.reviewCount)} reviews on the Shopify App Store`}
-            >
-              <Star aria-hidden className="size-3.5 fill-brand text-brand" />
-              <span aria-hidden>
-                {proof.rating} · {numberFormat.format(proof.reviewCount)}+
-                reviews
-              </span>
-            </li>
-          </ul>
-        </div>
+          <div className="grid gap-8 sm:grid-cols-2 sm:gap-10 lg:col-span-7 lg:gap-12">
+            <div>
+              <FooterHeading>Follow us</FooterHeading>
+              <SocialLinks className="mt-4" />
+            </div>
 
-        <nav
-          aria-label="Footer"
-          className="mt-12 grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 lg:grid-cols-6"
-        >
-          <div className="col-span-2 sm:col-span-3 lg:col-span-2">
-            <h3 className="text-sm font-semibold text-foreground">Features</h3>
-            <div className="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2">
-              {controlGroups.map((group) => (
-                <div key={group.title}>
-                  <p className="text-[0.6875rem] font-semibold tracking-[0.08em] text-muted-foreground uppercase">
-                    {group.title}
-                  </p>
-                  <ul className="mt-2 space-y-2">
-                    {group.items.map((item) => (
-                      <li key={item.href}>
-                        <FooterLink href={item.href}>{item.label}</FooterLink>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
+            <div>
+              <FooterHeading>Get in touch</FooterHeading>
+
+              {/*
+                The mailbox, readable, and the page — in that order. It is the
+                address the published legal documents answer on, so it is the one
+                a merchant can quote back at us; a chat thread is neither
+                addressable nor a record. WhatsApp is still one tap away from the
+                row of profiles beside this column and from the mobile action
+                bar, which is where a merchant who wants a conversation looks.
+              */}
+              <div className="mt-4 flex flex-col items-start gap-2.5">
+                {supportEmail ? (
+                  <a
+                    href={`mailto:${supportEmail}`}
+                    className="group inline-flex items-center gap-2 rounded-sm py-1 text-sm font-medium break-all text-foreground transition-colors duration-200 ease-[var(--ease-emphasized)] outline-none hover:text-brand focus-visible:text-brand focus-visible:ring-2 focus-visible:ring-ring/60"
+                  >
+                    <Mail
+                      aria-hidden
+                      className="size-4 shrink-0 text-ink/40 transition-colors duration-200 group-hover:text-brand"
+                      strokeWidth={1.8}
+                    />
+                    {supportEmail}
+                  </a>
+                ) : null}
+
+                <FooterLink
+                  item={{ label: "Contact us", href: routes.contact }}
+                />
+              </div>
             </div>
           </div>
+        </div>
 
-          {columns.map((column) => (
-            <div key={column.title}>
-              <h3 className="text-sm font-semibold text-foreground">
-                {column.title}
-              </h3>
-              <ul className="mt-4 space-y-2">
-                {column.items.map((item) => (
-                  <li key={item.href}>
-                    <FooterLink href={item.href}>{item.label}</FooterLink>
-                  </li>
-                ))}
-              </ul>
+        {/*
+          One grid, four headings, no second band.
+
+          Features holds six links against two to five in the others, and its
+          labels are the longest on the site — "Partial COD Payment – Upfront
+          Payments" in a Company-width column wraps to three lines. So it takes
+          two column widths and runs its own links in two sub-columns of three.
+          That trades the one tall column for a block three rows deep, which is
+          within a row of every column beside it: the row has a level bottom
+          edge instead of one spike and four short stacks, and no column is left
+          holding a rectangle of empty page.
+
+          The steps follow from that. At `lg` the six tracks are Features twice
+          plus Product, Solutions, Company and Resources, all on one row. At `sm`
+          those four wrap beneath Features, two and two. Below `sm` the
+          sub-columns collapse so each feature keeps a full-width line to itself
+          — two columns of 140px is where those labels start breaking mid-word.
+
+          Those sub-columns are CSS multi-column and not a nested grid, which is
+          not a stylistic preference. A two-track grid sizes each row to its
+          tallest cell, and these labels run one, two and three lines — so the
+          one-line links inherited the gap of whatever sat beside them and the
+          block read as six links scattered down a column. Multi-column flows
+          each side independently, so the spacing between links is the spacing
+          it was set to.
+        */}
+        <nav
+          aria-label="Footer"
+          className="mt-12 grid grid-cols-2 gap-x-6 gap-y-10 border-t border-ink/[0.07] pt-12 sm:grid-cols-4 lg:grid-cols-6 lg:gap-x-8"
+        >
+          <div className="col-span-2">
+            <FooterHeading>Features</FooterHeading>
+            <FooterLinkList
+              items={featureLinks}
+              itemClassName="break-inside-avoid"
+              className="mt-4 sm:columns-2 sm:gap-x-6 lg:gap-x-8"
+            />
+          </div>
+
+          {/*
+            A track can hold more than one heading, though none does today —
+            Legal used to share the fourth with Company. Which headings share a
+            column is decided in the navigation config beside the groups
+            themselves, so this only has to draw them.
+
+            `contents` is what keeps any such pairing a desktop-only
+            arrangement. Below `lg` the wrapper takes itself out of the layout
+            and its headings become grid items in their own right, which matters
+            at the four-column step: a track holding two stacked headings there
+            is one tall column beside three short ones and two empty cells, when
+            the same groups laid flat fill the row. At `lg` the wrapper becomes a
+            block again and a pair stacks as intended.
+          */}
+          {tracks.map((track) => (
+            <div
+              key={track[0]?.title}
+              className="contents lg:block lg:space-y-8"
+            >
+              {track.map((column) => (
+                <div key={column.title}>
+                  <FooterHeading>{column.title}</FooterHeading>
+                  <FooterLinkList items={column.items} className="mt-4" />
+                </div>
+              ))}
             </div>
           ))}
         </nav>
 
-        <p className="mt-12 border-t border-border pt-6 text-xs text-muted-foreground">
-          © {year} {siteConfig.name}. All rights reserved.
-        </p>
+        {/*
+          The bottom bar: the copyright, and the two documents a merchant reads
+          before installing.
+
+          Drawn at `text-sm` with a real hover rather than as the 12px small
+          print this row usually holds — that treatment is what made a Legal
+          column look necessary in the first place. The underline is a scaled
+          pseudo-element rather than `hover:underline` so it grows from the left
+          instead of appearing, and it costs no layout.
+        */}
+        <div className="mt-12 flex flex-col gap-4 border-t border-ink/[0.07] pt-6 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
+          <p className="text-xs text-muted-foreground">
+            © {year} {siteConfig.name}. All rights reserved.
+          </p>
+
+          <nav aria-label="Legal">
+            <ul className="flex flex-wrap items-center gap-x-6 gap-y-1">
+              {legalLinks.map((item) => (
+                <li key={item.href}>
+                  <NavLink
+                    item={item}
+                    className={cn(
+                      "relative inline-flex rounded-sm py-1.5 text-sm font-medium text-muted-foreground",
+                      "transition-colors duration-200 ease-[var(--ease-emphasized)] outline-none",
+                      "hover:text-brand focus-visible:text-brand focus-visible:ring-2 focus-visible:ring-ring/60",
+                      "after:absolute after:inset-x-0 after:bottom-1 after:h-px after:origin-left after:scale-x-0 after:bg-brand/60",
+                      "after:transition-transform after:duration-200 after:ease-[var(--ease-emphasized)]",
+                      "hover:after:scale-x-100 focus-visible:after:scale-x-100",
+                    )}
+                  >
+                    {item.label}
+                  </NavLink>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </div>
       </Container>
     </footer>
   );
 }
 
-function FooterLink({
-  href,
-  children,
+function FooterHeading({ children }: { readonly children: React.ReactNode }) {
+  return <h3 className="text-sm font-semibold text-foreground">{children}</h3>;
+}
+
+function FooterLinkList({
+  items,
+  className,
+  itemClassName,
 }: {
-  readonly href: React.ComponentProps<typeof Link>["href"];
-  readonly children: React.ReactNode;
+  readonly items: readonly NavDestination[];
+  readonly className?: string;
+  /** Needed only where the list flows in columns and a link must not split. */
+  readonly itemClassName?: string;
 }) {
   return (
-    <Link
-      href={href}
-      className="rounded-sm text-sm text-muted-foreground transition-colors outline-none hover:text-brand focus-visible:ring-2 focus-visible:ring-ring/60"
+    <ul className={cn("space-y-1", className)}>
+      {items.map((item) => (
+        <li key={item.href} className={itemClassName}>
+          <FooterLink item={item} />
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+/**
+ * One footer link.
+ *
+ * The vertical padding is the point of it: at `text-sm` the glyphs are 20px
+ * tall, and a column of bare 20px targets is a thumb hitting the wrong row.
+ * `py-1` takes each row to 28px without loosening the column enough to notice.
+ *
+ * Off-site links carry the outbound glyph, which travels a pixel toward where
+ * it points on hover. That is the entire animation — a footer of forty links
+ * that all move is a footer that never sits still.
+ */
+function FooterLink({ item }: { readonly item: NavDestination }) {
+  return (
+    <NavLink
+      item={item}
+      className={cn(
+        "group inline-flex items-center gap-1 rounded-sm py-1 text-sm text-muted-foreground",
+        "transition-colors duration-200 ease-[var(--ease-emphasized)] outline-none",
+        "hover:text-brand focus-visible:text-brand focus-visible:ring-2 focus-visible:ring-ring/60",
+      )}
     >
-      {children}
-    </Link>
+      {item.label}
+      {item.external ? (
+        <ArrowUpRight
+          aria-hidden
+          className="size-3.5 shrink-0 opacity-60 transition-[transform,opacity] duration-200 ease-[var(--ease-emphasized)] group-hover:translate-x-px group-hover:-translate-y-px group-hover:opacity-100"
+        />
+      ) : null}
+    </NavLink>
   );
 }

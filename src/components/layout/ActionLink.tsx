@@ -10,7 +10,7 @@ import type { ReactNode } from "react";
 /**
  * Maps the architecture's action hierarchy onto button variants.
  *
- * §4.2 assigns the weight, not the component: Install Free is the only filled
+ *  assigns the weight, not the component: Install Free is the only filled
  * action, Book a Demo is present but quieter, and Log in stays a text link so
  * returning merchants never compete with the install for attention.
  */
