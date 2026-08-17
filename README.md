@@ -134,7 +134,7 @@ actually needs before it is used.
 
 | Variable                      | Required   | Purpose                                           |
 | ----------------------------- | ---------- | ------------------------------------------------- |
-| `NEXT_PUBLIC_SITE_URL`        | Production | Absolute origin for canonical and Open Graph URLs |
+| `NEXT_PUBLIC_SITE_URL`        | Optional   | Absolute origin for canonical URLs, Open Graph, `robots.txt`, `sitemap.xml`, `llms.txt` and the Organization schema. Falls back to `https://codking.tech`; set it locally to `http://localhost:3000` |
 | `NEXT_PUBLIC_SHOPIFY_APP_URL` | Production | Install Free — the primary action on every page   |
 | `NEXT_PUBLIC_BOOK_DEMO_URL`   | Production | Book a Demo, the secondary action                 |
 | `NEXT_PUBLIC_APP_LOGIN_URL`   | Production | Log in, for existing merchants                    |

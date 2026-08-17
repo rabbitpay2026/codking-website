@@ -1,4 +1,4 @@
-import { controls, orderStages } from "@/data/controls";
+import { controls, dedicatedControlPages, orderStages } from "@/data/controls";
 import { featureIndexEntries } from "@/data/features";
 
 import type {
@@ -24,6 +24,28 @@ export function getControls(): readonly Control[] {
 
 export function getControlBySlug(slug: string): Control | undefined {
   return controls.find((control) => control.slug === slug);
+}
+
+/**
+ * Whether this control has a hand-built page rather than the generic template.
+ *
+ * Asked by two callers that must agree: `features/[control]` skips these slugs
+ * when prerendering, and the sitemap includes only these slugs.
+ */
+export function hasDedicatedPage(slug: ControlSlug): boolean {
+  return dedicatedControlPages.includes(slug);
+}
+
+/**
+ * The controls whose feature page is finished, in declaration order.
+ *
+ * "Published" here means indexable: a control served by the generic template
+ * has a URL that resolves, but the page says it is implemented in a later
+ * phase and is `noIndex`, so it is not a canonical URL to advertise. The
+ * sitemap and `llms.txt` both read this rather than the full set.
+ */
+export function getPublishedControls(): readonly Control[] {
+  return controls.filter((control) => hasDedicatedPage(control.slug));
 }
 
 /** Controls belonging to one stage, in declaration order (§6.1). */

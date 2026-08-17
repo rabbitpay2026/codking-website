@@ -15,12 +15,20 @@ import type { Control } from "@/types";
 
 import type { Metadata } from "next";
 
+/**
+ * `noIndex` is gone, and its removal is the point rather than an oversight.
+ *
+ * It was set when this route was a `PagePlaceholder`, and `createMetadata`
+ * documents dropping it as part of the definition of done for the phase that
+ * gives a page real content. That phase shipped — the page renders the working
+ * savings model — but the flag stayed behind, which left the site's main lead
+ * magnet (§8) telling search engines to ignore it.
+ */
 export const metadata: Metadata = createMetadata({
   title: "COD Calculator",
   description:
     "See what COD is costing you, and what it would take to fix it — free, no signup.",
   path: routes.codCalculator,
-  noIndex: true,
 });
 
 /**
