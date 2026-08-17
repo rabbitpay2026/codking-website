@@ -1,4 +1,4 @@
-import type { Control, OrderStage } from "@/types";
+import type { Control, ControlSlug, OrderStage } from "@/types";
 
 /**
  * The four order stages and their problems, transcribed from §6.1.
@@ -159,4 +159,29 @@ export const controls: readonly Control[] = [
     outcome: "See RTO, fake-order, and prepaid trends in one place.",
     featured: false,
   },
+];
+
+/**
+ * The controls that have a hand-built feature page of their own (§6.3).
+ *
+ * The remaining four are still served by the generic `features/[control]`
+ * template, which renders the control's record above a line saying the page is
+ * implemented in a later phase — so they are `noIndex` and belong in neither
+ * the sitemap nor `llms.txt`.
+ *
+ * This list lived inside `features/[control]/page.tsx`, where it existed only
+ * to keep `generateStaticParams` from prerendering a path another file owns.
+ * It is here now because a second consumer appeared: the sitemap has to answer
+ * the same question — which control pages are real — and answering it from a
+ * copy of this list is how the two drift the first time a page lands.
+ *
+ * A slug joins this list in the same commit that gives it a page.
+ */
+export const dedicatedControlPages: readonly ControlSlug[] = [
+  "otp-verification",
+  "partial-cod-payment",
+  "cod-to-prepaid",
+  "abandoned-cart-recovery",
+  "cod-show-hide",
+  "cod-fees",
 ];

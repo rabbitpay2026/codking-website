@@ -293,7 +293,7 @@ export const calculatorPathways: readonly CalculatorPathway[] = [
     problem: "Every COD order carries RTO risk that a prepaid order does not.",
     explanation:
       "Encourage buyers to pay upfront with configurable prepaid incentives at checkout.",
-    controlSlug: "prepaid-nudge",
+    controlSlug: "cod-to-prepaid",
   },
   {
     id: "exposure",
@@ -301,6 +301,6 @@ export const calculatorPathways: readonly CalculatorPathway[] = [
     problem: "COD is offered on orders where it costs more than it earns.",
     explanation:
       "Control where COD is available using rules on cart value, PIN code, products and customer conditions.",
-    controlSlug: "cod-rules",
+    controlSlug: "cod-show-hide",
   },
 ];
