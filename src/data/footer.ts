@@ -66,6 +66,14 @@ export const footerSolutionsColumn: NavGroup = {
   ],
 };
 
+/**
+ * Who we are, and how to reach us.
+ *
+ * The FAQ is deliberately absent. It reaches the footer through the Resources
+ * column, which is assembled from the header's own Resources dropdown in
+ * `lib/content/navigation.ts` — listing it here as well would put the same
+ * destination in the footer twice under two different headings.
+ */
 export const footerCompanyColumn: NavGroup = {
   title: "Company",
   items: [

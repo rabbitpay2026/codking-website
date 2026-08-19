@@ -24,6 +24,17 @@ export const routes = {
   customers: "/customers",
   integrations: "/integrations",
 
+  /**
+   * Every question the site answers, on one page (§3).
+   *
+   * Top-level rather than under `/resources`, for the reason the legal
+   * documents are top-level: `/faq` is the URL a merchant types, a support
+   * reply links to, and a search result lands on. It is also the surface the
+   * FAQPage structured data is attached to, and that node describes the page
+   * at its canonical address — so the address should be the obvious one.
+   */
+  faq: "/faq",
+
   /** Resources hub. Its four children are the maintained surfaces (§7). */
   resources: "/resources",
   guides: "/resources/guides",

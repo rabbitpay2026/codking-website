@@ -206,14 +206,19 @@ export function DesktopNav({ items, megaMenu, resources }: DesktopNavProps) {
                                 <span className="flex items-center gap-1 text-sm font-medium text-foreground transition-colors group-hover:text-brand">
                                   {resource.label}
                                   {/*
-                                    Marks the destination as off-site. It moves
+                                    Marks the destination as off-site, and only
+                                    when it is one — the FAQ is a page of this
+                                    site, and an outbound glyph beside it would
+                                    promise a new tab that never opens. It moves
                                     a pixel on hover in the direction it points,
                                     which is the whole animation.
                                   */}
-                                  <ArrowUpRight
-                                    aria-hidden
-                                    className="size-3.5 text-muted-foreground transition-[transform,color] duration-200 ease-[var(--ease-emphasized)] group-hover:translate-x-px group-hover:-translate-y-px group-hover:text-brand"
-                                  />
+                                  {resource.external ? (
+                                    <ArrowUpRight
+                                      aria-hidden
+                                      className="size-3.5 text-muted-foreground transition-[transform,color] duration-200 ease-[var(--ease-emphasized)] group-hover:translate-x-px group-hover:-translate-y-px group-hover:text-brand"
+                                    />
+                                  ) : null}
                                 </span>
                                 {resource.description ? (
                                   <span className="mt-0.5 block text-xs leading-snug text-muted-foreground">

@@ -30,18 +30,33 @@ export const primaryNav: readonly PrimaryNavItem[] = [
 ];
 
 /**
- * The Resources dropdown — two destinations, both off-site (§4.1, §7).
+ * The Resources dropdown — three destinations a merchant opens for an answer
+ * rather than for a feature (§4.1, §7).
  *
  * Deliberately not a mega-menu. Resources is a secondary errand: a merchant
- * opens it knowing whether they want to read how something is configured or
- * what shipped last month, and a panel of headed columns makes them read a
- * page to answer a question they already answered.
+ * opens it knowing whether they want to read how something is configured, what
+ * everyone else asks, or what shipped last month, and a panel of headed columns
+ * makes them read a page to answer a question they already answered.
  *
- * Both URLs come from `externalLinks`, so this list, the mobile drawer and the
- * footer's Resources column cannot drift — and pointing the blog at its real
- * home when it launches is a one-line change in `constants/external.ts`.
+ * The FAQ is the one entry on our own site, and this is the only place in the
+ * app it is declared as a navigation item. The header dropdown, the mobile
+ * drawer and the footer's Resources column are all assembled from this list, so
+ * adding it here puts it in three surfaces at once and in none of them twice —
+ * which is also why it is *not* repeated in the footer's Company column. The URL
+ * is `routes.faq` from the route registry rather than a literal.
+ *
+ * Order is by how deep the question is: the quick answer, the configuration
+ * reference, then what changed. Docs and Blog keep reading their URLs from
+ * `externalLinks`, so pointing the blog at its real home when it launches stays
+ * a one-line change in `constants/external.ts`.
  */
 export const resourcesNav: readonly ResourceNavItem[] = [
+  {
+    label: "FAQ",
+    href: routes.faq,
+    description: "The questions merchants ask most, answered.",
+    icon: "faq",
+  },
   {
     label: "Docs",
     href: externalLinks.docs,

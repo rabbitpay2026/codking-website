@@ -1,4 +1,6 @@
-import type { FaqItem } from "@/types";
+import { routeFor, routes } from "@/constants/routes";
+
+import type { FaqItem, FaqPageCategory } from "@/types";
 
 /**
  * The tagged question pool (§11).
@@ -350,5 +352,309 @@ export const faqs: readonly FaqItem[] = [
     answer:
       "Support is available 7 days a week over live chat and email, and typically responds within minutes. Enterprise customers get priority support with a dedicated account manager.",
     tags: ["pricing"],
+  },
+  /*
+    The questions the dedicated FAQ page had to add.
+
+    Everything above this point was written for a surface that already existed —
+    the homepage, the pricing page, a control page — and the FAQ page reuses it
+    rather than restating it. What was missing was the set nobody had needed
+    until the site had one page answering everything: what the product is, who
+    it is for, what RTO means, what installing involves, what a message costs,
+    and which plan a merchant should be looking at.
+
+    Each answer is assembled from what this repository already records rather
+    than written fresh — `src/data/about.ts`, `src/data/homepage.ts`,
+    `src/data/controls.ts`, `src/data/calculator.ts`, `src/data/pricing.ts`,
+    `src/data/integrations.ts` — so the FAQ page cannot describe the product
+    differently from the pages it links to. No figure appears here that is not
+    already published somewhere on this site.
+
+    They carry the `faq` tag and no other, so no existing surface's set changes
+    by their being added to the pool.
+  */
+  {
+    id: "what-is-cod-king",
+    question: "What is COD King?",
+    answer:
+      "COD King is a Shopify app for managing cash-on-delivery orders: verifying them, collecting payment upfront, controlling where COD is offered and at what fee, moving buyers to prepaid, and recovering carts that never converted. It runs inside the Shopify checkout you already have, so a cash order behaves more like a prepaid one.",
+    tags: ["faq"],
+  },
+  {
+    id: "who-is-it-for",
+    question: "Who is COD King for?",
+    answer:
+      "Shopify merchants whose orders are largely cash on delivery, and who are carrying the cost of that in fake orders, RTO and working capital tied up in transit. It runs on stores from single-product launches to established brands, across the markets where cash on delivery dominates.",
+    tags: ["faq"],
+  },
+  {
+    id: "what-is-rto",
+    question: "What is RTO, and why does it matter?",
+    answer:
+      "RTO — return to origin — is a shipped COD order that comes back undelivered. It costs freight out, freight back and the packaging in between, on a sale that never happened, and the marketing spend that won the order is gone either way. The COD Calculator puts a figure on it using your own order volume and costs.",
+    tags: ["faq"],
+  },
+  {
+    id: "install-steps",
+    question: "How do I install and set up COD King?",
+    answer:
+      "Install COD King from the Shopify App Store, then set the controls you want from inside the app — OTP verification, COD fees, partial payment and rules. Setup takes less than 10 minutes and needs no coding. From there it runs on its own: a customer places an order on your store, and COD King verifies, collects and validates it.",
+    tags: ["faq"],
+  },
+  {
+    id: "no-developer",
+    question: "Do I need a developer or any theme changes?",
+    answer:
+      "No. COD King runs inside the checkout you already have — no theme edits, no developer, nothing to deploy. Every control is configured from the app itself, and no coding or developer skills are required at any point.",
+    tags: ["faq"],
+  },
+  {
+    id: "otp-channel",
+    question: "Can the OTP be sent on WhatsApp instead of SMS?",
+    answer:
+      "Yes. The one-time password can go over SMS or WhatsApp, whichever your buyers actually read. Either way it works on Shopify checkout without code changes.",
+    tags: ["faq"],
+  },
+  {
+    id: "reporting",
+    question: "Can I see whether it is actually working?",
+    answer:
+      "Yes. COD King reports verified against unverified orders, prepaid share and recovered carts inside the app, so the effect is a figure you can check rather than a feeling. RTO, fake-order and prepaid trends are reported in one place.",
+    tags: ["faq"],
+  },
+  {
+    id: "message-billing",
+    question: "How are SMS and WhatsApp messages charged?",
+    answer:
+      "You pay for the messages you send — the features that use them carry no separate charge of their own. The Professional plan earns a 15% discount on notification rates and Enterprise earns 35%, and connecting your own local SMS provider means you pay that provider directly in local currency instead.",
+    tags: ["faq"],
+  },
+  {
+    id: "which-plan",
+    question: "Which plan do I need?",
+    answer:
+      "Standard is $0 per month and covers OTP verification, abandoned cart recovery, partial payment and unlimited orders. Professional at $7.99 adds COD fees, show/hide COD rules and a discount on notification rates. Enterprise at $39 adds a local SMS gateway, a dedicated account manager and 24/7 priority support. Every plan includes a 7-day free trial.",
+    tags: ["faq"],
+  },
+];
+
+/**
+ * The FAQ page's own words — the only copy on it not drawn from the pool.
+ *
+ * Four strings: what the page is called, what it covers, and what it closes on.
+ * The description says what a merchant will find rather than restating the
+ * product, because someone on this URL has already read the product pitch and
+ * arrived with a specific question.
+ */
+export const faqPageCopy = {
+  eyebrow: "Support",
+  title: "Frequently asked questions",
+  description:
+    "Everything merchants ask before and after installing COD King — how it runs inside Shopify checkout, what each control does, what messages cost, and how you are billed. If your question is not answered here, ask us directly.",
+  ctaTitle: "Install COD King and see it on your own orders",
+} as const;
+
+/**
+ * The four answers a merchant wants before they read any of the others.
+ *
+ * Every one of them is a sentence from an answer below, compressed to its
+ * fact — the theme and setup-time claims from `themes`, the trial terms from
+ * `free-trial`, the coverage from `countries`. Nothing here is a new claim, and
+ * nothing here is a figure this site does not already publish; the panel is a
+ * summary of the page it opens, not a fifth place to state a number.
+ */
+export const faqPageFacts: readonly { label: string; value: string }[] = [
+  { label: "Works with", value: "All Shopify themes" },
+  { label: "Setup time", value: "Under 10 minutes" },
+  { label: "Free trial", value: "7 days, no card" },
+  { label: "Available in", value: "100+ countries" },
+];
+
+/**
+ * The dedicated FAQ page, grouped (§2).
+ *
+ * Ids into the pool above rather than copies of the answers, the way
+ * `pricingFaqIds` works: a question asked here and on a control page is written
+ * once. The grouping and the order are the page's own — the pool has no opinion
+ * about either — and each category's `id` is the anchor the contents rail links
+ * to, so renaming a heading cannot break a link to it.
+ *
+ * The order is the order a merchant asks these in: what is this, how do I start,
+ * then the three problems they came with, then what it costs. Categories are
+ * deliberately uneven — COD rules and payments carry the most questions because
+ * those are the controls with the most to configure, and padding the shorter
+ * groups to match would mean inventing questions nobody asks.
+ *
+ * `links` point only at pages this site has finished. Nothing here links to a
+ * control served by the generic template, and no answer carries a link merely
+ * because it mentions a feature by name.
+ */
+export const faqPageCategories: readonly FaqPageCategory[] = [
+  {
+    id: "general",
+    title: "General",
+    description:
+      "What COD King is, who it is built for, and the problem it exists to solve.",
+    entries: [
+      {
+        id: "what-is-cod-king",
+        links: [{ label: "All features", href: routes.features }],
+      },
+      { id: "who-is-it-for" },
+      {
+        id: "what-is-rto",
+        links: [
+          { label: "Open the COD Calculator", href: routes.codCalculator },
+        ],
+      },
+      { id: "countries" },
+      { id: "support", links: [{ label: "Contact us", href: routes.contact }] },
+    ],
+  },
+  {
+    id: "getting-started",
+    title: "Getting started",
+    description:
+      "Installing the app, and what changes on your store once you have.",
+    entries: [
+      { id: "install-steps" },
+      { id: "themes" },
+      { id: "no-developer" },
+      { id: "checkout-impact" },
+      {
+        id: "free-trial",
+        links: [{ label: "See pricing", href: routes.pricing }],
+      },
+    ],
+  },
+  {
+    id: "fake-orders-and-rto",
+    title: "Fake orders and RTO",
+    description:
+      "The controls that stop a bad cash order before it becomes a refused parcel.",
+    entries: [
+      {
+        id: "otp",
+        links: [
+          {
+            label: "OTP Verification",
+            href: routeFor.control("otp-verification"),
+          },
+        ],
+      },
+      { id: "otp-channel" },
+      {
+        id: "partial-what",
+        links: [
+          {
+            label: "Partial COD Payment",
+            href: routeFor.control("partial-cod-payment"),
+          },
+        ],
+      },
+      { id: "partial-shipping" },
+      {
+        id: "cod-rules-customer",
+        links: [
+          { label: "COD Rules", href: routeFor.control("cod-show-hide") },
+        ],
+      },
+      { id: "reporting" },
+    ],
+  },
+  {
+    id: "cod-rules-and-fees",
+    title: "COD rules and fees",
+    description:
+      "Deciding where cash on delivery is offered at all, and what it costs the buyer.",
+    entries: [
+      {
+        id: "cod-rules-what",
+        links: [
+          { label: "COD Rules", href: routeFor.control("cod-show-hide") },
+        ],
+      },
+      { id: "cod-rules-pincode" },
+      { id: "cod-rules-product" },
+      { id: "cod-rules-value" },
+      {
+        id: "cod-fees-what",
+        links: [{ label: "COD Fees", href: routeFor.control("cod-fees") }],
+      },
+      { id: "cod-fees-amount" },
+      { id: "cod-fees-visible" },
+      { id: "cod-fees-adoption" },
+    ],
+  },
+  {
+    id: "payments-and-prepaid",
+    title: "Payments and prepaid",
+    description:
+      "Collecting money upfront, and moving cash buyers to paying online.",
+    entries: [
+      {
+        id: "partial-payment",
+        links: [
+          {
+            label: "Partial COD Payment",
+            href: routeFor.control("partial-cod-payment"),
+          },
+        ],
+      },
+      { id: "partial-percentage" },
+      { id: "partial-gateways" },
+      {
+        id: "prepaid-what",
+        links: [
+          { label: "COD to Prepaid", href: routeFor.control("cod-to-prepaid") },
+        ],
+      },
+      { id: "prepaid-rules" },
+      { id: "prepaid-only" },
+      { id: "prepaid-placement" },
+    ],
+  },
+  {
+    id: "messaging-and-recovery",
+    title: "Messaging and cart recovery",
+    description:
+      "WhatsApp and SMS — the reminders they carry, the providers behind them, and what they cost.",
+    entries: [
+      {
+        id: "cart-what",
+        links: [
+          {
+            label: "Abandoned Cart Recovery",
+            href: routeFor.control("abandoned-cart-recovery"),
+          },
+        ],
+      },
+      { id: "cart-channels" },
+      { id: "cart-sequence" },
+      { id: "cart-link" },
+      /*
+        No link. The answer names the regional providers, and the page that
+        would list them — `/integrations` — is still a placeholder. A link to an
+        empty page is worse than no link at all.
+      */
+      { id: "local-sms" },
+      { id: "message-billing" },
+    ],
+  },
+  {
+    id: "plans-and-billing",
+    title: "Plans and billing",
+    description:
+      "What each plan includes, how it reaches your invoice, and how to change it.",
+    entries: [
+      {
+        id: "which-plan",
+        links: [{ label: "Compare plans", href: routes.pricing }],
+      },
+      { id: "billing" },
+      { id: "plan-change" },
+      { id: "order-limit" },
+      { id: "free-plan-charges" },
+    ],
   },
 ];

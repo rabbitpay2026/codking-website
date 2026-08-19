@@ -52,6 +52,18 @@ const ENTRIES: readonly SitemapEntry[] = [
   /** The lead magnet (§8), and a page merchants arrive on from search. */
   { path: routes.codCalculator, priority: 0.8 },
 
+  /**
+   * The FAQ page (§2).
+   *
+   * Above About and Contact rather than beside them: it carries FAQPage
+   * structured data and answers the terms merchants actually search — what a
+   * COD fee is, whether an app needs a developer, how partial payment is
+   * collected — which is more than a company page will ever target. Below the
+   * calculator, because it answers questions rather than being the reason a
+   * merchant arrives.
+   */
+  { path: routes.faq, priority: 0.7 },
+
   { path: routes.about, priority: 0.5 },
   { path: routes.contact, priority: 0.5 },
 ];

@@ -68,6 +68,17 @@ function buildSections(): readonly Section[] {
         ...getPublishedControls().map((control) =>
           page(control.name, routeFor.control(control.slug), control.outcome),
         ),
+        /*
+          The FAQ, with the feature pages rather than under Company: it answers
+          questions about the product, and it is the densest page on this site
+          for exactly the kind of question a model is asked — what a COD fee is,
+          whether the app needs a developer, how a deposit is collected.
+        */
+        page(
+          "FAQ",
+          routes.faq,
+          "Answers to what merchants ask about setup, COD rules and fees, partial and prepaid payments, messaging costs, plans and billing.",
+        ),
       ],
     },
     {
