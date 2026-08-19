@@ -11,9 +11,21 @@ import type { WithClassName } from "@/types";
  * which is why the transition is a single continuous movement rather than one
  * glyph blinking into another.
  *
- * Driven by the `data-state` of the trigger it sits in, so it needs no
+ * Driven by the open state of the element it sits in, so it needs no
  * JavaScript of its own and cannot fall out of step with the panel it belongs
- * to. That trigger must carry `group`.
+ * to. That element must carry `group`.
+ *
+ * Two states are read rather than one, because the site now opens panels two
+ * ways. `group-data-[state=open]` is Radix's, used by the homepage FAQ, the
+ * pricing page and the feature pages. `group-open` is the native `[open]` of a
+ * `<details>` element, used by the FAQ page — which is built on the native
+ * disclosure so its answers exist in the server HTML rather than only after
+ * hydration.
+ *
+ * The two cannot both be true, and neither can match the other's markup: a
+ * Radix trigger is a `<button>` and is never `[open]`, and a `<details>` has no
+ * `data-state`. So the pair is additive — every existing caller renders exactly
+ * what it rendered before.
  */
 export function PlusMinus({ className }: WithClassName) {
   return (
@@ -25,7 +37,7 @@ export function PlusMinus({ className }: WithClassName) {
       )}
     >
       <span className="absolute h-px w-2.5 rounded-full bg-current" />
-      <span className="absolute h-px w-2.5 rotate-90 rounded-full bg-current transition-transform duration-300 ease-[var(--ease-emphasized)] group-data-[state=open]:rotate-0" />
+      <span className="absolute h-px w-2.5 rotate-90 rounded-full bg-current transition-transform duration-300 ease-[var(--ease-emphasized)] group-open:rotate-0 group-data-[state=open]:rotate-0" />
     </span>
   );
 }

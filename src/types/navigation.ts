@@ -50,12 +50,22 @@ export interface NavGroup {
  * across that boundary. The art is mapped in `resourceNavIcons.ts`, the same
  * way control marks are mapped in `featureIcons.ts`.
  */
-export type ResourceNavIcon = "docs" | "blog";
+export type ResourceNavIcon = "docs" | "blog" | "faq";
 
-/** One row of the Resources dropdown (§4.1). */
-export interface ResourceNavItem extends ExternalNavItem {
+/**
+ * One row of the Resources dropdown (§4.1).
+ *
+ * `NavDestination` rather than `ExternalNavItem`, because the menu is no longer
+ * only off-site: the FAQ is a page of this site, and it belongs in the group a
+ * merchant opens when they want an answer rather than a feature. Widening the
+ * union here — instead of giving the FAQ its own item type — is what keeps the
+ * header dropdown, the mobile drawer and the footer's Resources column reading
+ * one list. `external` still discriminates, so a renderer knows which of the two
+ * it is holding and `NavLink` keeps deciding between `<Link>` and `<a>`.
+ */
+export type ResourceNavItem = NavDestination & {
   readonly icon: ResourceNavIcon;
-}
+};
 
 /**
  * Which platform glyph a social link draws.

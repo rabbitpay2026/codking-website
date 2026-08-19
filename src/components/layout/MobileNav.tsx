@@ -188,10 +188,13 @@ export function MobileNav({
                         />
                         {resource.label}
                       </span>
-                      <ArrowUpRight
-                        aria-hidden
-                        className="size-4 shrink-0 text-muted-foreground"
-                      />
+                      {/* Off-site only. The FAQ is a page of this site. */}
+                      {resource.external ? (
+                        <ArrowUpRight
+                          aria-hidden
+                          className="size-4 shrink-0 text-muted-foreground"
+                        />
+                      ) : null}
                     </NavLink>
                   );
                 })}

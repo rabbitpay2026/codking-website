@@ -475,6 +475,52 @@
   }
 }
 
+/*
+ * A native disclosure that still animates open.
+ *
+ * The FAQ page is built on `<details>` rather than on the Radix accordion the
+ * rest of the site uses, and the reason is not stylistic: Radix renders a
+ * closed panel's children as nothing at all, so a page whose entire purpose is
+ * answers was shipping forty-two questions and no answers in its server
+ * response. `<details>` keeps both in the document whatever the state, and
+ * needs no JavaScript to open.
+ *
+ * What `<details>` historically could not do is animate, because the closed
+ * height is not a number to interpolate from. `interpolate-size` makes `auto`
+ * an interpolable keyword and `::details-content` gives the generated wrapper
+ * a box to put the transition on — so the panel eases open on the same curve
+ * and roughly the same duration as `--animate-accordion-down`, which is what
+ * keeps this disclosure feeling like the one on the homepage.
+ *
+ * `content-visibility` is transitioned `allow-discrete` because the browser
+ * flips it to `hidden` on close; without it in the list the panel would vanish
+ * on the first frame and the height animation would run against nothing.
+ *
+ * Every declaration is progressive. A browser that does not know
+ * `::details-content` never matches the rule, and the disclosure opens
+ * instantly — which is exactly what a `<details>` element does anyway. Nothing
+ * here is load-bearing for the content being present or reachable, and the
+ * global reduced-motion rule collapses the duration for anyone who asked.
+ */
+@utility faq-disclosure {
+  interpolate-size: allow-keywords;
+
+  &::details-content {
+    block-size: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition:
+      block-size 220ms var(--ease-emphasized),
+      opacity 160ms var(--ease-emphasized),
+      content-visibility 220ms var(--ease-emphasized) allow-discrete;
+  }
+
+  &[open]::details-content {
+    block-size: auto;
+    opacity: 1;
+  }
+}
+
 /** The same surface, as glass — for cards sitting over a colour field. */
 @utility surface-glass {
   @apply rounded-2xl border border-white/60 bg-card/70 shadow-card backdrop-blur-xl;
