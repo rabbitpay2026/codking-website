@@ -35,6 +35,17 @@ export const orderStages: readonly OrderStage[] = [
 ];
 
 /**
+ * The name the product markets the `cod-show-hide` control under.
+ *
+ * Declared once and read twice: the control record below carries it as its
+ * `alias`, and the page's own copy uses it for the headline, the breadcrumb
+ * and the document title. One marketing name written in two files is the drift
+ * this repository is built to avoid, and this is the only control that has a
+ * second name to drift.
+ */
+export const COD_SHOW_HIDE_ALIAS = "COD Show/Hide";
+
+/**
  * The ten controls (§6.2), in stage order.
  *
  * Where the product markets a control today, its `outcome` and `benefits` are
@@ -48,6 +59,7 @@ export const controls: readonly Control[] = [
   {
     slug: "cod-show-hide",
     name: "COD Rules",
+    alias: COD_SHOW_HIDE_ALIAS,
     stage: "before-the-order",
     outcome: "Restrict COD based on zip codes, cart value, or customer risk.",
     featured: true,
