@@ -83,6 +83,20 @@ export interface Control {
   readonly slug: ControlSlug;
   /** Display name, e.g. "OTP Verification". */
   readonly name: string;
+  /**
+   * The second name this control is published under, where the product uses
+   * two.
+   *
+   * Only `cod-show-hide` has one. Its `name` is "COD Rules" — what the
+   * mega-menu, the footer and the app's admin call it — while the product
+   * markets it, and titles its page and its URL, as "COD Show/Hide". A
+   * merchant searches for either, so `llms.txt` names both; every other
+   * surface keeps rendering the canonical `name` alone, and nothing about
+   * which name is canonical changes.
+   *
+   * Optional, and absent on the nine controls the product calls one thing.
+   */
+  readonly alias?: string;
   readonly stage: OrderStageId;
   /**
    * The single outcome this control delivers, in one line.

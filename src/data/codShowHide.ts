@@ -1,3 +1,5 @@
+import { COD_SHOW_HIDE_ALIAS } from "@/data/controls";
+
 import type {
   AudienceSegment,
   FeatureCapability,
@@ -228,12 +230,15 @@ export const codShowHidePageCopy = {
    * What the page calls the control, for the breadcrumb, the headline and the
    * document title.
    *
-   * The one place the page and the controls repository disagree, and
-   * deliberately: the record's `name` is "COD Rules", the name the mega-menu
-   * and the footer have always shown and the name the control has inside the
-   * admin. This is the name the product markets it under.
+   * The place the page and the controls repository differ, and deliberately:
+   * the record's `name` is "COD Rules", the name the mega-menu and the footer
+   * have always shown and the name the control has inside the admin. This is
+   * the name the product markets it under — read from the record's `alias`
+   * rather than retyped, so the marketing name is one declaration and this
+   * page cannot come to spell it differently from the one `llms.txt`
+   * publishes.
    */
-  name: "COD Show/Hide",
+  name: COD_SHOW_HIDE_ALIAS,
   /**
    * The category, not the feature. The headline directly below already carries
    * the name, and an eyebrow repeating it word for word is a label on a label.
