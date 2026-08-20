@@ -25,6 +25,7 @@ export * from "./customers";
 export * from "./faq";
 export * from "./homepage";
 export * from "./integrations";
+export * from "./knowledge";
 export * from "./legal";
 export * from "./navigation";
 export * from "./otpVerification";
