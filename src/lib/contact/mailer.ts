@@ -84,7 +84,7 @@ interface MailConfig {
  * fails at the SDK rather than here, and the log below says which.
  */
 function readConfig(): MailConfig | null {
-  const region = process.env.AWS_REGION?.trim();
+  const region = process.env.CODK_AWS_REGION?.trim();
   const accessKeyId = process.env.AWS_ACCESS_KEY_ID?.trim();
   const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY?.trim();
   const from = process.env.CONTACT_EMAIL_FROM?.trim();
@@ -236,7 +236,7 @@ export async function sendContactMessage(
     // the log and an afternoon spent looking for a bug that is a missing
     // variable on the deploy.
     console.error(
-      "[contact] No mail configuration — set AWS_REGION and CONTACT_EMAIL_FROM. Nothing was sent.",
+      "[contact] No mail configuration — set CODK_AWS_REGION and CONTACT_EMAIL_FROM. Nothing was sent.",
     );
     return { ok: false, reason: "unconfigured" };
   }
