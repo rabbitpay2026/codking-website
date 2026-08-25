@@ -30,16 +30,52 @@ export interface ProofMetrics {
 }
 
 /**
- * A single Shopify App Store review, synced rather than hand-copied (§11), so
- * proof updates itself instead of becoming a manual task.
+ * A single Shopify App Store review, captured from the listing rather than
+ * hand-copied (§11), so the reviewer and their words cannot be separated.
+ *
+ * `id` is the marketplace's own review id, which is what makes a capture
+ * idempotent: re-running the harvester recognises a review it already holds
+ * instead of appending a second copy under a new key.
  */
 export interface AppStoreReview {
   readonly id: string;
+  /** The store that left the review, as the marketplace prints it. */
   readonly author: string;
+  /** Stars left, 1–5. Never rounded, never adjusted. */
   readonly rating: number;
+  /**
+   * The review text, verbatim. Newlines are the reviewer's own paragraph
+   * breaks; an empty string is a rating left without words, which the
+   * marketplace allows and which the UI must render rather than discard.
+   */
   readonly body: string;
   /** ISO-8601 date. */
   readonly publishedAt: string;
+  /** The marketplace marks a review the merchant later revised. */
+  readonly edited?: boolean;
+  /** Where the store trades, where the listing shows it. */
+  readonly country?: string;
+}
+
+/**
+ * What the marketplace itself reports about the listing.
+ *
+ * Kept apart from `ProofMetrics` on purpose. That record holds the figures the
+ * site presents; this one holds the App Store's own, and the two currently
+ * disagree on the rating by design — see the note in `src/data/proof.ts`. A
+ * page that shows both has to be able to name which is which.
+ */
+export interface AppStoreListing {
+  /** The public reviews page these figures and reviews were read from. */
+  readonly url: string;
+  /** Every review on the listing, not only the ones captured locally. */
+  readonly totalReviews: number;
+  /** The marketplace's own average, to one decimal. */
+  readonly averageRating: number;
+  /** How many reviews sit at each star level, five down to one. */
+  readonly distribution: Readonly<Record<1 | 2 | 3 | 4 | 5, number>>;
+  /** ISO-8601 date the capture was taken. */
+  readonly capturedOn: string;
 }
 
 /**

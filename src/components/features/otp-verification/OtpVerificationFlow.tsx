@@ -1,8 +1,8 @@
 import {
   KeyRound,
-  MessageSquareText,
+  MousePointerClick,
   PackageCheck,
-  Smartphone,
+  ShoppingBag,
 } from "lucide-react";
 
 import { PageEnvironment } from "@/components/sections/PageEnvironment";
@@ -19,8 +19,8 @@ import type { LucideIcon } from "lucide-react";
  * mean picking art.
  */
 const iconFor: Record<string, LucideIcon> = {
-  number: Smartphone,
-  send: MessageSquareText,
+  select: ShoppingBag,
+  checkout: MousePointerClick,
   verify: KeyRound,
   placed: PackageCheck,
 };
@@ -114,8 +114,14 @@ function StepConnector() {
  * direction.
  *
  * The steps read as things that *happen* rather than things to do, because
- * three of the four are the buyer's and none of them are the merchant's. That
- * is the argument the section makes without ever claiming setup is easy.
+ * all four are the buyer's and none of them are the merchant's. That is the
+ * argument the section makes without ever claiming setup is easy.
+ *
+ * The sequence is the reviewer's: the buyer picks something, goes to checkout,
+ * verifies their number, and the order is placed. It starts at the product
+ * rather than at the phone field on purpose — beginning at "customer enters
+ * mobile number" makes the verification look like a form bolted onto the
+ * store instead of one step inside a checkout the buyer was already in.
  */
 export function OtpVerificationFlow() {
   const steps = getOtpFlowSteps();
@@ -140,7 +146,7 @@ export function OtpVerificationFlow() {
 
       <ol className="mt-lede grid gap-x-10 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
         {steps.map((step, index) => {
-          const Icon = iconFor[step.id] ?? Smartphone;
+          const Icon = iconFor[step.id] ?? ShoppingBag;
 
           return (
             <li key={step.id} className="relative">

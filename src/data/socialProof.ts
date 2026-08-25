@@ -1,24 +1,40 @@
 import type { MerchantTestimonial, ReviewSnippet } from "@/types";
 
 /**
- * The staged half of the social-proof band (§5.1 #8).
+ * The App Store half of the social-proof band (§5.1 #8).
  *
- * ── Read this before shipping ──────────────────────────────────────────────
- * The records below are ILLUSTRATIVE. The stores and words are written to show
- * the band at full size; they are not reviews anyone left.
+ * ── Read this before editing ──────────────────────────────────────────────
+ * Every entry below is a real, five-star, publicly visible review left on the
+ * COD King listing in the Shopify App Store:
  *
- * They are deliberately the minority of what the section renders. The
- * carousel opens with the two reviews the product has actually published —
- * those live in `src/data/customers.ts`, attributed to the merchants who wrote
- * them, and the repository puts them first. These fill the remaining slots so
- * a carousel of two does not look like a product with two customers.
+ *   https://apps.shopify.com/cash-on-delivery-cod-order-confirmation/reviews
  *
- * §10.1 requires every claim to point at a source, so this file is a staging
- * area, not a destination.
+ * The store name and the words are the reviewer's own. Nothing here may be
+ * written, reworded, combined or strengthened: a review trimmed for the card
+ * is cut at a sentence boundary and never edited, so what a visitor reads is
+ * always a prefix of what the merchant actually wrote. §10.1 makes every claim
+ * on this site traceable to its source, and a paraphrased review has stopped
+ * being the merchant's statement.
+ *
+ * ── On attribution ────────────────────────────────────────────────────────
+ * Store names and review bodies were paired by parsing the listing's own
+ * markup — each review sits in its own `data-merchant-review` block carrying
+ * its store, its country and its star widget — rather than by reading the
+ * rendered page. That matters: an earlier pass transcribed the page by eye and
+ * shifted two reviews onto the wrong stores. Attributing one merchant's words
+ * to another is the worst failure this file has available to it, so the pairing
+ * is machine-checked against the block, not eyeballed.
+ *
+ * Two reviews on the page are deliberately absent. One is a one-star review
+ * and one is a five-star rating whose text is a complaint; a marketing
+ * testimonial carousel carries the positive reviews, and neither is hidden
+ * anywhere it counts — the band's own rating and review count are read from
+ * `proof.ts` and cover every review on the listing, critical ones included.
  *
  * TODO(content): replace both lists with `getAppStoreReviews()` once the
- * Shopify App Store sync described in §11 lands. The consuming repository
- * already returns them behind async functions, so the swap is an edit inside
+ * Shopify App Store sync described in §11 lands, so the section stops being a
+ * transcription and starts being a feed. The consuming repository already
+ * returns them behind async functions, so the swap is an edit inside
  * `src/lib/content/proof.ts` and touches no component.
  * ──────────────────────────────────────────────────────────────────────────
  *
@@ -31,28 +47,39 @@ import type { MerchantTestimonial, ReviewSnippet } from "@/types";
  */
 
 /**
- * The carousel's staged entries, appended after the published reviews.
+ * The carousel's App Store entries, appended after the two published customer
+ * stories.
  *
- * Two, and short. The card is compact and holds one review at a time, so a
- * quote that runs four lines longer than its neighbours either sets the height
- * for all of them or makes the card breathe in and out every few seconds.
+ * Two, because the carousel is capped at four and the published stories lead —
+ * see `getMerchantTestimonials()`. Both of these were chosen for what they
+ * name rather than for how warm they are: between them they mention OTP
+ * verification, partial COD payments, COD rules, COD order management and fake
+ * orders, which is the product a visitor is being asked to believe in.
+ *
+ * `caption` says where the review was left rather than inventing a job title
+ * for someone who did not give one.
  */
 export const stagedTestimonials: readonly MerchantTestimonial[] = [
   {
-    id: "urban-thread-co",
-    store: "Urban Thread Co.",
-    caption: "Rahul Sharma · Founder",
+    id: "oham-shoham-ayurved",
+    store: "Oham shoham ayurved",
+    caption: "Shopify App Store review",
     rating: 5,
     quote:
-      "COD verification cut our fake orders sharply within a fortnight. Setup took under ten minutes and prepaid share moved in week one.",
+      "We've had an excellent experience using COD King. The app is easy to set up and provides all the essential features we need, including OTP verification, partial COD payments, and flexible COD rules. It has helped us reduce fake COD orders and streamline our order confirmation process.",
   },
   {
-    id: "voltbay",
-    store: "Voltbay",
-    caption: "Priya Nair · Co-founder",
+    /*
+      The first two sentences of a four-sentence review. The card holds one
+      quote at a time and sets its height from the longest, so the two that
+      name the controls are kept and the two that summarise are not.
+    */
+    id: "buybindas",
+    store: "BuyBindas",
+    caption: "Shopify App Store review",
     rating: 5,
     quote:
-      "We ship high-value electronics, so every refused parcel hurt. Partial payment on COD filtered out the non-serious buyers almost at once.",
+      "Using COD King has really helped improve my Shopify COD order management. The OTP verification and COD control features are very useful for reducing fake and risky orders.",
   },
 ];
 
@@ -64,28 +91,29 @@ export const stagedTestimonials: readonly MerchantTestimonial[] = [
  * are many of these and they all say the same thing, and a paragraph in each
  * row would undo it.
  *
- * Every preview is written to land inside two lines of the row it sits in.
- * The row clamps rather than overflows, but a clamp is a safety net, not a
- * layout: three rows all ending in an ellipsis reads as content that did not
- * fit, and this is the column arguing the product is well made.
+ * Each preview is one complete sentence of a real review, taken whole. The row
+ * is roughly fifty characters across two lines, so the sentence has to fit
+ * rather than be cut to fit: the row clamps as a safety net, but a clamp is not
+ * a layout, and three rows all ending in an ellipsis reads as content that did
+ * not fit in the column arguing the product is well made.
  */
 export const reviewSnippets: readonly ReviewSnippet[] = [
   {
-    id: "saanjh-living",
-    store: "Saanjh Living",
+    id: "hasya",
+    store: "HASYA",
     rating: 5,
-    preview: "Support replied in minutes. OTP was live the same day.",
+    preview: "Solved my problem of RTO to a large extent",
   },
   {
-    id: "northbound",
-    store: "Northbound",
+    id: "velox",
+    store: "VELOX",
     rating: 5,
-    preview: "RTO dropped in the first month. Cheapest fix yet.",
+    preview: "The support was very quick, helpful, and efficient.",
   },
   {
-    id: "lumen-studio",
-    store: "Lumen Studio",
+    id: "lost-my-buds",
+    store: "Lost my buds",
     rating: 5,
-    preview: "No code, clean dashboard, WhatsApp OTP that works.",
+    preview: "Excellent support experience!",
   },
 ];

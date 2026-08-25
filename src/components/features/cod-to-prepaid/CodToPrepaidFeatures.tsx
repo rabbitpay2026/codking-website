@@ -1,8 +1,8 @@
 import {
   BadgePercent,
+  Landmark,
   Megaphone,
   MessageSquareText,
-  Receipt,
   Settings2,
   SlidersHorizontal,
 } from "lucide-react";
@@ -17,7 +17,7 @@ const iconFor: Record<string, LucideIcon> = {
   discount: BadgePercent,
   placement: Megaphone,
   messaging: MessageSquareText,
-  tax: Receipt,
+  gateway: Landmark,
   simple: Settings2,
 };
 

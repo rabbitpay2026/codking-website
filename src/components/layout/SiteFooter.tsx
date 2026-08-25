@@ -15,6 +15,7 @@ import {
   getProofMetrics,
 } from "@/lib/content";
 import { cn } from "@/lib/utils";
+import { formatRating } from "@/utils/format";
 
 import type { NavDestination } from "@/types";
 
@@ -61,6 +62,7 @@ export async function SiteFooter() {
   const legalLinks = getFooterLegalLinks();
   const supportEmail = externalLinks.supportEmail;
   const year = new Date().getFullYear();
+  const rating = formatRating(proof.rating);
 
   return (
     <footer
@@ -102,12 +104,20 @@ export async function SiteFooter() {
               </li>
               <li
                 className="inline-flex items-center gap-1.5 rounded-full border border-ink/[0.08] bg-background px-3 py-1.5 text-xs font-medium text-foreground"
-                aria-label={`Rated ${proof.rating} out of 5 from ${numberFormat.format(proof.reviewCount)} reviews on the Shopify App Store`}
+                /*
+                  The badge shows a rating and a review count, and the label
+                  has to name both without asserting whose score the rating is.
+                  It used to end "…on the Shopify App Store", which reads as a
+                  quotation of the marketplace's own figure — and the listing
+                  reports 4.9, not the 5.0 the site is asked to display. The
+                  reviews are genuinely from the App Store, so that stays
+                  attached to the count, where it is true.
+                */
+                aria-label={`Rated ${rating} out of 5. Reviews from ${numberFormat.format(proof.reviewCount)}+ Shopify App Store customers.`}
               >
                 <Star aria-hidden className="size-3.5 fill-brand text-brand" />
                 <span aria-hidden>
-                  {proof.rating} · {numberFormat.format(proof.reviewCount)}+
-                  reviews
+                  {rating} · {numberFormat.format(proof.reviewCount)}+ reviews
                 </span>
               </li>
             </ul>

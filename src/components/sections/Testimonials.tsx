@@ -11,6 +11,7 @@ import { BlurFade } from "@/components/ui/blur-fade";
 import { Button } from "@/components/ui/button";
 import { routes } from "@/constants/routes";
 import { cn } from "@/lib/utils";
+import { formatRating } from "@/utils/format";
 import {
   getMerchantTestimonials,
   getProofMetrics,
@@ -26,7 +27,7 @@ const numberFormat = new Intl.NumberFormat("en");
  * White paper, a 16px corner, one hairline, and a shadow you have to look for.
  * No tint on any of them — colour is what an advertisement uses to tell you
  * where to look, and a band arguing that the product can be trusted should not
- * be pointing. The eye goes to the 4.9 because it is a large number, not
+ * be pointing. The eye goes to the rating because it is a large number, not
  * because the card under it is blue.
  *
  * `h-full` on every pane against `items-stretch` on the grid is what makes the
@@ -68,9 +69,11 @@ const HEADING = "text-[0.9375rem] leading-tight font-semibold text-foreground";
  * Every figure comes from the repository (§11.1), so this band cannot disagree
  * with the hero, the pricing page or the footer — the rating a visitor reads
  * here is the same object the hero read. The two reviews that open the
- * carousel are the ones merchants actually wrote; the entries after them are
- * staged in `src/data/socialProof.ts`, which says so at the top and carries
- * the TODO for the App Store sync that replaces them (§11).
+ * carousel are the published customer stories; the entries after them, and
+ * every row in the list beside them, are real five-star reviews transcribed
+ * from the Shopify App Store listing — `src/data/socialProof.ts` names the
+ * source and carries the TODO for the sync that replaces the transcription
+ * (§11).
  */
 export async function Testimonials() {
   const [proof, testimonials, snippets] = await Promise.all([
@@ -78,6 +81,8 @@ export async function Testimonials() {
     getMerchantTestimonials(),
     getReviewSnippets(),
   ]);
+
+  const rating = formatRating(proof.rating);
 
   return (
     <SectionShell
@@ -121,9 +126,29 @@ export async function Testimonials() {
         {/* ── The marketplace verdict ──────────────────────────────────── */}
         <BlurFade delay={0.07} inView className="h-full min-w-0">
           <div className={CARD}>
-            <div className="flex items-center gap-2">
-              <ShopifyMark className="size-[18px]" />
-              <h2 className={HEADING}>Shopify App Store reviews</h2>
+            {/*
+              `items-start`, because the heading is two lines at most of the
+              widths this pane is given. Centred against a two-line heading the
+              mark floats in the gutter between them; aligned to the top with a
+              pixel of optical nudge it sits on the first line's cap height,
+              which is the relationship the marks and labels have everywhere
+              else on the site. `shrink-0` keeps the mark square when the
+              heading takes the rest of the row.
+            */}
+            <div className="flex items-start gap-2">
+              <ShopifyMark className="mt-px size-[18px] shrink-0" />
+              {/*
+                Named for whose reviews these are, not for whose score the
+                number is. "Shopify App Store reviews" sitting directly above a
+                rating reads as a quotation of the marketplace's own figure,
+                and the listing reports 4.9 rather than the 5.0 the site is
+                asked to display. The rows below are genuinely App Store
+                customers' reviews, so the heading says exactly that and claims
+                nothing about the rating beside it.
+              */}
+              <h2 className={HEADING}>
+                Reviews from Shopify App Store customers
+              </h2>
             </div>
 
             {/*
@@ -137,14 +162,32 @@ export async function Testimonials() {
                   rows, where it is the difference between a store's name
                   fitting and being truncated. */}
               <div className="flex shrink-0 flex-col sm:w-[36%] sm:max-w-[9.5rem]">
-                <div className="flex items-center gap-2.5">
+                {/*
+                  Wraps rather than squashes.
+
+                  This column is 36% of the pane, which is about 127px on a
+                  72rem page and about 109px at the width `lg` starts at. The
+                  figure at 34px and five 13px stars with their gaps need
+                  roughly 132px on one line — so the row did not fit, and
+                  because neither the star row nor the glyphs inside it carried
+                  `shrink-0`, what gave way was the stars: they compressed
+                  horizontally and rendered as five slightly squashed shapes in
+                  the one place on the page a rating has to be unmistakable.
+
+                  `shrink-0` on the glyphs makes the star row incompressible,
+                  and `flex-wrap` gives it somewhere to go — under the figure,
+                  at full size, on the widths where it cannot sit beside it.
+                  The column is a flex column inside a stretched pane, so the
+                  extra line costs the layout nothing.
+                */}
+                <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1.5">
                   <span className="text-[2.125rem] leading-none font-semibold tracking-[-0.03em] text-ink tabular-nums">
-                    {proof.rating}
+                    {rating}
                   </span>
                   <Stars
                     rating={proof.rating}
-                    className="size-[13px]"
-                    label={`Rated ${proof.rating} out of 5`}
+                    className="size-[13px] shrink-0"
+                    label={`Rated ${rating} out of 5`}
                   />
                 </div>
 

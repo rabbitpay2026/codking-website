@@ -11,8 +11,8 @@ import {
   contactAssurances,
   contactChannels,
   contactFormCopy,
-  contactFormFallback,
   contactFormFields,
+  contactFormStates,
   contactHeroCopy,
   contactWhatsApp,
 } from "@/data/contact";
@@ -79,8 +79,8 @@ export function getContactFormCopy(): typeof contactFormCopy {
   return contactFormCopy;
 }
 
-export function getContactFormFallback(): typeof contactFormFallback {
-  return contactFormFallback;
+export function getContactFormStates(): typeof contactFormStates {
+  return contactFormStates;
 }
 
 /** The WhatsApp card, or `null` when no number is configured. */

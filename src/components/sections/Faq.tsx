@@ -1,3 +1,4 @@
+import { CtaLiveDemoStore } from "@/components/sections/cta/CtaLiveDemoStore";
 import { FinalCta } from "@/components/sections/FinalCta";
 import { SectionShell } from "@/components/sections/SectionShell";
 import {
@@ -97,6 +98,24 @@ export function Faq() {
           className="lg:border-l lg:border-border lg:pl-8"
         >
           <FinalCta />
+        </BlurFade>
+
+        {/*
+          The demo store, across the foot of the same panel.
+
+          A third row rather than a fourth thing in either column, and the
+          width is the argument. Under the questions it would read as a sixth
+          question; under the close it would be a second ask stacked on the
+          first, in the column that is already the longer of the two. Spanning
+          both, it is the panel's own footer — the last offer the page makes,
+          and the only one that costs the merchant nothing to accept.
+
+          It draws its own top rule and no border, so the panel still has
+          exactly one edge. Nothing above it moves: both columns hang from the
+          same top line they did before.
+        */}
+        <BlurFade delay={0.16} inView className="lg:col-span-2">
+          <CtaLiveDemoStore />
         </BlurFade>
       </div>
     </SectionShell>

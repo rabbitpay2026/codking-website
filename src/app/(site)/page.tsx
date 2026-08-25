@@ -1,7 +1,6 @@
 import { Faq } from "@/components/sections/Faq";
 import { FeatureShowcase } from "@/components/sections/FeatureShowcase";
 import { Hero } from "@/components/sections/Hero";
-import { HowItWorks } from "@/components/sections/HowItWorks";
 import { Integrations } from "@/components/sections/Integrations";
 import { Metrics } from "@/components/sections/Metrics";
 import { PainPoints } from "@/components/sections/PainPoints";
@@ -33,6 +32,12 @@ export const metadata: Metadata = createMetadata({
  * commitment than the one before it, which is why the install is not
  * requested until the merchant has seen what it is worth.
  *
+ * The setup flow that used to sit between the capability board and the
+ * integrations board is gone at the reviewer's instruction. `HowItWorks` is
+ * still built and still holds its steps, because `llms.txt` describes the
+ * setup sequence from the same repository — the section is off the page, not
+ * out of the product.
+ *
  * Coverage sits before results on purpose: a merchant outside India decides
  * whether the page is about them before they can be persuaded by what it did
  * for someone else. Results then hands straight to the merchants who report
@@ -46,7 +51,6 @@ export default function HomePage() {
       <Metrics />
       <PainPoints />
       <FeatureShowcase />
-      <HowItWorks />
       <Integrations />
       <Worldwide />
       <Results />

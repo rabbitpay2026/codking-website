@@ -6,5 +6,6 @@
  * order being converted — a comparison, a calculator, a future landing page.
  * A component living inside one page's folder is a component nobody reuses.
  */
+export { CodToPrepaidNudgePreview } from "./CodToPrepaidNudgePreview";
 export { CodToPrepaidPanel } from "./CodToPrepaidPanel";
 export { CodToPrepaidScene } from "./CodToPrepaidScene";

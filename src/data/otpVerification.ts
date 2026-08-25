@@ -41,30 +41,35 @@ export const otpCheckpoints: readonly FeatureCheckpoint[] = [
 /**
  * How a verification runs, as the buyer experiences it (§6.3).
  *
- * Four beats, and the merchant performs none of them — which is the argument
- * the section is making without stating it. The same sequence drives the
- * animated panel in the hero, so what a visitor reads here and what they watch
- * up there are the same four steps in the same order.
+ * Four beats, restated at the reviewer's instruction as the journey the buyer
+ * actually takes — they pick something, they go to checkout, they prove the
+ * number is theirs, the order is placed. The earlier version started at
+ * "customer enters mobile number", which begins the story halfway through and
+ * makes the verification look like a form the store added rather than one step
+ * inside a checkout the buyer was already in.
+ *
+ * The merchant performs none of the four, which is the argument the section
+ * makes without stating it.
  */
 export const otpFlowSteps: readonly FeatureFlowStep[] = [
   {
-    id: "number",
-    title: "Customer enters mobile number",
-    body: "The buyer reaches checkout and enters the number the parcel will be delivered to.",
+    id: "select",
+    title: "Customer selects the product",
+    body: "The buyer adds what they want to the cart on your Shopify store, exactly as they do today.",
   },
   {
-    id: "send",
-    title: "OTP is sent instantly",
-    body: "COD King sends a one-time password to that number over SMS or WhatsApp.",
+    id: "checkout",
+    title: "Clicks on checkout",
+    body: "They reach checkout and choose cash on delivery. Nothing about the page changes.",
   },
   {
     id: "verify",
-    title: "Customer enters the OTP",
-    body: "The buyer types the code back into checkout, proving the number is theirs.",
+    title: "Verifies mobile number via OTP",
+    body: "COD King sends a one-time password over SMS or WhatsApp, and the buyer enters it to prove the number is theirs.",
   },
   {
     id: "placed",
-    title: "Order is placed successfully",
+    title: "Order placed",
     body: "Only verified orders are accepted. Everything else never becomes a parcel.",
   },
 ];
@@ -144,32 +149,67 @@ export const otpCheckoutStages: readonly CheckoutStage[] = [
   },
 ];
 
-/** The capability row (§6.3). Five, compact, one line each. */
+/**
+ * The capability grid (§6.3).
+ *
+ * ── Where these come from ─────────────────────────────────────────────────
+ * Every entry is a setting the COD King documentation describes for OTP
+ * verification — https://docs.codking.tech/setting-otp-verification-on-shopify
+ * — rather than a capability written to fill a grid. The review asked this
+ * section to explain more of what a merchant can actually configure, naming
+ * country targeting and blocked numbers specifically; both are here, with the
+ * rest of the documented set beside them.
+ *
+ * "Smart auto detect" was removed at the reviewer's instruction and nothing
+ * was invented to take its place — the grid simply carries the settings that
+ * exist.
+ * ──────────────────────────────────────────────────────────────────────────
+ */
 export const otpCapabilities: readonly FeatureCapability[] = [
   {
-    id: "auto-detect",
-    title: "Smart auto detect",
-    body: "Detects a COD order at checkout and triggers verification on its own.",
+    id: "countries",
+    title: "Country targeting",
+    body: "Ask for verification only in the countries you select, or in every country by default.",
+  },
+  {
+    id: "blocklist",
+    title: "Blocked phone numbers",
+    body: "Blacklist specific numbers so they can never verify an order on your store.",
+  },
+  {
+    id: "channels",
+    title: "SMS, WhatsApp or both",
+    body: "Choose which channel carries the one-time password, or send it over both.",
   },
   {
     id: "branding",
     title: "Custom OTP branding",
-    body: "Your store name, your message, your wording on every code that goes out.",
+    body: "Your store name, your message, your logo on the verification your buyers see.",
   },
   {
-    id: "fraud",
-    title: "Fraud protection",
-    body: "Repeat offenders and unverified numbers never make it into dispatch.",
+    id: "trigger",
+    title: "Choose what to verify",
+    body: "Trigger verification on every order, or only on the cash-on-delivery ones.",
+  },
+  {
+    id: "address",
+    title: "Prefilled shipping address",
+    body: "Fill the buyer's address in from their verified number. Available in India.",
+  },
+  {
+    id: "autocancel",
+    title: "Auto-cancel timer",
+    body: "Set how long an order waits for confirmation. Unverified orders are cancelled automatically.",
+  },
+  {
+    id: "onepass",
+    title: "One-pass verification",
+    body: "A buyer who has already verified is not asked again across tabs or stores.",
   },
   {
     id: "devices",
     title: "Multi-device optimised",
     body: "Renders correctly on mobile, tablet and desktop checkout.",
-  },
-  {
-    id: "realtime",
-    title: "Real-time verification",
-    body: "The code is sent and checked in seconds, without leaving checkout.",
   },
 ];
 
@@ -200,4 +240,7 @@ export const otpPageCopy = {
   headlineAccent: "with OTP Verification",
   description:
     "Verify every cash-on-delivery order with a single OTP step, so genuine buyers sail through and fake orders never become a parcel you pay to ship twice.",
+  capabilitiesTitle: "Advanced capabilities",
+  capabilitiesDescription:
+    "Everything you can configure about how, where and when a buyer is asked to verify.",
 } as const;

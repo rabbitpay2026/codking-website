@@ -5,6 +5,7 @@ import { ShopifyMark } from "@/components/brand/ShopifyMarks";
 import { SectionShell } from "@/components/sections/SectionShell";
 import { Marquee } from "@/components/ui/marquee";
 import { getProofMetrics, getTrustedBrands } from "@/lib/content";
+import { formatRating } from "@/utils/format";
 
 const numberFormat = new Intl.NumberFormat("en");
 
@@ -208,7 +209,7 @@ export async function TrustBar() {
 
           <span
             className="flex items-center gap-1.5 text-[13px] leading-none"
-            aria-label={`Rated ${proof.rating} out of 5 from ${numberFormat.format(proof.reviewCount)} reviews`}
+            aria-label={`Rated ${formatRating(proof.rating)} out of 5 from ${numberFormat.format(proof.reviewCount)} reviews`}
           >
             <span aria-hidden className="flex items-center gap-0.5">
               {Array.from({ length: 5 }, (_, index) => (
@@ -219,7 +220,7 @@ export async function TrustBar() {
               ))}
             </span>
             <span aria-hidden className="font-semibold text-ink tabular-nums">
-              {proof.rating}
+              {formatRating(proof.rating)}
             </span>
             <span aria-hidden className="text-ink/40">
               · {numberFormat.format(proof.reviewCount)}+ reviews

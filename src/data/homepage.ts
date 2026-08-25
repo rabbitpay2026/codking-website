@@ -2,7 +2,6 @@ import { routes } from "@/constants/routes";
 
 import type {
   ControlBoardCard,
-  ControlSlug,
   HowItWorksStep,
   OutcomeMetric,
   PainPoint,
@@ -94,23 +93,6 @@ export const outcomeMetrics: readonly OutcomeMetric[] = [
 export const setupMinutes = 10;
 
 /**
- * The eight controls the homepage puts on the board (§5.1 #6).
- *
- * Slugs rather than copied names, so the hero checklist and the feature grid
- * are the same list read twice and a rename happens in one place.
- */
-export const homepageControlSlugs: readonly ControlSlug[] = [
-  "otp-verification",
-  "partial-cod-payment",
-  "cod-fees",
-  "cod-show-hide",
-  "cod-to-prepaid",
-  "messaging-gateways",
-  "analytics",
-  "abandoned-cart-recovery",
-];
-
-/**
  * Stores using COD King, shown as a logo wall (§5.1 #3).
  *
  * These are the merchants' own marks, supplied as artwork, not lockups drawn
@@ -155,23 +137,39 @@ export const trustedBrands: readonly TrustedBrand[] = [
 ];
 
 /**
- * The capability board (§5.1 #6).
+ * The homepage feature list (§5.1 #6).
  *
- * Eight controls in the order the blueprint puts them: the three that stop a
- * bad order first, then the four that change buyer behaviour, then the one that
- * reports on all of it. Reading order is left to right across two rows, so the
- * sequence has to survive being cut after the fourth card.
+ * One list, read twice: the hero's checklist beside the headline and the
+ * capability board further down the page are the same ten entries in the same
+ * order, so a rename happens here and nowhere else. They used to be two
+ * declarations — a slug list for the hero and a card list for the board — and
+ * two lists of the same thing are two lists that eventually disagree.
+ *
+ * `label` and `blurb` are the homepage's own words rather than the control
+ * record's `name` and `outcome`, which is the distinction `ControlBoardCard`
+ * exists to carry: a record is named for the merchant already inside the
+ * admin, a homepage card has one line to be understood by someone who has
+ * never seen the product.
+ *
+ * The order is the order a bad COD order meets them: verified, confirmed,
+ * priced, filtered by risk, moved to prepaid, addressed, messaged, measured,
+ * recovered.
  *
  * Every entry is resolved by slug against the controls repository before it
  * renders — one naming a control that does not exist is dropped rather than
- * shown, so this board and the hero's checklist can never promise something the
- * feature pages do not carry.
+ * shown, so neither surface can promise something the feature pages do not
+ * carry.
  */
-export const controlBoard: readonly ControlBoardCard[] = [
+export const homepageFeatures: readonly ControlBoardCard[] = [
   {
     slug: "otp-verification",
     label: "OTP Verification",
     blurb: "Verify customers with OTP to block fake orders.",
+  },
+  {
+    slug: "order-verification",
+    label: "COD Verification",
+    blurb: "Confirm, hold or cancel COD orders before they ship.",
   },
   {
     slug: "partial-cod-payment",
@@ -184,18 +182,31 @@ export const controlBoard: readonly ControlBoardCard[] = [
     blurb: "Add COD charges to reduce non-serious orders.",
   },
   {
+    /*
+      Labelled for the outcome rather than for the setting. This is the
+      control the product documents as the one that reduces RTO — it restricts
+      cash on delivery for risky pin codes, risky locations and customers with
+      a history of cancellations — and "Smart RTO Detection" is the name the
+      review asks the homepage to use for it. The record it resolves to, and
+      therefore the page it links to, is unchanged.
+    */
     slug: "cod-show-hide",
-    label: "Smart COD Rules",
-    blurb: "Show or hide COD based on location, cart value and customer.",
+    label: "Smart RTO Detection",
+    blurb: "Restrict COD for high-risk locations, customers and orders.",
   },
   {
     slug: "cod-to-prepaid",
-    label: "Prepaid Discount",
+    label: "COD to Prepaid",
     blurb: "Offer discounts to customers who choose prepaid.",
   },
   {
+    slug: "address-validation",
+    label: "Prefilled Addresses",
+    blurb: "Fetch customer details from their phone number or past orders.",
+  },
+  {
     slug: "messaging-gateways",
-    label: "WhatsApp & SMS",
+    label: "Branded WhatsApp & SMS",
     blurb: "Send order updates, OTP and notifications via WhatsApp or SMS.",
   },
   {

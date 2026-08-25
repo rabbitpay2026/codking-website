@@ -1,4 +1,4 @@
-import { Percent, Receipt, Wallet } from "lucide-react";
+import { Landmark, Percent, Wallet } from "lucide-react";
 
 import { CodToPrepaidPanel } from "@/components/product/cod-to-prepaid/CodToPrepaidPanel";
 import { cn } from "@/lib/utils";
@@ -26,7 +26,7 @@ const CONTROLS: readonly { id: string; icon: LucideIcon; label: string }[] = [
     icon: Wallet,
     label: "Applied to prepaid options only",
   },
-  { id: "tax", icon: Receipt, label: "Flexible tax options by region" },
+  { id: "gateway", icon: Landmark, label: "Paid through your own gateway" },
 ];
 
 /**

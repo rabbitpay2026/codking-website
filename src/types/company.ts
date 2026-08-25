@@ -80,3 +80,37 @@ export interface ContactField {
   readonly autoComplete?: string;
   readonly required: boolean;
 }
+
+/**
+ * The contact form's payload, once trimmed.
+ *
+ * Keyed by the same `name`s the fields in `data/contact.ts` declare, which is
+ * what lets the route hand a per-field error map straight back to the inputs
+ * that produced it.
+ */
+export interface ContactSubmission {
+  readonly name: string;
+  readonly phone: string;
+  readonly email: string;
+  readonly shopUrl: string;
+}
+
+/** Per-field messages, keyed by field name. Absent keys are valid fields. */
+export type ContactFieldErrors = Partial<
+  Record<keyof ContactSubmission, string>
+>;
+
+/**
+ * What `POST /api/contact` answers with.
+ *
+ * A failure always carries a sentence fit to render — the form shows it
+ * verbatim rather than inventing one from the status code — and carries
+ * `fields` only when the failure was the merchant's input rather than ours.
+ */
+export type ContactResponse =
+  | { readonly ok: true }
+  | {
+      readonly ok: false;
+      readonly message: string;
+      readonly fields?: ContactFieldErrors;
+    };

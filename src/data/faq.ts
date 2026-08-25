@@ -128,10 +128,10 @@ export const faqs: readonly FaqItem[] = [
     tags: ["control:cod-to-prepaid"],
   },
   {
-    id: "prepaid-tax",
-    question: "How are taxes handled on a discounted order?",
+    id: "prepaid-gateway",
+    question: "Which payment gateway collects the money?",
     answer:
-      "Flexible tax options let you manage different tax structures, supporting multiple regions and compliance requirements.",
+      "Your own. A gateway is connected to COD King with its API key and secret, and the payment link in the banner and the reminder is raised on that account — Razorpay is a commonly used option. Nothing is settled through us.",
     tags: ["control:cod-to-prepaid"],
   },
   /*

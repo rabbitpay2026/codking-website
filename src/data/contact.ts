@@ -114,15 +114,33 @@ export const contactFormCopy = {
 } as const;
 
 /**
- * What the form does today.
+ * What the form says once it has done something.
  *
- * There is no endpoint behind it yet, and the form says so on submit rather
- * than showing a green tick for a message nobody received. The alternative —
- * a fake success state — is the single worst thing a contact page can do.
+ * Two panels, and only two, because there are only two things that can be true
+ * after a submit: the message reached the support mailbox, or it did not. The
+ * state this page used to have — a panel admitting there was no endpoint behind
+ * the form — is gone, along with the reason for it.
+ *
+ * The success copy carries one extra sentence, and it is there to prevent a
+ * specific wasted exchange. A good share of the people who find a contact form
+ * on a payments product are shoppers chasing a delivery, not merchants: this
+ * mailbox answers questions about COD King itself, and an order's status lives
+ * with the store the order was placed on. Saying so on the success panel routes
+ * them in one step instead of costing them a day's wait for a reply that only
+ * tells them where to look.
+ *
+ * The error copy names WhatsApp because an error panel that offers nothing but
+ * "try again" leaves a merchant with a message they still cannot deliver.
  */
-export const contactFormFallback = {
-  title: "This form is not connected yet",
-  body: "We are still wiring up the mailbox behind it, so nothing has been sent. Message us on WhatsApp and you will get an answer today.",
+export const contactFormStates = {
+  success: {
+    title: "Message sent",
+    body: "Thanks — it is with the support team and you will hear back today. If this is about a specific order, its status and delivery updates live on the website you ordered from, not with us.",
+  },
+  error: {
+    title: "That did not send",
+    body: "Something went wrong on our side, so the message has not reached us. Try again in a moment, or message us on WhatsApp and you will get an answer today.",
+  },
 } as const;
 
 /**

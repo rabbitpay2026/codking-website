@@ -1,5 +1,6 @@
 import { getProofMetrics } from "@/lib/content";
 import { cn } from "@/lib/utils";
+import { formatRating } from "@/utils/format";
 
 const compactFormat = new Intl.NumberFormat("en", {
   notation: "compact",
@@ -41,7 +42,7 @@ export async function AboutStats() {
     },
     {
       id: "rating",
-      value: `${proof.rating}★`,
+      value: `${formatRating(proof.rating)}★`,
       label: `${numberFormat.format(proof.reviewCount)}+ reviews`,
     },
     {

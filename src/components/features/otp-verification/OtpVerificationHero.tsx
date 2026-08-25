@@ -13,6 +13,7 @@ import {
   getProofMetrics,
   getUtilityActions,
 } from "@/lib/content";
+import { formatRating } from "@/utils/format";
 
 const numberFormat = new Intl.NumberFormat("en");
 
@@ -148,11 +149,11 @@ export async function OtpVerificationHero() {
 
             <span
               className="flex items-center gap-2"
-              aria-label={`Rated ${proof.rating} out of 5`}
+              aria-label={`Rated ${formatRating(proof.rating)} out of 5`}
             >
               <Stars rating={proof.rating} className="size-[15px]" />
               <span className="font-semibold text-ink tabular-nums">
-                {proof.rating}
+                {formatRating(proof.rating)}
               </span>
               <span className="text-ink/45">
                 ({numberFormat.format(proof.reviewCount)}+ reviews)
