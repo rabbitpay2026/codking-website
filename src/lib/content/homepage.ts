@@ -1,7 +1,6 @@
 import {
-  controlBoard,
   controlBoardTitle,
-  homepageControlSlugs,
+  homepageFeatures,
   howItWorksSteps,
   howItWorksTitle,
   outcomeMetrics,
@@ -14,7 +13,6 @@ import { getControlBySlug } from "@/lib/content/controls";
 import { getProofMetrics } from "@/lib/content/proof";
 
 import type {
-  Control,
   ControlBoardCard,
   HowItWorksStep,
   OutcomeMetric,
@@ -114,30 +112,17 @@ export async function getPlatformStats(): Promise<readonly PlatformStat[]> {
 }
 
 /**
- * The eight controls the homepage puts on the board, resolved to their records.
+ * The homepage's feature list, validated against the controls repository.
  *
- * The hero checklist and the feature grid both read this, so the two lists are
+ * The hero checklist and the capability board both read this, so the two are
  * one list seen twice and a control renamed in `data/controls` is renamed in
- * both. A slug naming a control that does not exist is dropped once, here,
- * rather than rendering a dead card.
+ * both. An entry naming a control that no longer exists is dropped here, once,
+ * rather than rendering a card that links to a page the site does not have.
  */
-/**
- * The eight cards on the capability board, validated against the repository.
- *
- * An entry naming a control that no longer exists is dropped here, once, rather
- * than rendering a card that links to a page the site does not have.
- */
-export function getControlBoard(): readonly ControlBoardCard[] {
-  return controlBoard.filter((card) => getControlBySlug(card.slug));
+export function getHomepageFeatures(): readonly ControlBoardCard[] {
+  return homepageFeatures.filter((card) => getControlBySlug(card.slug));
 }
 
 export function getControlBoardTitle(): string {
   return controlBoardTitle;
-}
-
-export function getHomepageControls(): readonly Control[] {
-  return homepageControlSlugs.flatMap((slug) => {
-    const control = getControlBySlug(slug);
-    return control ? [control] : [];
-  });
 }

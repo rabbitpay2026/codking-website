@@ -40,7 +40,7 @@ interface StoreMonogramProps {
  * So: initials, one neutral tint, one hairline. It is the only element here
  * that repeats seven times, which is exactly why it stays achromatic — seven
  * coloured discs would be the first thing the eye finds in the section, and
- * the first thing the eye finds should be the 4.9.
+ * the first thing the eye finds should be the rating.
  *
  * Decorative: the store's name sits beside it in text every time it is used,
  * so announcing "NU" to a screen reader would only repeat what follows it.

@@ -3,21 +3,23 @@ import Link from "next/link";
 
 import { FeatureLink } from "@/components/features/FeatureLink";
 import { FeatureMark } from "@/components/features/FeatureMark";
-import { FlagshipVisual } from "@/components/sections/flagship/FlagshipVisual";
 import { routeFor } from "@/constants/routes";
 
 import type { FeatureIndexItem } from "@/types";
 
 /**
- * The control that opens the page, shown working.
+ * The control that opens the page.
  *
- * The one block on this page that does not describe a capability but
- * demonstrates it. The demonstration is the project's own flagship visual —
- * drawn in markup, animated in the browser, no video bytes and real text
- * throughout — so the first thing a merchant sees on Features is the product
- * doing the thing, not a card claiming it does.
+ * The same card as every other tier, given the page's first position and the
+ * room to say more: a larger mark, a larger headline, and the record's full
+ * benefit list rather than the three a `highlight` card shows.
  *
- * Copy on the left, product on the right, both hanging from the same top edge.
+ * It used to carry a live demonstration of the control beside the copy. That
+ * was removed at the reviewer's instruction — the Features index is cards
+ * only, and a preview here promised a shape the rest of the page does not
+ * have. The demonstration still runs, on the control's own page, which is
+ * where a merchant who wants it has already decided to go.
+ *
  * The benefits are the record's own (§6.2); not a word of them is authored
  * here, and a control with none simply renders without the list.
  *
@@ -29,21 +31,28 @@ export function FeatureLead({ control, title }: FeatureIndexItem) {
   return (
     <Link
       href={routeFor.control(control.slug)}
-      className="group grid gap-8 rounded-[1.25rem] border border-border bg-card p-6 transition-[box-shadow,border-color] duration-300 ease-emphasized outline-none hover:border-ink/20 hover:shadow-card focus-visible:ring-2 focus-visible:ring-ring/60 lg:grid-cols-[minmax(0,0.46fr)_minmax(0,0.54fr)] lg:gap-10 lg:p-8"
+      className="group block rounded-[1.25rem] border border-border bg-card p-6 transition-[box-shadow,border-color] duration-300 ease-emphasized outline-none hover:border-ink/20 hover:shadow-card focus-visible:ring-2 focus-visible:ring-ring/60 lg:p-8"
     >
       <div className="flex flex-col items-start">
         <FeatureMark slug={control.slug} size="lg" />
 
-        <h2 className="mt-5 text-[1.4rem] leading-[1.15] font-semibold tracking-[-0.025em] text-balance text-ink sm:text-[1.6rem]">
+        <h2 className="mt-5 max-w-2xl text-[1.4rem] leading-[1.15] font-semibold tracking-[-0.025em] text-balance text-ink sm:text-[1.6rem]">
           {title}
         </h2>
 
-        <p className="mt-3 text-[14px] leading-relaxed text-pretty text-ink/60">
+        <p className="mt-3 max-w-2xl text-[14px] leading-relaxed text-pretty text-ink/60">
           {control.outcome}
         </p>
 
+        {/*
+            Two columns from `sm` up. With the demonstration gone this card has
+            the page's full measure, and four short benefits stacked down the
+            left of it leaves the right half empty — which reads as a missing
+            element rather than as a card. Paired, they fill the width and the
+            block stays half as tall.
+        */}
         {control.benefits ? (
-          <ul className="mt-5 space-y-2.5">
+          <ul className="mt-5 grid w-full gap-x-8 gap-y-2.5 sm:grid-cols-2">
             {control.benefits.map((benefit) => (
               <li key={benefit} className="flex items-start gap-2.5">
                 <span
@@ -60,14 +69,8 @@ export function FeatureLead({ control, title }: FeatureIndexItem) {
           </ul>
         ) : null}
 
-        {/* Directly under the list, not pinned to the foot of the column. The
-            demonstration beside it is taller, and pushing this down to meet it
-            would open a hand's width of nothing under the last benefit for the
-            sake of aligning with a frame edge nobody is reading across to. */}
         <FeatureLink className="mt-6" />
       </div>
-
-      <FlagshipVisual slug={control.slug} />
     </Link>
   );
 }

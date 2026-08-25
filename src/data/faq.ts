@@ -82,7 +82,7 @@ export const faqs: readonly FaqItem[] = [
     id: "partial-gateways",
     question: "Does it work with my payment gateway?",
     answer:
-      "The deposit is taken through Shopify Payments or whichever gateway your store already uses, so there is nothing new to connect. The balance is still collected as cash on delivery exactly as it is today.",
+      "Yes — you use whichever payment gateway you prefer. The deposit is taken through the gateway your store already runs, so there is nothing new to sign up for, and the balance is still collected as cash on delivery exactly as it is today. One setting to check: your gateway must be set to auto-capture, or the deposit is authorised without ever being collected.",
     tags: ["control:partial-cod-payment"],
   },
   /*
@@ -128,10 +128,10 @@ export const faqs: readonly FaqItem[] = [
     tags: ["control:cod-to-prepaid"],
   },
   {
-    id: "prepaid-tax",
-    question: "How are taxes handled on a discounted order?",
+    id: "prepaid-gateway",
+    question: "Which payment gateway collects the money?",
     answer:
-      "Flexible tax options let you manage different tax structures, supporting multiple regions and compliance requirements.",
+      "Your own, and you choose which one. Connect whichever gateway you already use — Razorpay, PayU, Cashfree and PhonePe are common choices, and they are examples rather than a fixed list — with its API key and secret. The payment link in the banner and the reminder is then raised on your account, and nothing is settled through us.",
     tags: ["control:cod-to-prepaid"],
   },
   /*

@@ -21,10 +21,13 @@ interface SitemapEntry {
  * than typed out, so a URL cannot appear here in a shape no page answers to.
  * What it deliberately leaves out is the more interesting half:
  *
- * - Customers, Integrations, the Resources hub and its four children are still
+ * - Integrations, the Resources hub and its four children are still
  *   `PagePlaceholder` and carry `noIndex`. A sitemap is a list of pages worth
  *   indexing, so submitting a page whose own metadata says not to index it is
- *   a contradiction Search Console reports back as an error.
+ *   a contradiction Search Console reports back as an error. Customers used to
+ *   be on that list and has come off it: it is a real page now, carrying the
+ *   App Store review feed, and it dropped `noIndex` in the same commit it
+ *   gained content.
  * - The four legal documents are `status: "draft"` and `noIndex` with them.
  *   They join this list when the documents are approved, and nothing here has
  *   to change for that — `legalPageMetadata` already drops `noIndex` on that
@@ -63,6 +66,17 @@ const ENTRIES: readonly SitemapEntry[] = [
    * merchant arrives.
    */
   { path: routes.faq, priority: 0.7 },
+
+  /**
+   * The customer reviews page (§3.1).
+   *
+   * Beside the FAQ rather than with the company pages: it answers the question
+   * a merchant actually searches — whether anyone else trusts this — with a
+   * page of named, dated, sourced reviews rather than with a paragraph about
+   * us. Its filtered and paged views are query strings on this same address,
+   * so this one entry covers the route.
+   */
+  { path: routes.customers, priority: 0.7 },
 
   { path: routes.about, priority: 0.5 },
   { path: routes.contact, priority: 0.5 },

@@ -11,8 +11,8 @@ import { routes } from "@/constants/routes";
 import { externalLinks } from "@/constants/external";
 import {
   getContactFormCopy,
-  getContactFormFallback,
   getContactFormFields,
+  getContactFormStates,
   getContactHeroCopy,
 } from "@/lib/content";
 
@@ -83,7 +83,7 @@ export function ContactSupport() {
         <ContactForm
           fields={getContactFormFields()}
           copy={getContactFormCopy()}
-          fallback={getContactFormFallback()}
+          states={getContactFormStates()}
           whatsappHref={externalLinks.whatsapp}
         />
       </div>

@@ -35,9 +35,13 @@ export const generalDemoVideoId = "gq2C3A0pbXY";
  * a page is one line here and nothing else.
  *
  * ── Not yet recorded ──────────────────────────────────────────────────────
- * TODO(content): `cod-to-prepaid` has no demo of its own yet and shows the
- * general one. The remaining feature pages join this map as their recordings
- * are made.
+ * TODO(content): `cod-to-prepaid` has no demo of its own. Its page no longer
+ * falls back to the general recording — a review flagged that substitution as
+ * showing the wrong video, which it was — and demonstrates the banner and the
+ * WhatsApp reminder in markup instead. Adding the id here when the recording
+ * exists is the whole change; `FeatureDemoSplit` prefers a `videoId` over a
+ * drawn demonstration. The remaining feature pages join this map as their
+ * recordings are made.
  * ──────────────────────────────────────────────────────────────────────────
  *
  * ── One recording, two surfaces ───────────────────────────────────────────
@@ -48,7 +52,29 @@ export const generalDemoVideoId = "gq2C3A0pbXY";
  * ──────────────────────────────────────────────────────────────────────────
  */
 export const demoVideos: DemoVideoRegistry = {
-  home: "I22U3fj6vKo",
+  /*
+    ── Two slots are waiting for an id ─────────────────────────────────────
+    `home` and `cod-to-prepaid` are absent, and that absence is the record.
+    Both surfaces still hold their player: they read this registry through
+    `getRegisteredDemoVideoId()`, which returns nothing rather than falling
+    back to the general demo, so today the homepage renders no player and the
+    COD to Prepaid page renders its drawn banner-and-WhatsApp preview instead.
+
+    Uncommenting a line below is the whole change. The player returns in the
+    place, at the width and with the framing it always had, and no component
+    needs editing.
+
+      home: "I22U3fj6vKo",          ← the recording removed at the review's request
+      "cod-to-prepaid": "<id>",     ← no COD to Prepaid recording exists yet
+
+    `home` carries its old id so restoring it is a one-line undo. The review
+    asked for that specific video to go, so it stays commented until someone
+    decides otherwise. `cod-to-prepaid` has no id to carry: the review called
+    its player "wrong video", and it was the *general* demo arriving through
+    the old fallback — a real recording of a different feature under a heading
+    promising this one. It gets a line here when a recording of its own exists.
+    ────────────────────────────────────────────────────────────────────────
+  */
   "otp-verification": "yCPBjrO2tFA",
   "partial-cod-payment": "gq2C3A0pbXY",
   "abandoned-cart-recovery": "XoTkeO4d2KU",

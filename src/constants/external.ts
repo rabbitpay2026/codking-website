@@ -81,6 +81,28 @@ const FACEBOOK_PAGE = "https://www.facebook.com/profile.php?id=61583322967006";
 const INSTAGRAM_PROFILE = "https://www.instagram.com/codkingshopify";
 
 /**
+ * The public demo storefront.
+ *
+ * A real Shopify store running COD King, where anyone can take the
+ * cash-on-delivery checkout themselves without installing anything. It is a
+ * published destination, so it is the fallback rather than a blank — the same
+ * treatment the App Store listing gets.
+ *
+ * Deliberately *not* `bookDemo`, and the two are not interchangeable.
+ * `bookDemo` is a request to speak to someone and is reserved for the booking
+ * tool that will eventually answer it; this is a storefront that asks the
+ * visitor for nothing. Pointing either one at the other's destination would
+ * strand a merchant who wanted the other thing.
+ *
+ * The host is published separately for the same reason the WhatsApp number is:
+ * a storefront card showing `codking.store` is worth more than one showing the
+ * full product URL with its variant id.
+ */
+const DEMO_STORE =
+  "https://codking.store/products/the-collection-snowboard-hydrogen?variant=42518544777334";
+export const demoStoreDisplayHost = "codking.store";
+
+/**
  * Documentation and the blog are separate properties on their own subdomains,
  * not sections of this site. They are declared here — once — so the header
  * dropdown, the mobile drawer and the footer all read the same destination.
@@ -113,6 +135,12 @@ export const externalLinks = {
     process.env.NEXT_PUBLIC_SUPPORT_EMAIL,
     SUPPORT_EMAIL,
   ),
+
+  /**
+   * The live demo storefront (§4.2). Never the booking action — see
+   * `DEMO_STORE` above for why the two stay separate.
+   */
+  demoStore: externalUrl(process.env.NEXT_PUBLIC_DEMO_STORE_URL, DEMO_STORE),
 
   /** Setup and configuration reference, on its own subdomain (§7). */
   docs: externalUrl(process.env.NEXT_PUBLIC_DOCS_URL, DOCS_SITE),

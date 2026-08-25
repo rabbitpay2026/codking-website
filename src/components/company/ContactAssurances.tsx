@@ -2,6 +2,7 @@ import { Check } from "lucide-react";
 
 import { Stars } from "@/components/sections/proof/Stars";
 import { getContactAssurances, getProofMetrics } from "@/lib/content";
+import { formatRating } from "@/utils/format";
 
 const numberFormat = new Intl.NumberFormat("en");
 
@@ -31,11 +32,11 @@ export async function ContactAssurances() {
     <div className="flex flex-col gap-4 rounded-2xl border border-ink/[0.08] bg-cloud px-5 py-4 sm:flex-row sm:items-center sm:gap-5">
       <div
         className="flex shrink-0 items-center gap-2"
-        aria-label={`Rated ${proof.rating} out of 5 from ${numberFormat.format(proof.reviewCount)} reviews`}
+        aria-label={`Rated ${formatRating(proof.rating)} out of 5 from ${numberFormat.format(proof.reviewCount)} reviews`}
       >
         <Stars rating={proof.rating} className="size-[15px]" />
         <span aria-hidden className="text-[13px] font-semibold text-ink">
-          {proof.rating}
+          {formatRating(proof.rating)}
         </span>
         <span aria-hidden className="text-[13px] text-ink/45">
           ({numberFormat.format(proof.reviewCount)}+)

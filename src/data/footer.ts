@@ -1,6 +1,7 @@
+import { externalLinks } from "@/constants/external";
 import { routeFor, routes } from "@/constants/routes";
 
-import type { NavGroup, NavItem } from "@/types";
+import type { ExternalNavItem, NavGroup, NavItem } from "@/types";
 
 /**
  * Authored footer columns (§4.5).
@@ -17,6 +18,24 @@ import type { NavGroup, NavItem } from "@/types";
  * Center of our own — it is omitted rather than invented, and a link to a route
  * that exists only as a placeholder is treated the same way: a footer whose job
  * is to be the site's index cannot be the place a merchant finds an empty page.
+ *
+ * ── On "add all links" ────────────────────────────────────────────────────
+ * The review asks the footer to carry every link. It now does, in the only
+ * sense that helps a merchant: every finished page on the site is reachable
+ * from here — all six feature pages twice over, by name and by outcome; the
+ * whole product track including the reviews page; both company pages; the FAQ
+ * and the two documentation properties; and all four legal documents. What is
+ * still deliberately absent is the set that would make the footer an index of
+ * empty pages — the Resources hub and its unfinished children, and the four
+ * controls served by the generic template — all of which are `PagePlaceholder`
+ * and `noIndex` today. Each joins a column in the same commit that gives it a
+ * page.
+ *
+ * Customers was on that absent list until it had one. It is a real page now,
+ * carrying the App Store review feed, and it dropped `noIndex` and entered the
+ * sitemap in the same commit — so it enters the footer here on exactly the
+ * rule the paragraph above states, rather than as an exception to it.
+ * ──────────────────────────────────────────────────────────────────────────
  */
 
 /** The product itself, as a merchant would ask for it: everything, price, proof. */
@@ -25,8 +44,30 @@ export const footerProductColumn: NavGroup = {
   items: [
     { label: "All Features", href: routes.features },
     { label: "Pricing", href: routes.pricing },
+    /*
+      The proof this column's heading has always promised and never carried.
+      It sits third because that is the order the column is described in —
+      everything, price, proof — and because a merchant who has just read what
+      the product does and what it costs is asking, next, who else uses it.
+
+      Labelled for what the page holds rather than for its path: the route is
+      `/customers`, but what is behind it is the reviews merchants left, and
+      that is also the page's own title.
+    */
+    { label: "Customer Reviews", href: routes.customers },
     { label: "COD Calculator", href: routes.codCalculator },
     { label: "Integrations", href: routes.integrations },
+    /*
+      The install, in the one column that is a list of everything the product
+      is. It is the same destination as the header's primary action and reads
+      its URL from the same place, so a footer link can never point at a
+      different listing from the button above it.
+    */
+    {
+      label: "Install on Shopify",
+      href: externalLinks.install,
+      external: true,
+    } satisfies ExternalNavItem,
   ],
 };
 
@@ -40,9 +81,10 @@ export const footerProductColumn: NavGroup = {
  * the control that actually does the job, so the link never over-promises, and
  * every one of them lands on a finished feature page.
  *
- * Four, not six. This is the outcomes a merchant arrives naming, not a
- * rewording of the whole feature set — and four keeps the column within a row
- * of Product beside it rather than trailing two rows below it.
+ * Six, one per finished feature page. The review asks the footer to carry
+ * every link, and the two that used to be missing here — the COD fee and the
+ * rules that decide who is offered cash on delivery at all — are outcomes a
+ * merchant arrives naming as readily as the other four.
  */
 export const footerSolutionsColumn: NavGroup = {
   title: "Solutions",
@@ -63,6 +105,14 @@ export const footerSolutionsColumn: NavGroup = {
       label: "Recover abandoned carts",
       href: routeFor.control("abandoned-cart-recovery"),
     },
+    {
+      label: "Charge for cash on delivery",
+      href: routeFor.control("cod-fees"),
+    },
+    {
+      label: "Control who gets COD",
+      href: routeFor.control("cod-show-hide"),
+    },
   ],
 };
 
@@ -79,6 +129,21 @@ export const footerCompanyColumn: NavGroup = {
   items: [
     { label: "About Us", href: routes.about },
     { label: "Contact Us", href: routes.contact },
+    /*
+      The support thread, as a destination rather than as an icon. It is
+      already one tap from the row of social profiles and from the mobile
+      action bar, but neither of those reads as a *link to support* in a column
+      a merchant is scanning for one.
+    */
+    ...(externalLinks.whatsapp
+      ? ([
+          {
+            label: "WhatsApp Support",
+            href: externalLinks.whatsapp,
+            external: true,
+          },
+        ] as const satisfies readonly ExternalNavItem[])
+      : []),
   ],
 };
 
@@ -97,10 +162,11 @@ export const footerCompanyColumn: NavGroup = {
  * and the bottom bar is where a merchant, a Shopify reviewer and every other
  * site on the web already look for them.
  *
- * Two, not four. Refund and Cookies stay published and stay linked from the
- * bottom of every legal document, but the footer's job here is the two
- * documents a merchant actually goes looking for; the other two arriving
- * alongside them dilutes both.
+ * All four, since the review asks the footer to carry every link. Privacy and
+ * Terms are still first, in that order, because they are the two a merchant
+ * checks before installing; Refund and Cookies follow. They fit on one line at
+ * every width the bottom bar has, and the row wraps rather than truncates
+ * where they do not.
  *
  * Full names rather than the one-word forms. "Terms" beside "Privacy" reads as
  * a label; a merchant checking what they are agreeing to before installing is
@@ -109,4 +175,6 @@ export const footerCompanyColumn: NavGroup = {
 export const footerLegalLinks: readonly NavItem[] = [
   { label: "Privacy Policy", href: routeFor.legal("privacy-policy") },
   { label: "Terms & Conditions", href: routeFor.legal("terms-and-conditions") },
+  { label: "Refund Policy", href: routeFor.legal("refund-policy") },
+  { label: "Cookie Policy", href: routeFor.legal("cookies") },
 ];

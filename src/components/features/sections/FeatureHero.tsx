@@ -7,6 +7,7 @@ import { HeroEnvironment } from "@/components/sections/hero/HeroEnvironment";
 import { Stars } from "@/components/sections/proof/Stars";
 import { SectionShell } from "@/components/sections/SectionShell";
 import { getProofMetrics, getUtilityActions } from "@/lib/content";
+import { formatRating } from "@/utils/format";
 
 import type { FeatureCheckpoint } from "@/types";
 
@@ -167,11 +168,11 @@ export async function FeatureHero({
 
             <span
               className="flex items-center gap-2"
-              aria-label={`Rated ${proof.rating} out of 5`}
+              aria-label={`Rated ${formatRating(proof.rating)} out of 5`}
             >
               <Stars rating={proof.rating} className="size-[15px]" />
               <span className="font-semibold text-ink tabular-nums">
-                {proof.rating}
+                {formatRating(proof.rating)}
               </span>
               <span className="text-ink/45">
                 ({numberFormat.format(proof.reviewCount)}+ reviews)

@@ -1,15 +1,20 @@
 "use client";
 
-import { CircleAlert, Send } from "lucide-react";
-import { useState } from "react";
+import { CircleAlert, CircleCheck, LoaderCircle, Send } from "lucide-react";
+import { useRef, useState } from "react";
 
 import { WhatsAppMark } from "@/components/brand/SocialMarks";
 import { Button } from "@/components/ui/button";
+import { parseContactSubmission } from "@/lib/contact/submission";
 import { cn } from "@/lib/utils";
 
-import type { ContactField } from "@/types";
+import type {
+  ContactField,
+  ContactFieldErrors,
+  ContactResponse,
+} from "@/types";
 
-import type { FormEvent } from "react";
+import type { FormEvent, ReactNode } from "react";
 
 interface ContactFormProps {
   readonly fields: readonly ContactField[];
@@ -18,29 +23,39 @@ interface ContactFormProps {
     readonly description: string;
     readonly submitLabel: string;
   };
-  readonly fallback: {
-    readonly title: string;
-    readonly body: string;
+  readonly states: {
+    readonly success: { readonly title: string; readonly body: string };
+    readonly error: { readonly title: string; readonly body: string };
   };
-  /** Offered in the fallback panel. Omitted when not configured. */
+  /** Offered when a send fails. Omitted when not configured. */
   readonly whatsappHref: string | null;
 }
+
+type Status = "idle" | "sending" | "sent" | "error";
 
 /**
  * The contact form.
  *
- * There is no endpoint behind it yet, and this is the one decision in the
- * component worth defending: on submit it says so, in a panel, and points at a
- * channel that does work. The alternative — a green tick and "thanks, we'll be
- * in touch" for a message that went nowhere — is a lie the merchant only
- * discovers by waiting a week for a reply.
+ * It posts to `/api/contact`, which validates the submission again and mails it
+ * to the support mailbox. The panel that used to admit there was no endpoint
+ * behind it is gone; what replaces it is two panels in the same place — sent,
+ * or not sent — because those are now the only two things that can be true.
  *
- * Everything else is built so that wiring it up later is one function. The
- * fields are a record, the inputs are named, labelled and autocompleted, and
- * each carries the input type its content actually is — so the browser checks
- * the email and offers a phone keypad for the number before `handleSubmit` ever
- * runs. When there is somewhere to post to, that handler changes and nothing
- * around it has to.
+ * The state machine is four values and one of them does the important work.
+ * `sending` disables the fieldset and the button *and* returns early from the
+ * handler, which is belt and braces on purpose: the disabled attribute stops
+ * the click, and the guard stops the Enter key that beat React to the
+ * re-render. A contact form that sends twice puts two threads in a support
+ * inbox for one merchant, and the merchant is the one who gets asked the same
+ * question twice.
+ *
+ * Validation runs here as well as on the server, from the same module, so a
+ * missing store URL is caught without a round trip and reads the same either
+ * way. `noValidate` turns off the browser's own bubbles — not because they are
+ * wrong, but because a native tooltip on one field and an inline message on
+ * another is two error languages on one form. The inputs keep `required` and
+ * their real types regardless: that is what a screen reader announces and what
+ * decides the keyboard a phone shows.
  *
  * A client component because a form with a state transition needs one — and the
  * only one on either company page, which is why it is this narrow.
@@ -48,17 +63,90 @@ interface ContactFormProps {
 export function ContactForm({
   fields,
   copy,
-  fallback,
+  states,
   whatsappHref,
 }: ContactFormProps) {
-  const [submitted, setSubmitted] = useState(false);
+  const [status, setStatus] = useState<Status>("idle");
+  const [errors, setErrors] = useState<ContactFieldErrors>({});
+  /**
+   * Set only when the server sends a sentence better than the generic one — a
+   * rate limit, say. Otherwise the panel keeps the copy from the content layer,
+   * which is where the site's voice lives.
+   */
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const sending = useRef(false);
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    // Nothing to post to yet. The browser has already enforced `required` and
-    // the field formats by the time this runs, so what is left is telling the
-    // truth about where the message went.
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setSubmitted(true);
+
+    // The ref, not the state: two submits in the same tick both read the same
+    // stale `status`, and only one of them can be allowed through.
+    if (sending.current) return;
+
+    const form = event.currentTarget;
+    const entries = Object.fromEntries(new FormData(form));
+    const { data, errors: found, isValid } = parseContactSubmission(entries);
+
+    if (!isValid) {
+      setErrors(found);
+      setStatus("idle");
+      setErrorMessage(null);
+      focusFirstInvalid(form, found);
+      return;
+    }
+
+    sending.current = true;
+    setStatus("sending");
+    setErrors({});
+    setErrorMessage(null);
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      const result = (await response
+        .json()
+        .catch(() => null)) as ContactResponse | null;
+
+      if (response.ok && result?.ok) {
+        // Cleared rather than left filled. The message is gone, and a form
+        // still holding it invites the merchant to press send again.
+        form.reset();
+        setStatus("sent");
+        return;
+      }
+
+      // A 422 means the server disagreed with the check above — a rule this
+      // build has and the browser's copy of it did not. Its field map wins.
+      if (result && !result.ok && result.fields) {
+        setErrors(result.fields);
+        setStatus("idle");
+        focusFirstInvalid(form, result.fields);
+        return;
+      }
+
+      setErrorMessage(result && !result.ok ? result.message : null);
+      setStatus("error");
+    } catch {
+      // Offline, or the request never landed. Same panel: from where the
+      // merchant is sitting, the message did not send.
+      setErrorMessage(null);
+      setStatus("error");
+    } finally {
+      sending.current = false;
+    }
+  }
+
+  /** Clears a field's error as soon as it is edited, not on the next submit. */
+  function clearError(name: string) {
+    setErrors((current) =>
+      name in current
+        ? omit(current, name as keyof ContactFieldErrors)
+        : current,
+    );
   }
 
   return (
@@ -70,7 +158,7 @@ export function ContactForm({
         {copy.description}
       </p>
 
-      <form onSubmit={handleSubmit} className="mt-7">
+      <form onSubmit={handleSubmit} noValidate className="mt-7">
         {/*
           One field per row, not two.
 
@@ -80,21 +168,43 @@ export function ContactForm({
           not have room for the answer it is asking for. Four fields is short
           enough that a single column costs nothing in scanning, and it gives
           the card the height it needs to sit level with the column beside it.
+
+          A `fieldset` rather than a `div` so that one `disabled` covers every
+          input while the message is in flight — otherwise the merchant can edit
+          the values that are already on their way to the mailbox.
         */}
-        <div className="grid gap-4">
+        <fieldset
+          disabled={status === "sending"}
+          className="grid gap-4 border-0 p-0"
+        >
           {fields.map((field) => (
-            <Field key={field.name} field={field} />
+            <Field
+              key={field.name}
+              field={field}
+              error={errors[field.name as keyof ContactFieldErrors]}
+              onInput={() => clearError(field.name)}
+            />
           ))}
-        </div>
+        </fieldset>
 
         <Button
           type="submit"
           size="lg"
           block
+          disabled={status === "sending"}
           className="mt-6 h-12 gap-2 text-[15px] font-semibold"
         >
-          <Send aria-hidden className="size-4" />
-          {copy.submitLabel}
+          {status === "sending" ? (
+            <>
+              <LoaderCircle aria-hidden className="size-4 animate-spin" />
+              Sending…
+            </>
+          ) : (
+            <>
+              <Send aria-hidden className="size-4" />
+              {copy.submitLabel}
+            </>
+          )}
         </Button>
 
         <p className="mt-3 text-center text-[12px] leading-snug text-ink/40">
@@ -104,41 +214,94 @@ export function ContactForm({
         {/*
           `role="status"` rather than an alert: this is the result of something
           the merchant did, not an error condition, and an assertive region
-          would interrupt whatever a screen reader was mid-sentence on.
+          would interrupt whatever a screen reader was mid-sentence on. The
+          failed send is announced here too — it is still the answer to a thing
+          they just did, and it stays on screen until they act on it either way.
         */}
         <div role="status" aria-live="polite">
-          {submitted ? (
-            <div className="mt-6 flex animate-in gap-3 rounded-xl border border-ink/[0.08] bg-sky-50 px-4 py-3.5 duration-300 ease-[var(--ease-emphasized)] fade-in-0 slide-in-from-bottom-1">
-              <CircleAlert
-                aria-hidden
-                className="mt-px size-4 shrink-0 text-ink/40"
-                strokeWidth={1.8}
-              />
-              <div className="min-w-0">
-                <p className="text-[13.5px] leading-snug font-semibold text-ink/80">
-                  {fallback.title}
-                </p>
-                <p className="mt-1.5 text-[13px] leading-relaxed text-pretty text-ink/55">
-                  {fallback.body}
-                </p>
+          {status === "sent" ? (
+            <ResultPanel
+              tone="success"
+              title={states.success.title}
+              body={states.success.body}
+            />
+          ) : null}
 
-                {whatsappHref ? (
-                  <a
-                    href={whatsappHref}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-3 inline-flex items-center gap-1.5 rounded-sm text-[13px] font-medium text-brand transition-colors duration-200 hover:text-brand-deep focus-visible:ring-2 focus-visible:ring-ring/60 focus-visible:outline-none"
-                  >
-                    <WhatsAppMark className="size-3.5" />
-                    Message us on WhatsApp
-                    <span className="sr-only"> (opens in a new tab)</span>
-                  </a>
-                ) : null}
-              </div>
-            </div>
+          {status === "error" ? (
+            <ResultPanel
+              tone="error"
+              title={states.error.title}
+              body={errorMessage ?? states.error.body}
+            >
+              {whatsappHref ? (
+                <a
+                  href={whatsappHref}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-3 inline-flex items-center gap-1.5 rounded-sm text-[13px] font-medium text-brand transition-colors duration-200 hover:text-brand-deep focus-visible:ring-2 focus-visible:ring-ring/60 focus-visible:outline-none"
+                >
+                  <WhatsAppMark className="size-3.5" />
+                  Message us on WhatsApp
+                  <span className="sr-only"> (opens in a new tab)</span>
+                </a>
+              ) : null}
+            </ResultPanel>
           ) : null}
         </div>
       </form>
+    </div>
+  );
+}
+
+/**
+ * The panel under the button, in the two shapes it takes.
+ *
+ * Deliberately the same object in both: same radius, same border, same inset,
+ * same icon size and position — which is also the panel this page already had,
+ * so the sent state lands exactly where the old notice did. Only the tint and
+ * the glyph differ, because the merchant is reading the sentence, not decoding
+ * a colour.
+ */
+function ResultPanel({
+  tone,
+  title,
+  body,
+  children,
+}: {
+  readonly tone: "success" | "error";
+  readonly title: string;
+  readonly body: string;
+  readonly children?: ReactNode;
+}) {
+  const Icon = tone === "success" ? CircleCheck : CircleAlert;
+
+  return (
+    <div
+      className={cn(
+        "mt-6 flex animate-in gap-3 rounded-xl border px-4 py-3.5",
+        "duration-300 ease-[var(--ease-emphasized)] fade-in-0 slide-in-from-bottom-1",
+        tone === "success"
+          ? "border-emerald-600/15 bg-emerald-50"
+          : "border-ink/[0.08] bg-sky-50",
+      )}
+    >
+      <Icon
+        aria-hidden
+        className={cn(
+          "mt-px size-4 shrink-0",
+          tone === "success" ? "text-emerald-600" : "text-ink/40",
+        )}
+        strokeWidth={1.8}
+      />
+      <div className="min-w-0">
+        <p className="text-[13.5px] leading-snug font-semibold text-ink/80">
+          {title}
+        </p>
+        <p className="mt-1.5 text-[13px] leading-relaxed text-pretty text-ink/55">
+          {body}
+        </p>
+        {children}
+      </div>
     </div>
   );
 }
@@ -149,10 +312,20 @@ const controlClass = cn(
   "transition-[border-color,box-shadow] duration-200 ease-[var(--ease-emphasized)]",
   "hover:border-ink/20",
   "focus:border-brand/45 focus:ring-2 focus:ring-ring/25 focus:outline-none",
+  "disabled:cursor-not-allowed disabled:bg-ink/[0.02] disabled:text-ink/50",
 );
 
-function Field({ field }: { readonly field: ContactField }) {
+function Field({
+  field,
+  error,
+  onInput,
+}: {
+  readonly field: ContactField;
+  readonly error?: string;
+  readonly onInput: () => void;
+}) {
   const id = `contact-${field.name}`;
+  const errorId = `${id}-error`;
 
   return (
     <div>
@@ -179,8 +352,56 @@ function Field({ field }: { readonly field: ContactField }) {
         required={field.required}
         placeholder={field.placeholder}
         autoComplete={field.autoComplete}
-        className={cn(controlClass, "mt-2")}
+        aria-invalid={error ? true : undefined}
+        aria-describedby={error ? errorId : undefined}
+        onInput={onInput}
+        className={cn(
+          controlClass,
+          "mt-2",
+          error && "border-red-500/50 hover:border-red-500/60",
+        )}
       />
+
+      {/*
+        The message sits under the input it belongs to and is wired to it with
+        `aria-describedby`, so it is read out on focus rather than only seen — a
+        red border alone tells a sighted merchant something is wrong and tells
+        everyone else nothing at all.
+      */}
+      {error ? (
+        <p
+          id={errorId}
+          className="mt-1.5 text-[12px] leading-snug text-red-600"
+        >
+          {error}
+        </p>
+      ) : null}
     </div>
   );
+}
+
+/**
+ * Puts the caret in the first field that needs fixing.
+ *
+ * The browser does this for its own validation and it is the part worth
+ * keeping: on a phone, the field with the problem can be off screen, and a form
+ * that reports an error nobody can see reads as a button that does nothing.
+ */
+function focusFirstInvalid(
+  form: HTMLFormElement,
+  errors: ContactFieldErrors,
+): void {
+  const first = Object.keys(errors)[0];
+  if (!first) return;
+
+  const control = form.elements.namedItem(first);
+  if (control instanceof HTMLInputElement) control.focus();
+}
+
+function omit(
+  errors: ContactFieldErrors,
+  key: keyof ContactFieldErrors,
+): ContactFieldErrors {
+  const { [key]: _removed, ...rest } = errors;
+  return rest;
 }

@@ -60,7 +60,27 @@ export function Results() {
               delay={0.06 * index}
               className="h-full"
             >
-              <article className="group flex h-[118px] items-center rounded-[1.05rem] border border-[#E5E7EB] bg-white p-5 shadow-[0_1px_2px_rgba(15,23,42,0.03)] transition-[transform,box-shadow,border-color] duration-300 ease-[var(--ease-emphasized)] hover:-translate-y-0.5 hover:border-[#D9DFE8] hover:shadow-[0_6px_18px_-16px_rgba(15,23,42,0.12)] sm:p-6">
+              {/*
+                `h-full`, not a fixed height.
+
+                This card used to be pinned to `h-[118px]`. Four across on a
+                72rem page gives each one a 260px box, so after the padding and
+                the mark there are about 178px of measure for the text — and
+                every one of the four descriptions wraps to two lines at that
+                width. The figure, the title and a two-line description come to
+                roughly 99px, which with `p-6` needs about 147px of card. The
+                content was therefore taller than the box that was meant to
+                hold it, and because the card sets no `overflow`, it spilled
+                past the border top and bottom rather than being clipped —
+                which is what the review screenshot shows.
+
+                `h-full` hands the sizing to the grid, where `md:auto-rows-fr`
+                already equalises the row, so the four cards stay exactly the
+                same height as each other and that height is now whatever the
+                tallest of them actually needs. Nothing about the type, the
+                spacing or the copy changes.
+              */}
+              <article className="group flex h-full items-center rounded-[1.05rem] border border-[#E5E7EB] bg-white p-5 shadow-[0_1px_2px_rgba(15,23,42,0.03)] transition-[transform,box-shadow,border-color] duration-300 ease-[var(--ease-emphasized)] hover:-translate-y-0.5 hover:border-[#D9DFE8] hover:shadow-[0_6px_18px_-16px_rgba(15,23,42,0.12)] sm:p-6">
                 <div className="flex w-full items-center gap-4">
                   <Icon
                     aria-hidden

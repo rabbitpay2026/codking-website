@@ -6,45 +6,13 @@ import { HeroEnvironment } from "@/components/sections/hero/HeroEnvironment";
 import { HeroStage } from "@/components/sections/hero/HeroStage";
 import { SectionShell } from "@/components/sections/SectionShell";
 import {
-  getHomepageControls,
+  getHomepageFeatures,
   getProofMetrics,
   getUtilityActions,
 } from "@/lib/content";
-
-import type { ControlSlug } from "@/types";
+import { formatRating } from "@/utils/format";
 
 const numberFormat = new Intl.NumberFormat("en");
-
-/**
- * The checklist, in the blueprint's own order and wording.
- *
- * Two things are being reconciled here. The blueprint fixes both the sequence
- * — four items down the left column, four down the right — and the words on
- * them, three of which differ from how the control repository names the same
- * capability ("COD Rules" is *Smart* COD Rules here, "COD to Prepaid" is
- * *Prepaid Discount*, "Messaging Gateways" is *WhatsApp & SMS*). A record is
- * named for the merchant already using the admin; a hero has one line in which
- * to be understood by someone who has never seen the product.
- *
- * But the list is still validated against the repository rather than being a
- * free-standing copy (§11): every entry is resolved by slug, and one naming a
- * control that does not exist is dropped rather than rendered. So the hero can
- * never advertise a capability the feature grid below it does not carry, while
- * still reading in the order and the words the blueprint specifies.
- *
- * An entry with no `label` falls back to the record's own name, which is why
- * the four that already match carry none.
- */
-const CHECKLIST: readonly { slug: ControlSlug; label?: string }[] = [
-  { slug: "otp-verification" },
-  { slug: "partial-cod-payment" },
-  { slug: "cod-fees" },
-  { slug: "cod-show-hide", label: "Smart COD Rules" },
-  { slug: "cod-to-prepaid", label: "Prepaid Discount" },
-  { slug: "messaging-gateways", label: "WhatsApp & SMS" },
-  { slug: "abandoned-cart-recovery" },
-  { slug: "analytics", label: "Analytics & Insights" },
-];
 
 /**
  * The homepage hero.
@@ -56,7 +24,7 @@ const CHECKLIST: readonly { slug: ControlSlug; label?: string }[] = [
  * site blank. Below the fold that trade is fine, because the content has
  * scrolled into view by the time it matters. Here it is not.
  *
- * The copy is the blueprint's, verbatim — headline, supporting line, the eight
+ * The copy is the blueprint's, verbatim — headline, supporting line, the
  * checklist items in their given order, and both button labels. It reads as a
  * positioning statement rather than as a paragraph of benefits, which is the
  * point: the argument is made by the device beside it, where the verification
@@ -76,17 +44,13 @@ export async function Hero() {
   const actions = getUtilityActions();
 
   /*
-    Resolved against the repository, so an entry naming a control that no
-    longer exists drops out instead of rendering a promise the product does
-    not keep.
+    The homepage's one feature list, resolved against the repository — so an
+    entry naming a control that no longer exists drops out instead of
+    rendering a promise the product does not keep, and this checklist can
+    never differ from the capability board further down the page.
   */
-  const controls = getHomepageControls();
-  const checklist = CHECKLIST.flatMap((item) => {
-    const control = controls.find((candidate) => candidate.slug === item.slug);
-    return control
-      ? [{ slug: item.slug, label: item.label ?? control.name }]
-      : [];
-  });
+  const checklist = getHomepageFeatures();
+  const rating = formatRating(proof.rating);
 
   const installAction = actions.find((action) => action.variant === "primary");
   const demoAction = actions.find((action) => action.variant === "secondary");
@@ -114,14 +78,18 @@ export async function Hero() {
           </p>
 
           {/*
-            Two columns rather than a wrapping row: eight short items in a flex
+            Two columns rather than a wrapping row: ten short items in a flex
             row break at a different point on every viewport and the list stops
             reading as a set. Column flow rather than row flow, so the pairs
-            read down each column the way the blueprint groups them, and the
-            second column stays aligned at all widths — which is what makes it
-            scan as a specification.
+            read down each column, and the second column stays aligned at all
+            widths — which is what makes it scan as a specification.
+
+            Five rows rather than four, because the list is ten long since the
+            review added prefilled addresses and COD verification to it. The
+            row count is stated rather than left to `auto` so the list fills
+            the first column before it starts the second.
           */}
-          <ul className="mt-7 grid gap-x-8 gap-y-3 sm:grid-flow-col sm:grid-cols-2 sm:grid-rows-4">
+          <ul className="mt-7 grid gap-x-8 gap-y-3 sm:grid-flow-col sm:grid-cols-2 sm:grid-rows-5">
             {checklist.map((item) => (
               <li key={item.slug} className="flex items-center gap-2.5">
                 <span
@@ -180,7 +148,7 @@ export async function Hero() {
           <div className="mt-8 flex flex-wrap items-center gap-x-4 gap-y-2.5 text-[13px]">
             <span
               className="flex items-center gap-2"
-              aria-label={`Rated ${proof.rating} out of 5`}
+              aria-label={`Rated ${rating} out of 5`}
             >
               <span aria-hidden className="flex items-center gap-0.5">
                 {Array.from({ length: 5 }, (_, index) => (
@@ -191,7 +159,7 @@ export async function Hero() {
                 ))}
               </span>
               <span className="font-semibold text-ink tabular-nums">
-                {proof.rating}
+                {rating}
               </span>
               <span className="text-ink/45">rating</span>
             </span>

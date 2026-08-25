@@ -1,8 +1,10 @@
+import { appStoreListing, appStoreReviews } from "@/data/appStoreReviews";
 import { proofMetrics } from "@/data/proof";
 import { reviewSnippets, stagedTestimonials } from "@/data/socialProof";
 import { getCustomerStories } from "@/lib/content/customers";
 
 import type {
+  AppStoreListing,
   AppStoreReview,
   MerchantTestimonial,
   ProofMetrics,
@@ -22,13 +24,31 @@ export async function getProofMetrics(): Promise<ProofMetrics> {
 }
 
 /**
- * The live App Store review feed (§5.1 #8, §11).
+ * The App Store review feed (§5.1 #8, §11).
  *
- * Returns an empty list until the sync is implemented. Consumers must treat an
- * empty feed as a valid state and render without it, never as an error.
+ * Backed by the capture in `src/data/appStoreReviews.ts` rather than the empty
+ * list this used to return. Still async, and still the seam a live sync would
+ * replace: swapping the capture for a scheduled fetch is an edit to this
+ * function and nothing else.
+ *
+ * An empty feed remains a valid state and consumers must render without it
+ * rather than treat it as an error — the customers page does exactly that.
  */
 export async function getAppStoreReviews(): Promise<readonly AppStoreReview[]> {
-  return [];
+  return appStoreReviews;
+}
+
+/**
+ * What the marketplace itself reports — its totals, its average, its
+ * distribution, and the address they were read from.
+ *
+ * Deliberately separate from `getProofMetrics()`. That returns the figures the
+ * site presents; this returns the App Store's own, and the two do not agree on
+ * the rating. Any surface showing both has to be able to say which is which,
+ * and it can only do that if they arrive from different functions.
+ */
+export async function getAppStoreListing(): Promise<AppStoreListing> {
+  return appStoreListing;
 }
 
 /**
@@ -44,10 +64,10 @@ const CAROUSEL_LIMIT = 4;
  * Merchant testimonials for the homepage carousel (§5.1 #8).
  *
  * Published reviews first, always. `customerStories` are the ones merchants
- * actually wrote and are the strongest thing this section has; the staged
- * entries exist to fill a carousel that would otherwise be two slides long,
- * and they follow rather than lead. Order here is not cosmetic — the first
- * slide is the only one most visitors see.
+ * actually wrote and are the strongest thing this section has; the App Store
+ * entries in `socialProof` fill a carousel that would otherwise be two slides
+ * long, and they follow rather than lead. Order here is not cosmetic — the
+ * first slide is the only one most visitors see.
  *
  * The published stories are re-shaped rather than re-typed. A story's own
  * metric becomes the caption ("Fake orders · Solved"), so the line under the
