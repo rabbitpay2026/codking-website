@@ -406,7 +406,7 @@ export const controlKnowledge: Partial<Record<ControlSlug, ControlKnowledge>> =
           id: "gateway",
           option: "Payment gateway",
           detail:
-            "Shopify Payments, or whichever gateway the store already uses. Nothing new to connect, and the balance still arrives as cash on delivery.",
+            "Whichever gateway the store already uses — the merchant's choice, not a fixed list. Nothing new to connect, and the balance still arrives as cash on delivery. The gateway must be set to auto-capture, or the deposit is authorised without being collected.",
         },
         {
           id: "rate",
@@ -496,7 +496,7 @@ export const controlKnowledge: Partial<Record<ControlSlug, ControlKnowledge>> =
     "cod-to-prepaid": {
       overview: [
         "COD to Prepaid nudges cash-on-delivery buyers to pay fully online instead. When a customer chooses cash on delivery, COD King presents an exclusive prepaid discount — as a banner in the checkout flow, or as a reminder carrying a payment link after the order has been placed — so paying online costs the buyer less than paying on delivery. The discount is attached to the payment option itself, so only orders paid online receive it.",
-        "The discount rules are fully configurable: a percentage of the cart or a fixed value, with the merchant's own wording and their own conditions for when it applies. The payment link is raised on the merchant's own payment gateway, connected to COD King with its API key and secret — Razorpay is a commonly used option. Conversion from cash on delivery to prepaid is tracked in real time inside the app.",
+        "The discount rules are fully configurable: a percentage of the cart or a fixed value, with the merchant's own wording and their own conditions for when it applies. The payment link is raised on the merchant's own payment gateway, connected to COD King with its API key and secret. The merchant uses whichever gateway they prefer — Razorpay, PayU, Cashfree and PhonePe are commonly used, and are examples rather than the set of gateways that work. Conversion from cash on delivery to prepaid is tracked in real time inside the app.",
         "An order that converts stops being a cash-on-delivery order in every respect that matters: the full amount arrives before the parcel leaves, there is nothing to refuse at the door, and the working capital is in the business rather than with the courier. Everything is set from the COD King dashboard — no theme edits, no code.",
       ],
       problemDetail: [
@@ -540,7 +540,7 @@ export const controlKnowledge: Partial<Record<ControlSlug, ControlKnowledge>> =
           id: "gateway",
           option: "Payment gateway",
           detail:
-            "The merchant's own, connected with an API key and secret so the payment link is raised on their account. Razorpay is a commonly used option.",
+            "The merchant's own, connected with an API key and secret so the payment link is raised on their account. Whichever gateway they prefer — Razorpay, PayU, Cashfree and PhonePe among the common ones, given as examples and not as a supported-provider list.",
         },
         {
           id: "tracking",

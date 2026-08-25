@@ -2,6 +2,7 @@ import { Puzzle } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
+import { PaymentGateways } from "@/components/sections/integrations/PaymentGateways";
 import { PageEnvironment } from "@/components/sections/PageEnvironment";
 import { SectionHeading } from "@/components/sections/SectionHeading";
 import { SectionShell } from "@/components/sections/SectionShell";
@@ -147,6 +148,17 @@ export function Integrations() {
           </BlurFade>
         </li>
       </ul>
+
+      {/*
+        Payment gateways, as a second board under the first.
+
+        Same band rather than a section of its own: both answer "does this work
+        with what I already use?", and asking that question twice on one page
+        under two headings would read as a page that had lost its place. The
+        subsection keeps its own heading and its own row, so the two boards are
+        legibly about different things.
+      */}
+      <PaymentGateways />
     </SectionShell>
   );
 }

@@ -372,6 +372,20 @@ function ecosystem(): readonly string[] {
     (integration) => integration.name,
   );
 
+  /*
+    Named separately from the SMS gateways, and described in the opposite way.
+
+    The SMS list is a compatibility list: those are the providers the product
+    connects to. The payment list is not — a merchant connects whichever
+    gateway they prefer — so the sentence below leads with that and marks the
+    four as examples. An assistant reading this file will be asked "does COD
+    King work with <gateway>?" about providers that are not on any list we
+    publish, and the answer has to come out yes.
+  */
+  const paymentGateways = getIntegrationsByCategory("payment-gateway").map(
+    (integration) => integration.name,
+  );
+
   return [
     heading(2, "COD King Product Ecosystem"),
     "",
@@ -384,6 +398,12 @@ function ecosystem(): readonly string[] {
     "OTP verification, order notifications, prepaid reminders and cart-recovery messages all reach the buyer over SMS or WhatsApp. Messages are charged per message on every plan; the Professional and Enterprise plans earn a discount on notification rates, and a store can connect its own regional provider and pay that provider directly in local currency instead.",
     "",
     `Supported SMS gateways named by the product: ${joinList(gateways)}.`,
+    "",
+    heading(3, "Payment gateways"),
+    "",
+    "Prepaid and partial payments are collected through the merchant's own payment gateway, connected to COD King with its API key and secret so the money is settled into the merchant's account and never through COD King. COD King does not restrict which gateway a merchant connects: they use whichever one they prefer.",
+    "",
+    `Commonly used gateways, given as examples and explicitly not as a supported-provider list: ${joinList(paymentGateways)}. A gateway absent from that sentence is not unsupported — there is no supported-provider list to be absent from. For partial payments the gateway must be set to auto-capture, or the deposit is authorised without being collected.`,
   ];
 }
 

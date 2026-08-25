@@ -1,53 +1,129 @@
+import { SendEmailCommand, SESv2Client } from "@aws-sdk/client-sesv2";
+
 import { externalLinks } from "@/constants/external";
 import { siteConfig } from "@/constants/site";
 
 import type { ContactSubmission } from "@/types";
 
 /**
- * Delivery for the contact form.
+ * Delivery for the contact form, over Amazon SES.
  *
  * Server-only by construction rather than by convention: nothing here is
  * exported to a client component, and every variable it reads is unprefixed, so
- * Next.js will not inline any of it into the browser bundle. The API key never
- * leaves this process.
+ * Next.js will not inline any of it into the browser bundle. The AWS
+ * credentials never leave this process, and there is no `NEXT_PUBLIC_*` name
+ * anywhere in this file by design.
  *
- * Resend over its HTTP API rather than its SDK, and that is the one choice
- * worth defending. The site had no mail infrastructure at all, so this was a
- * green field — and a single `fetch` to a documented JSON endpoint does
- * everything one transactional message needs while adding nothing to
- * `package.json`, nothing to the deploy, and no SMTP socket to a serverless
- * function. Swapping providers later is this file and nothing else: the route
- * knows only `sendContactMessage`.
+ * The SDK rather than a signed `fetch`, and here that is the easy call. The
+ * previous provider took a bearer token on a JSON endpoint, so one `fetch` did
+ * the whole job; SES speaks SigV4, and hand-rolling a request signer — canonical
+ * requests, a derived signing key, clock skew — to save a dependency would be
+ * trading a maintained implementation for a subtle one. `@aws-sdk/client-sesv2`
+ * is the official client and is scoped to SES alone rather than the whole SDK.
+ *
+ * Swapping providers again is this file and nothing else: the route knows only
+ * `sendContactMessage` and the `SendResult` union below, neither of which
+ * mentions a vendor.
  */
 
-const RESEND_ENDPOINT = "https://api.resend.com/emails";
-
 /**
- * How long we wait on the provider before giving up.
+ * How long we wait on SES before giving up.
  *
  * A merchant staring at a spinner needs an answer sooner than a socket needs to
- * time out. Ten seconds is longer than Resend has ever taken and short enough
- * that a provider outage shows the WhatsApp fallback instead of hanging.
+ * time out. Ten seconds bounds the whole call including retries, and is long
+ * enough that only an outage reaches it — at which point the form shows the
+ * WhatsApp fallback instead of hanging.
  */
 const SEND_TIMEOUT_MS = 10_000;
 
 /**
- * Where the message goes, and who it comes from.
+ * Two attempts, not the SDK's default three.
+ *
+ * The default is tuned for a background job that would rather finish late than
+ * fail. This is a person waiting on a form: one retry covers a dropped
+ * connection, and a third would mostly spend the timeout budget above without
+ * changing the outcome.
+ */
+const MAX_ATTEMPTS = 2;
+
+interface MailConfig {
+  readonly region: string;
+  readonly from: string;
+  readonly to: string;
+  /**
+   * Absent when the deployment supplies credentials some other way — see
+   * `readConfig`.
+   */
+  readonly credentials?: {
+    readonly accessKeyId: string;
+    readonly secretAccessKey: string;
+  };
+}
+
+/**
+ * Where the message goes, who it comes from, and what signs for it.
  *
  * `to` falls back to the mailbox the published legal pages already answer on —
  * read from `constants/external.ts` rather than retyped, so there is still one
  * support address in this codebase. `from` has no fallback and cannot have one:
- * it must be an address on a domain verified with the provider, which is a
- * deployment fact, not a code one. Guessing it produces a message the provider
- * rejects, which is a worse failure than saying it is not configured.
+ * it must be an address or domain verified in SES, which is a deployment fact,
+ * not a code one. Guessing it produces a message SES rejects, which is a worse
+ * failure than saying it is not configured. `region` likewise — SES identities
+ * are per-region, so the wrong region is not a smaller mistake than none.
+ *
+ * The credentials are the one part treated as optional, and deliberately.
+ * `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` are what a local machine and
+ * most CI use, and when both are present they are passed explicitly. When
+ * neither is, the client is left to the SDK's own credential chain, which is
+ * what picks up the task or instance role on a container host — the site
+ * already deploys to one. Demanding static keys there would mean minting a
+ * long-lived secret for something the platform hands out automatically and
+ * rotates on its own.
+ *
+ * The failure mode of that choice is honest: with no keys and no role, the send
+ * fails at the SDK rather than here, and the log below says which.
  */
-function readConfig() {
-  const apiKey = process.env.RESEND_API_KEY?.trim();
+function readConfig(): MailConfig | null {
+  const region = process.env.AWS_REGION?.trim();
+  const accessKeyId = process.env.AWS_ACCESS_KEY_ID?.trim();
+  const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY?.trim();
   const from = process.env.CONTACT_EMAIL_FROM?.trim();
   const to = process.env.CONTACT_EMAIL_TO?.trim() || externalLinks.supportEmail;
 
-  if (!apiKey || !from || !to) return null;
-  return { apiKey, from, to } as const;
+  if (!region || !from || !to) return null;
+
+  return {
+    region,
+    from,
+    to,
+    ...(accessKeyId && secretAccessKey
+      ? { credentials: { accessKeyId, secretAccessKey } }
+      : {}),
+  };
+}
+
+/**
+ * One client, kept for the life of the process.
+ *
+ * Built on first use rather than at import, so a module that is merely loaded —
+ * by a build, by a type check, by a route that is never called — does not
+ * construct an AWS client or resolve a credential chain. Reused afterwards
+ * because the connection pool underneath it is the whole reason not to build a
+ * new one per message.
+ *
+ * The configuration it captures comes from the environment, which does not
+ * change while the process is alive, so there is nothing to invalidate.
+ */
+let client: SESv2Client | undefined;
+
+function getClient(config: MailConfig): SESv2Client {
+  client ??= new SESv2Client({
+    region: config.region,
+    maxAttempts: MAX_ATTEMPTS,
+    ...(config.credentials ? { credentials: config.credentials } : {}),
+  });
+
+  return client;
 }
 
 export type SendResult =
@@ -121,12 +197,35 @@ function buildHtml(submission: ContactSubmission): string {
 }
 
 /**
+ * What we are willing to write down about a failure.
+ *
+ * An AWS error carries a `$metadata` and, on some paths, the request that
+ * produced it. Serialising the whole object into a log is how an account id, an
+ * identity ARN or a signed header ends up somewhere it was never meant to be,
+ * so the three fields that actually help are pulled out by name and the rest is
+ * dropped. `name` is the part that matters — `MessageRejected`,
+ * `NotAuthorized`, `AccessDenied` and `CredentialsProviderError` each point at
+ * a different line of the runbook.
+ */
+function describeError(error: unknown): string {
+  if (typeof error !== "object" || error === null) return String(error);
+
+  const { name, message } = error as { name?: string; message?: string };
+  const status = (error as { $metadata?: { httpStatusCode?: number } })
+    .$metadata?.httpStatusCode;
+
+  return [name ?? "Error", status ? `(${status})` : "", message ?? ""]
+    .filter(Boolean)
+    .join(" ");
+}
+
+/**
  * Sends one enquiry to the support mailbox.
  *
  * Never throws. A route that has to wrap this in a `try` to stay up is a route
  * that will one day forget to, so every failure — no configuration, a network
- * error, a timeout, a rejection from the provider — comes back as a value. The
- * caller only has to decide what to tell the merchant.
+ * error, a timeout, a rejection from SES — comes back as a value. The caller
+ * only has to decide what to tell the merchant.
  */
 export async function sendContactMessage(
   submission: ContactSubmission,
@@ -137,45 +236,41 @@ export async function sendContactMessage(
     // the log and an afternoon spent looking for a bug that is a missing
     // variable on the deploy.
     console.error(
-      "[contact] No mail configuration — set RESEND_API_KEY and CONTACT_EMAIL_FROM. Nothing was sent.",
+      "[contact] No mail configuration — set AWS_REGION and CONTACT_EMAIL_FROM. Nothing was sent.",
     );
     return { ok: false, reason: "unconfigured" };
   }
 
   try {
-    const response = await fetch(RESEND_ENDPOINT, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${config.apiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        from: config.from,
-        to: [config.to],
-        subject: buildSubject(submission),
-        text: buildText(submission),
-        html: buildHtml(submission),
+    await getClient(config).send(
+      new SendEmailCommand({
+        FromEmailAddress: config.from,
+        Destination: { ToAddresses: [config.to] },
         // So hitting reply in the support mailbox answers the merchant rather
         // than the sending address, whenever they gave us somewhere to reply.
-        ...(submission.email ? { reply_to: submission.email } : {}),
+        ...(submission.email ? { ReplyToAddresses: [submission.email] } : {}),
+        Content: {
+          Simple: {
+            Subject: { Data: buildSubject(submission), Charset: "UTF-8" },
+            Body: {
+              Text: { Data: buildText(submission), Charset: "UTF-8" },
+              Html: { Data: buildHtml(submission), Charset: "UTF-8" },
+            },
+          },
+        },
       }),
-      signal: AbortSignal.timeout(SEND_TIMEOUT_MS),
-      cache: "no-store",
-    });
-
-    if (!response.ok) {
-      // The provider's own message, in the server log only — it can name the
-      // sending domain and the key's account, neither of which belongs in a
-      // response body a browser receives.
-      console.error(
-        `[contact] Resend rejected the message (${response.status}): ${await response.text()}`,
-      );
-      return { ok: false, reason: "provider" };
-    }
+      // Bounds the whole call, retries included, rather than each attempt.
+      { abortSignal: AbortSignal.timeout(SEND_TIMEOUT_MS) },
+    );
 
     return { ok: true };
   } catch (error) {
-    console.error("[contact] Could not reach the mail provider.", error);
+    // SES's own message, in the server log only — it can name the sending
+    // identity and the account, neither of which belongs in a response body a
+    // browser receives.
+    console.error(
+      `[contact] SES rejected the message: ${describeError(error)}`,
+    );
     return { ok: false, reason: "provider" };
   }
 }
