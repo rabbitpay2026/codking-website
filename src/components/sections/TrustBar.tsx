@@ -1,13 +1,33 @@
-import { Star } from "lucide-react";
-
 import { MerchantMark } from "@/components/brand/MerchantMarks";
-import { ShopifyMark } from "@/components/brand/ShopifyMarks";
 import { SectionShell } from "@/components/sections/SectionShell";
 import { Marquee } from "@/components/ui/marquee";
 import { getProofMetrics, getTrustedBrands } from "@/lib/content";
-import { formatRating } from "@/utils/format";
+import { cn } from "@/lib/utils";
 
 const numberFormat = new Intl.NumberFormat("en");
+
+/**
+ * How the logo wall ends at both edges.
+ *
+ * Two overlays painted in the band's own tint, and deliberately *not* a mask
+ * on the track. A `mask-image` is the better technique on paper — it fades the
+ * marks to transparent, so it is correct over any backdrop instead of matching
+ * one flat colour — and it cannot be used here: masking the marquee stops
+ * Chrome ever loading the marks inside it. They stay `complete: false` with a
+ * zero natural width however long the strip is on screen, the track collapses
+ * to no height, and the section renders as an empty row beside the count.
+ * Removing the mask loads them within a frame. A
+ * logo wall that is sometimes not there is a worse outcome than a fade colour
+ * that is approximate, and the approximation is invisible in any case: the
+ * band runs white to `sky-50` and back, and `sky-50` is `#f8fbff`.
+ *
+ * Both ends take the same width, so the track stays symmetrical about its own
+ * centre, and the width steps up with the viewport because what has to
+ * dissolve is a ~130px lockup rather than a rule. The previous 32/40px was
+ * narrower than a quarter of one, so a mark was sliced mid-word at the edge
+ * and read as content cut off by the page rather than as a loop continuing.
+ */
+const trackFade = "pointer-events-none absolute inset-y-0 w-12 sm:w-16 lg:w-20";
 
 /**
  * The band this strip sits in.
@@ -50,7 +70,21 @@ function TrustBand() {
  *
  * The first thing under the hero, with one job: turn the claim the hero just
  * made into someone else's word. So it carries no argument of its own — a
- * count, five marks, and the marketplace the product is certified on.
+ * count and the marks of the stores behind it.
+ *
+ * It used to close on a third column: Shopify's mark, "Built for Shopify", and
+ * the star rating with the review count. The review took it out as a
+ * duplicate, and it was one — the hero states the same rating and the same
+ * review count about eighty pixels above this line, and the proof band further
+ * down states both again beside the quotes that earn them. Three prints of one
+ * figure inside one scroll does not treble the proof; it spends the strip's
+ * attention restating what a visitor read a moment ago instead of on the
+ * merchant names, which are the only thing here they have not already seen.
+ *
+ * What the column left behind is the point rather than a gap to fill. The
+ * review's other note on this section was that the wall ran out of the right
+ * edge of the page with no margin, so the space is now deliberate and slightly
+ * wider than the gutter — the marks stop, and the row ends on air.
  *
  * It is deliberately not a card. An earlier pass floated this on a rounded
  * white panel pulled up over the hero's floor, and a panel is the wrong object
@@ -63,16 +97,14 @@ function TrustBand() {
  *
  * The count and the wall are one component, not two things beside each other:
  * no rule between them and a gap tight enough that they share a line rather
- * than occupy columns. The only vertical hairline left is before the
- * marketplace verdict, which is a different kind of statement and earns the
- * separation.
+ * than occupy columns. There is no vertical hairline anywhere in the row.
  *
  * The figure is the focal point of the section and is sized like one. It is the
  * largest thing on the page after the headline, and everything around it — both
  * captions and the marks themselves — is set small and quiet so there is never
  * a question about what is being said.
  *
- * Below `lg` the three parts stack, and the wall keeps the container's gutter
+ * Below `lg` the two parts stack, and the wall keeps the container's gutter
  * rather than bleeding — a strip that runs to the screen edges stops sharing
  * the page's margin, and losing that alignment costs more than the bleed buys.
  *
@@ -90,7 +122,7 @@ export async function TrustBar() {
       backdrop={<TrustBand />}
       containerClassName="py-8 md:py-9 lg:py-10"
     >
-      <div className="grid items-center gap-x-7 gap-y-7 lg:grid-cols-[auto_1fr_auto] xl:gap-x-9">
+      <div className="grid items-center gap-x-7 gap-y-7 lg:grid-cols-[auto_1fr] xl:gap-x-9">
         {/*
           The count.
 
@@ -141,8 +173,20 @@ export async function TrustBar() {
           matters more here: the wall stops sharing the page's left and right
           margin, and a trust strip that does not line up with the hero above it
           looks like a mistake long before it looks like a flourish.
+
+          `min-w-0` is what actually holds it there, and its absence is a
+          silent layout failure rather than a cosmetic one. A grid item's
+          `min-width` resolves to `auto`, which is its *min-content* width —
+          and the min-content width of a marquee is the whole unwrapped track.
+          So the `1fr` column was quietly sized to the full length of the logo
+          wall, the marketplace verdict beside it was pushed clean off the
+          viewport, and the section's own `overflow-hidden` hid the evidence:
+          the strip read as logos running out of the right edge of the page
+          with no margin at all. Flooring the minimum at zero lets `1fr` mean
+          what it says, which restores both the right-hand column and the
+          page's right gutter.
         */}
-        <div className="relative">
+        <div className="relative min-w-0 lg:mr-10 xl:mr-16">
           {/*
             Hidden from assistive technology: the marquee repeats its children
             to fill the track, so a screen reader would hear every store named
@@ -169,63 +213,20 @@ export async function TrustBar() {
             ))}
           </Marquee>
 
-          {/*
-            Matched fades, and deliberately narrow.
-
-            These exist to stop a mark appearing and disappearing at a hard
-            edge, and that is all they are for. A wide one softens the loop
-            beautifully and then costs the section its composition: the first
-            logo no longer starts where the column starts, so the row opens on a
-            gap that reads as a layout error. Both are the same width, so the
-            track is symmetrical about its own centre.
-          */}
+          {/* See `trackFade` for why these are overlays rather than a mask. */}
           <div
             aria-hidden
-            className="pointer-events-none absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-sky-50 to-transparent sm:w-10"
+            className={cn(trackFade, "left-0 bg-gradient-to-r from-sky-50")}
           />
           <div
             aria-hidden
-            className="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-sky-50 to-transparent sm:w-10"
+            className={cn(trackFade, "right-0 bg-gradient-to-l from-sky-50")}
           />
 
           <p className="sr-only">
             Stores using COD King include{" "}
             {brands.map((brand) => brand.name).join(", ")}.
           </p>
-        </div>
-
-        {/*
-          The marketplace verdict. The one hairline in the row, because this is
-          the only part that is not the merchant count restated — it is who
-          vouches for the product rather than who uses it.
-        */}
-        <div className="flex flex-wrap items-center gap-x-5 gap-y-2.5 lg:flex-col lg:items-end lg:gap-y-2.5 lg:border-l lg:border-ink/[0.08] lg:pl-8 xl:pl-9">
-          <span className="flex items-center gap-2">
-            <ShopifyMark className="size-[18px]" />
-            <span className="text-[13px] leading-none font-semibold tracking-[-0.005em] text-ink/80">
-              Built for Shopify
-            </span>
-          </span>
-
-          <span
-            className="flex items-center gap-1.5 text-[13px] leading-none"
-            aria-label={`Rated ${formatRating(proof.rating)} out of 5 from ${numberFormat.format(proof.reviewCount)} reviews`}
-          >
-            <span aria-hidden className="flex items-center gap-0.5">
-              {Array.from({ length: 5 }, (_, index) => (
-                <Star
-                  key={index}
-                  className="size-[13px] fill-[#f5a623] text-[#f5a623]"
-                />
-              ))}
-            </span>
-            <span aria-hidden className="font-semibold text-ink tabular-nums">
-              {formatRating(proof.rating)}
-            </span>
-            <span aria-hidden className="text-ink/40">
-              · {numberFormat.format(proof.reviewCount)}+ reviews
-            </span>
-          </span>
         </div>
       </div>
     </SectionShell>

@@ -90,9 +90,19 @@ const DESKTOP_COLUMNS = 4;
  * main branch point into the product — the card is the whole target, not a
  * "learn more" tucked in the corner of it.
  *
- * Same surface as every other card on the site: `surface-card`, one radius, one
- * shadow, one lift, a monochrome outline icon that warms to brand on hover. The
- * board is a set of equal things, and equal things want one treatment.
+ * The board is a light, near-white set, and the variation across it is
+ * deliberately the smallest thing that still reads as one. Ten identical white
+ * cards on a white page was the review's "too plain" and it was; alternating
+ * blue and violet *fills* was the correction overshooting, and the review's
+ * word for that was "artificial". Both notes point the same way: the rhythm
+ * belongs in the accent, not in the surface.
+ *
+ * So the surfaces alternate between `surface-card` and `surface-card-tint`,
+ * which are white and four percent of blue — a step you notice across a row of
+ * four and cannot name on any one card — and the colour lives entirely in a
+ * 36px icon container, tinted at six or seven percent. Radius, shadow,
+ * padding, type and the lift on hover are one decision applied to all ten, so
+ * the board is a set of equals with a pulse rather than two kinds of card.
  *
  * The set is read from the content repository and resolved by slug (§11), so
  * this grid, the hero's checklist and the feature pages are one list seen three
@@ -130,6 +140,20 @@ export function FeatureShowcase() {
         {board.map((card, index) => {
           const Icon = iconFor[card.slug] ?? ShieldCheck;
 
+          /*
+            Which beat of the two-surface set this card takes.
+
+            Parity of the card's own index rather than of its position in the
+            grid, and that is the whole reason it survives: the board is four
+            across on desktop, two on a tablet and one on a phone, and the
+            final row is offset by a fraction of a column that depends on how
+            many controls the repository holds. A rule written against the
+            visual column would have to be re-derived at every breakpoint and
+            would come out half a column wrong the moment a control is added.
+            Alternating on the index reads as alternating at every one of them.
+          */
+          const tinted = index % 2 === 0;
+
           return (
             <li
               key={card.slug}
@@ -146,22 +170,72 @@ export function FeatureShowcase() {
               <BlurFade delay={0.04 * index} className="h-full">
                 <Link
                   href={routeFor.control(card.slug)}
-                  className="group flex h-full surface-card items-start gap-3.5 rounded-[1.15rem] p-5 outline-none focus-visible:ring-2 focus-visible:ring-ring/60"
+                  className={cn(
+                    "group flex h-full flex-col rounded-[1.15rem] p-5 outline-none focus-visible:ring-2 focus-visible:ring-ring/60",
+                    tinted ? "surface-card-tint" : "surface-card",
+                  )}
                 >
-                  <Icon
-                    aria-hidden
-                    className="mt-px size-5 shrink-0 text-ink/35 transition-colors duration-300 ease-emphasized group-hover:text-brand"
-                    strokeWidth={1.6}
-                  />
+                  {/*
+                    Mark and name on one row, outcome underneath.
 
-                  <div className="min-w-0">
-                    <h3 className="text-[14.5px] leading-none font-semibold tracking-[-0.012em] text-ink">
+                    Two arrangements were wrong before this one. Inline — mark
+                    left, the whole text block right — indents the description
+                    past the icon and costs it forty pixels of measure, which
+                    on a quarter-width card is a whole extra line of wrap.
+                    Fully stacked — mark, then name, then outcome, each on its
+                    own row — reads well and makes the card a third taller than
+                    it needs to be for the same words, which is what left the
+                    board looking airier and less substantial than it had been.
+
+                    This takes the measure of the stacked version and the
+                    height of the inline one: the header row is as tall as the
+                    chip whatever the name does, and the description runs the
+                    full width of the card underneath it.
+                  */}
+                  <div className="flex items-center gap-3">
+                    {/*
+                      The mark, in a container of its own — the elegant part of
+                      the card and the only place brand colour appears on it.
+
+                      The tint is a whisper: seven percent of blue or six of
+                      violet behind the glyph, with a hairline ring a few
+                      points darker. Enough to read as a considered object at
+                      the size a chip is looked at, nowhere near enough to
+                      compete with the name beside it.
+
+                      The two beats take the two brand colours in the roles the
+                      token file gives them, so the rhythm across the board is
+                      carried here rather than by the surfaces. That is the
+                      whole reason the fills could drop to almost nothing: an
+                      alternation only needs one signal to be legible, and a
+                      36px chip is a far quieter place to put it than a card.
+                    */}
+                    <span
+                      aria-hidden
+                      className={cn(
+                        "grid size-9 shrink-0 place-items-center rounded-[10px] ring-1 transition-colors duration-300 ease-emphasized",
+                        tinted
+                          ? "bg-brand/[0.07] text-brand ring-brand/[0.13] group-hover:bg-brand/[0.12]"
+                          : "bg-brand-violet/[0.06] text-brand-violet ring-brand-violet/[0.12] group-hover:bg-brand-violet/[0.11]",
+                      )}
+                    >
+                      <Icon className="size-[17px]" strokeWidth={1.75} />
+                    </span>
+
+                    <h3 className="min-w-0 text-[14.5px] leading-snug font-semibold tracking-[-0.014em] text-ink">
                       {card.label}
                     </h3>
-                    <p className="mt-2.5 text-[12.5px] leading-relaxed text-pretty text-ink/50">
-                      {card.blurb}
-                    </p>
                   </div>
+
+                  {/*
+                    A step darker than it was. At 50% ink the outcome was quiet
+                    to the point of looking disabled next to a solid black
+                    name; 58% keeps the name unambiguously first while leaving
+                    the line something to be read rather than skipped.
+                  */}
+                  <p className="mt-3 text-[12.5px] leading-relaxed text-pretty text-ink/[0.58]">
+                    {card.blurb}
+                  </p>
                 </Link>
               </BlurFade>
             </li>

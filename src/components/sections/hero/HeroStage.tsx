@@ -45,42 +45,42 @@ const CHIPS: readonly FloatingChip[] = [
     id: "fake-orders",
     icon: ShieldOff,
     label: "Block fake orders",
-    className: "top-[8%] left-0",
+    className: "top-[6%] left-0",
     delay: "0s",
   },
   {
     id: "advance",
     icon: HandCoins,
     label: "Collect advance",
-    className: "top-[38%] -left-[2%]",
+    className: "top-[38%] -left-[1%]",
     delay: "-2.4s",
   },
   {
     id: "cod-fees",
     icon: IndianRupee,
     label: "Charge COD fees",
-    className: "top-[68%] left-[1%]",
+    className: "top-[70%] left-[1%]",
     delay: "-4.8s",
   },
   {
     id: "prepaid",
     icon: TrendingUp,
     label: "Convert to prepaid",
-    className: "top-[17%] right-0",
+    className: "top-[16%] right-0",
     delay: "-1.2s",
   },
   {
     id: "rto",
     icon: Undo2,
     label: "Reduce RTO",
-    className: "top-[47%] -right-[2%]",
+    className: "top-[48%] -right-[1%]",
     delay: "-3.6s",
   },
   {
     id: "trust",
     icon: BadgeCheck,
     label: "Build trust",
-    className: "top-[77%] right-[1%]",
+    className: "top-[78%] right-[1%]",
     delay: "-6s",
   },
 ];
@@ -94,6 +94,22 @@ const CHIPS: readonly FloatingChip[] = [
  * a visitor is trying to read. A chip has to be legible in the quarter second
  * the eye spends on it on its way to the product.
  *
+ * Sized to be read rather than merely noticed. The review's note on this scene
+ * was that the blocks around the device were too small and too faint to
+ * register, and every value here answers that: 24% of the stage instead of
+ * 21%, an 11.5px label instead of a 10px one, near-solid white instead of 80%
+ * glass, and a drop shadow deep enough to lift the chip off the field rather
+ * than tint the pixels under it.
+ *
+ * The one piece of colour is the mark. A chip is a *result* the product
+ * produces, so tinting its icon in brand is what separates these from the
+ * neutral furniture elsewhere in the hero — and it does the work of making
+ * them visible without any of them getting louder in size or weight.
+ *
+ * They still lose to the device, and are meant to. The phone is three times
+ * the width of a chip, is the only thing in the frame in full colour and is
+ * the only thing that moves through states; these annotate it.
+ *
  * Hidden from assistive technology: every one of these restates a capability
  * the checklist beside it already lists in full, and a screen reader should
  * hear that list once.
@@ -104,16 +120,16 @@ function Chip({ icon: Icon, label, className, delay }: FloatingChip) {
       aria-hidden
       style={{ animationDelay: delay }}
       className={cn(
-        "absolute z-30 w-[21%] animate-float",
-        "flex items-center gap-2 rounded-2xl border border-white/90 bg-white/80 px-2.5 py-2 backdrop-blur-xl",
-        "shadow-[0_1px_2px_rgba(11,27,54,0.05),0_10px_24px_-14px_rgba(11,27,54,0.4)]",
+        "absolute z-30 w-[24%] animate-float",
+        "flex items-center gap-2.5 rounded-[14px] border border-ink/[0.07] bg-white/95 px-3 py-2.5 backdrop-blur-xl",
+        "shadow-[0_1px_2px_rgba(11,27,54,0.06),0_14px_30px_-14px_rgba(11,27,54,0.55)]",
         className,
       )}
     >
-      <span className="grid size-6 shrink-0 place-items-center rounded-lg bg-ink/[0.05] ring-1 ring-ink/8">
-        <Icon className="size-3 text-ink/65" />
+      <span className="grid size-7 shrink-0 place-items-center rounded-[9px] bg-brand/[0.08] ring-1 ring-brand/12">
+        <Icon className="size-3.5 text-brand" strokeWidth={1.9} />
       </span>
-      <span className="text-[10px] leading-[1.25] font-semibold text-balance text-ink/75">
+      <span className="text-[11.5px] leading-[1.3] font-semibold text-balance text-ink/85">
         {label}
       </span>
     </div>
@@ -162,6 +178,14 @@ export function HeroStage() {
           were right at exactly one breakpoint and sat well to the left of the
           phone at the others — a device casting a shadow next to itself is
           the clearest tell that a scene was assembled rather than lit.
+        */}
+        {/*
+          The device keeps its full 48% of the stage. It is the subject, and
+          the two columns of annotation have to be found room around it rather
+          than taken out of it — so the chips are sized at 24% instead, which
+          leaves 2% of the stage as clearance on each side at every width the
+          scene is drawn at. That is 11px at `lg`, where the column is
+          narrowest, and it widens from there.
         */}
         <div
           className={cn(

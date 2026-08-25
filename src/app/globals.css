@@ -521,6 +521,43 @@
   }
 }
 
+/*
+ * The same surface, one step off white.
+ *
+ * A board of ten identical white cards on a white page is legible and
+ * completely flat — with no tonal difference between one card and the next,
+ * ten peers read as one undifferentiated field and the eye has nowhere to
+ * rest. This is the second beat of that set, and its whole job is to be
+ * noticed without being seen.
+ *
+ * It is `sky-100` — the page's own second-lightest tint, about four percent of
+ * blue — laid flat. The first pass at this ran a gradient from `brand-soft`
+ * down to `sky-50`, and at roughly three times this strength it stopped being
+ * a rhythm and became a colour: the board read as blue cards alternating with
+ * white ones, which is a decorated grid rather than a designed one. Flat and
+ * faint is the difference between a surface that varies and a surface that is
+ * painted.
+ *
+ * No gradient, for the same reason — a fill that changes down the card draws
+ * attention to itself at exactly the moment this one should not.
+ *
+ * Every other metric is `surface-card` to the pixel: radius, shadow, the lift
+ * and the curve it lifts on, so the board is unmistakably one grid rather than
+ * two kinds of card side by side, and it answers the pointer with one voice.
+ * Only the fill and the weight of the border differ, and the border is a
+ * tenth of brand — a hairline that belongs to the tint rather than a second
+ * outline drawn over it.
+ */
+@utility surface-card-tint {
+  @apply rounded-2xl border border-brand/[0.11] bg-sky-100 shadow-card;
+  @apply transition-[transform,box-shadow,border-color] duration-300;
+  transition-timing-function: var(--ease-emphasized);
+
+  &:hover {
+    @apply -translate-y-1 border-brand/25 shadow-overlay;
+  }
+}
+
 /** The same surface, as glass — for cards sitting over a colour field. */
 @utility surface-glass {
   @apply rounded-2xl border border-white/60 bg-card/70 shadow-card backdrop-blur-xl;

@@ -2,11 +2,9 @@
 
 import { AnimatePresence, motion } from "motion/react";
 import {
-  BadgePercent,
   Check,
   ChevronDown,
   Lock,
-  MapPinHouse,
   Pencil,
   ShieldCheck,
   Smartphone,
@@ -108,8 +106,22 @@ const BEATS = [
 
 const DURATIONS = BEATS.map((beat) => beat.ms);
 
-/** The three stages the rail draws. The fourth is the result, not a step. */
-const STAGES = ["verify", "address", "payment"] as const;
+/**
+ * The three stages the rail draws, and what it calls them. The fourth is the
+ * result, not a step.
+ *
+ * Named rather than drawn as three anonymous bars. Three unlabelled segments
+ * tell a visitor how far through something the buyer is but never what the
+ * something is, which is exactly the kind of ornament-shaped-like-information
+ * that makes an interface read as a mockup of an interface. With the words
+ * under them the rail states the whole flow on the first frame — verify,
+ * address, payment — before any of it has happened.
+ */
+const STAGES = [
+  { id: "verify", label: "Verify" },
+  { id: "address", label: "Address" },
+  { id: "payment", label: "Payment" },
+] as const;
 
 const STAGE_INDEX: Record<(typeof BEATS)[number]["stage"], number> = {
   verify: 0,
@@ -133,37 +145,83 @@ function IndiaFlag() {
   );
 }
 
-/** The heading every stage opens with: a mark, a title, and one line of why. */
+/**
+ * The heading every stage opens with.
+ *
+ * Set flush left, which is the whole of the change and most of the reason the
+ * screen stopped looking generated. Each stage used to open on a 48px
+ * brand-gradient tile with a halo pulsing behind it, over a centred title and
+ * a centred paragraph measured to 230px — the glowing-icon-above-centred-copy
+ * arrangement that appears on approximately every AI-rendered product shot and
+ * on approximately no real checkout. A buyer's checkout is a form. Forms are
+ * ranged left, because that is where the next line starts and where every
+ * field label under it begins.
+ *
+ * Losing the tile costs nothing: the stage is already named by the rail above
+ * it and by the title itself, so the icon was carrying no information that was
+ * not written twice over beside it.
+ */
 function StageHead({
-  icon: Icon,
   title,
   body,
 }: {
-  readonly icon: typeof ShieldCheck;
   readonly title: string;
   readonly body: string;
 }) {
   return (
-    <div className="px-5 text-center">
-      <span
-        aria-hidden
-        className="relative inline-grid size-12 place-items-center rounded-[16px] bg-gradient-to-b from-brand to-brand-deep shadow-[0_8px_22px_-8px_var(--brand)]"
-      >
-        <span className="absolute -inset-1.5 animate-halo rounded-[20px] bg-brand/15" />
-        <Icon className="relative size-6 text-white" />
-      </span>
-
-      <p className="mt-3.5 text-[17px] leading-tight font-semibold tracking-[-0.02em]">
+    <div className="px-5">
+      <p className="text-[16.5px] leading-tight font-semibold tracking-[-0.02em] text-ink">
         {title}
       </p>
-      <p className="mx-auto mt-2 max-w-[230px] text-[10.5px] leading-relaxed text-ink/50">
-        {body}
-      </p>
+      <p className="mt-1.5 text-[11px] leading-[1.55] text-ink/50">{body}</p>
     </div>
   );
 }
 
-/** One of the two ways to pay, as the store's payment rules offer them. */
+/** The label above a field or a group of them. */
+function FieldLabel({ children }: { readonly children: string }) {
+  return (
+    <p className="text-[9.5px] leading-none font-bold tracking-[0.1em] text-ink/40 uppercase">
+      {children}
+    </p>
+  );
+}
+
+/**
+ * The action that closes a stage.
+ *
+ * Every stage now ends on one, and it is pinned to the foot of the screen
+ * rather than left to fall wherever the content above it happens to stop. The
+ * verification had no button at all — it filled its own code field and moved
+ * on by itself, which left a third of the glass empty under it and made the
+ * one screen a visitor looks at longest read as a layout that had run out of
+ * content. A phone checkout puts its content at the top and its commitment at
+ * the bottom, within reach of a thumb, and doing the same here turns that
+ * empty band from an accident into the space the pattern asks for.
+ *
+ * Drawn as a paragraph rather than a button: this is a picture of an
+ * interface, and a real `<button>` here would offer a keyboard a stop that
+ * does nothing when it gets there.
+ */
+function PrimaryAction({ children }: { readonly children: string }) {
+  return (
+    <p className="grid h-12 place-items-center rounded-[13px] bg-brand text-[13.5px] font-semibold tracking-[-0.01em] text-white shadow-[0_1px_2px_rgba(37,99,235,0.32),0_8px_18px_-8px_rgba(37,99,235,0.55)]">
+      {children}
+    </p>
+  );
+}
+
+/**
+ * One of the two ways to pay, as the store's payment rules offer them.
+ *
+ * The selected row is marked by its border and a four-percent wash and nothing
+ * else. It used to carry a 3px brand-coloured spread shadow as well — a glow
+ * around the chosen option — and a glowing radio row is the single most
+ * reliable tell that a screen was generated rather than designed: no shipping
+ * payment sheet has ever lit its selected method up like that. Border, tint
+ * and the filled radio are three signals of selection already, which is two
+ * more than the pattern needs.
+ */
 function PaymentOption({
   selected,
   title,
@@ -184,10 +242,8 @@ function PaymentOption({
   return (
     <div
       className={cn(
-        "flex items-center gap-2.5 rounded-xl border px-3 py-2.5",
-        selected
-          ? "border-brand bg-brand/[0.05] shadow-[0_0_0_3px_color-mix(in_oklab,var(--brand)_10%,transparent)]"
-          : "border-ink/10 bg-white",
+        "flex items-center gap-3 rounded-[13px] border px-3 py-3.5",
+        selected ? "border-brand bg-brand/[0.04]" : "border-ink/10 bg-white",
       )}
     >
       {/* The radio, drawn — a native input here would inherit focus behaviour
@@ -195,7 +251,7 @@ function PaymentOption({
       <span
         aria-hidden
         className={cn(
-          "grid size-4 shrink-0 place-items-center rounded-full border-[1.5px]",
+          "grid size-[17px] shrink-0 place-items-center rounded-full border-[1.5px]",
           selected ? "border-brand" : "border-ink/25",
         )}
       >
@@ -210,29 +266,33 @@ function PaymentOption({
       <Icon
         aria-hidden
         className={cn(
-          "size-4 shrink-0",
-          selected ? "text-brand" : "text-ink/25",
+          "size-[18px] shrink-0",
+          selected ? "text-brand" : "text-ink/30",
         )}
         strokeWidth={1.7}
       />
 
       <span className="min-w-0 flex-1">
-        <span className="flex flex-wrap items-center gap-1.5">
-          <span className="text-[12px] leading-tight font-semibold text-ink">
-            {title}
-          </span>
-          {badge ? (
-            <span className="rounded-full bg-brand/10 px-1.5 py-px text-[8.5px] leading-[1.4] font-bold tracking-[0.04em] text-brand uppercase">
-              {badge}
-            </span>
-          ) : null}
+        <span className="block text-[12.5px] leading-tight font-semibold text-ink">
+          {title}
         </span>
-        <span className="mt-0.5 block text-[10px] leading-tight text-ink/50">
+        <span className="mt-1 block text-[10.5px] leading-[1.35] text-ink/45">
           {caption}
         </span>
       </span>
 
-      <span className="flex shrink-0 items-baseline gap-1.5">
+      {/*
+        Price, then what it saves, in one right-hand column.
+
+        The saving used to sit inline after the title, and at this measure
+        there is not room for both on a line: the badge wrapped, the caption
+        wrapped under it, and the discounted row came out half again as tall as
+        the one below it — two options that are meant to be weighed against
+        each other, drawn at two different sizes. Stacking the money together
+        also puts the argument where the eye goes to compare, which is the
+        column with the numbers in it.
+      */}
+      <span className="flex shrink-0 flex-col items-end gap-1">
         {strike ? (
           <span className="text-[10px] leading-none text-ink/35 tabular-nums line-through">
             {strike}
@@ -240,12 +300,17 @@ function PaymentOption({
         ) : null}
         <span
           className={cn(
-            "text-[12.5px] leading-none font-semibold tabular-nums",
-            selected ? "text-brand" : "text-ink/45",
+            "text-[13px] leading-none font-semibold tabular-nums",
+            selected ? "text-ink" : "text-ink/55",
           )}
         >
           {amount}
         </span>
+        {badge ? (
+          <span className="rounded-[5px] bg-brand/10 px-1.5 py-[2px] text-[8.5px] leading-[1.3] font-bold tracking-[0.03em] text-brand uppercase">
+            {badge}
+          </span>
+        ) : null}
       </span>
     </div>
   );
@@ -273,9 +338,20 @@ function PaymentOption({
  * mechanisms, and watching them happen proves the product does something in a
  * way a screenshot of a finished tick never does.
  *
+ * The review's verdict on the drawing itself was that it looked generated, and
+ * it was right for reasons that were all the same reason: every stage opened
+ * on a glowing gradient tile over centred copy, the selected payment method
+ * sat inside a coloured halo, the verification had no action to complete and
+ * left a third of the glass blank under it, and three unlabelled bars stood in
+ * for a flow nothing named. What replaces them is the ordinary grammar of a
+ * checkout — a named step rail, ranged-left headings, labelled fields, one
+ * primary action at the foot of every stage, selection marked by a border
+ * rather than by light — and the ordinariness is the point. It should look
+ * like the product, not like a picture of a product.
+ *
  * The frame is fixed and the stages are swapped inside it, so a loop running
- * behind the headline never nudges the layout. The header, the progress rail
- * and the trust strip are outside the swap for the same reason — they are the
+ * behind the headline never nudges the layout. The header, the step rail and
+ * the trust strip are outside the swap for the same reason — they are the
  * furniture the stages move through. The cycle is parked while the hero is off
  * screen, and under reduced motion it parks on the last beat — the order
  * placed — which is the frame that makes the argument anyway.
@@ -298,55 +374,93 @@ export function VerifyScreen() {
       aria-label={`A cash-on-delivery order going through on ${siteConfig.name}: the buyer confirms a one-time password sent on WhatsApp, their delivery address is filled in from their number, the store's payment rules offer a discount for paying online, and the order is placed.`}
       className="relative flex size-full flex-col overflow-hidden bg-white text-ink"
     >
-      {/* A whisper of colour at the crown, so the screen is lit rather than flat. */}
+      {/*
+        A whisper of colour at the crown, so the screen is lit rather than
+        flat. Half the height and rather less of it than before: it used to run
+        160px down the glass behind a brand-coloured badge, and the two
+        together read as a coloured header band rather than as light.
+      */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-brand-soft to-transparent"
+        className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-brand-soft/70 to-transparent"
       />
 
       <StatusBar className="relative text-ink" />
 
-      {/* App bar — the merchant's storefront, not ours. */}
-      <div className="relative mt-2.5 flex items-center gap-2 px-5">
+      {/*
+        App bar — the merchant's storefront, not ours.
+
+        Closed by a hairline, which is what makes it chrome. Without one the
+        merchant's name and the first line of the stage under it read as two
+        parts of the same heading.
+      */}
+      <div className="relative mt-2.5 flex items-center gap-2.5 border-b border-ink/[0.06] px-5 pb-3">
         <span
           aria-hidden
-          className="grid size-6 shrink-0 place-items-center rounded-lg bg-brand"
+          className="grid size-[26px] shrink-0 place-items-center rounded-[9px] bg-brand shadow-[0_1px_2px_rgba(37,99,235,0.35)]"
         >
-          <ShieldCheck className="size-3.5 text-white" />
+          <ShieldCheck className="size-[15px] text-white" strokeWidth={2.1} />
         </span>
-        <p className="min-w-0 flex-1 truncate text-[12.5px] leading-none font-semibold">
-          {BRAND}
-        </p>
+
+        <span className="min-w-0 flex-1">
+          <span className="block truncate text-[13px] leading-tight font-semibold tracking-[-0.01em]">
+            {BRAND}
+          </span>
+          <span className="mt-0.5 block text-[9.5px] leading-none font-medium text-ink/40 tabular-nums">
+            Order {ORDER.id}
+          </span>
+        </span>
+
         <span
           aria-hidden
-          className="grid size-5 shrink-0 place-items-center rounded-full bg-ink/6"
+          className="grid size-[22px] shrink-0 place-items-center rounded-full bg-ink/[0.05]"
         >
-          <X className="size-3 text-ink/45" />
+          <X className="size-3 text-ink/45" strokeWidth={2.2} />
         </span>
       </div>
 
       {/*
-        The progress rail.
+        The step rail.
 
-        Three segments for the three stages the buyer passes through, filling
-        as they are cleared. It is what turns four unrelated screens into one
-        journey: without it, a visitor who glances at the address stage has no
-        way of knowing it follows the verification they saw a moment ago.
+        Three named segments for the three stages the buyer passes through,
+        filling as they are cleared. It is what turns four unrelated screens
+        into one journey: without it, a visitor who glances at the address
+        stage has no way of knowing it follows the verification they saw a
+        moment ago — and without the words under it, no way of knowing what
+        either of them is.
       */}
-      <div aria-hidden className="relative mt-3 flex gap-1.5 px-5">
-        {STAGES.map((id, index) => (
-          <span
-            key={id}
-            className={cn(
-              "h-[3px] flex-1 rounded-full transition-colors duration-500 ease-emphasized",
-              index < stageIndex
-                ? "bg-brand-check"
-                : index === stageIndex
-                  ? "bg-brand"
-                  : "bg-ink/10",
-            )}
-          />
-        ))}
+      <div aria-hidden className="relative mt-3.5 flex gap-2 px-5">
+        {STAGES.map(({ id, label }, index) => {
+          const done = index < stageIndex;
+          const current = index === stageIndex;
+
+          return (
+            <div key={id} className="flex-1">
+              <span
+                className={cn(
+                  "block h-[3px] rounded-full transition-colors duration-500 ease-emphasized",
+                  done
+                    ? "bg-brand-check"
+                    : current
+                      ? "bg-brand"
+                      : "bg-ink/[0.09]",
+                )}
+              />
+              <span
+                className={cn(
+                  "mt-[7px] block text-[9px] leading-none font-semibold tracking-[-0.005em] transition-colors duration-500 ease-emphasized",
+                  done
+                    ? "text-ink/45"
+                    : current
+                      ? "text-ink/80"
+                      : "text-ink/25",
+                )}
+              >
+                {label}
+              </span>
+            </div>
+          );
+        })}
       </div>
 
       {/*
@@ -356,7 +470,7 @@ export function VerifyScreen() {
         through each other is illegible at this size, and the short pause
         between them reads as a screen being replaced, which is what it is.
       */}
-      <div className="relative mt-5 min-h-0 flex-1">
+      <div className="relative mt-4 min-h-0 flex-1">
         <AnimatePresence initial={false} mode="wait">
           <motion.div
             key={stage}
@@ -369,30 +483,27 @@ export function VerifyScreen() {
             {stage === "verify" ? (
               <>
                 <StageHead
-                  icon={ShieldCheck}
                   title="Verify your mobile number"
                   body="We sent a one-time password to your number. Enter it to confirm this cash-on-delivery order."
                 />
 
                 {/* The number under verification. */}
                 <div className="mt-5 px-5">
-                  <p className="text-[9px] font-bold tracking-[0.12em] text-ink/35 uppercase">
-                    Mobile number
-                  </p>
+                  <FieldLabel>Mobile number</FieldLabel>
                   <div
                     className={cn(
-                      "mt-1.5 flex h-11 items-center gap-2 rounded-xl border bg-white px-2.5",
+                      "mt-2 flex h-[46px] items-center gap-2.5 rounded-[13px] border bg-white px-3",
                       "transition-colors duration-300",
                       verified ? "border-brand-check/45" : "border-ink/12",
                     )}
                   >
                     <IndiaFlag />
-                    <span className="text-[12px] font-semibold text-ink/70 tabular-nums">
+                    <span className="text-[12.5px] font-semibold text-ink/70 tabular-nums">
                       +91
                     </span>
                     <ChevronDown aria-hidden className="size-3 text-ink/30" />
                     <span aria-hidden className="h-4 w-px bg-ink/10" />
-                    <span className="flex-1 text-[13.5px] font-semibold tracking-[0.01em] tabular-nums">
+                    <span className="flex-1 text-[14px] font-semibold tracking-[0.01em] tabular-nums">
                       98765 43210
                     </span>
 
@@ -402,7 +513,7 @@ export function VerifyScreen() {
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ duration: 0.26 }}
                         aria-hidden
-                        className="grid size-4 shrink-0 place-items-center rounded-full bg-brand-check"
+                        className="grid size-[17px] shrink-0 place-items-center rounded-full bg-brand-check"
                       >
                         <Check
                           className="size-2.5 text-white"
@@ -421,23 +532,30 @@ export function VerifyScreen() {
                   whole scene with it, and a hero that will not sit still is
                   the opposite of confident.
                 */}
-                <div className="mt-4 flex min-h-[60px] items-start gap-2 px-5">
+                <div className="mt-4 flex min-h-[62px] items-start gap-2.5 px-5">
                   <span
                     aria-hidden
-                    className="mt-0.5 grid size-7 shrink-0 place-items-center rounded-full bg-[#25D366]/12"
+                    className="mt-0.5 grid size-[30px] shrink-0 place-items-center rounded-full bg-[#25D366]/12"
                   >
-                    <WhatsappMark className="size-4" />
+                    <WhatsappMark className="size-[17px]" />
                   </span>
 
-                  <div className="min-w-0 flex-1 rounded-[14px] rounded-tl-[5px] border border-ink/6 bg-white px-2.5 py-2 shadow-[0_1px_4px_rgba(11,27,54,0.07)]">
-                    <p className="text-[9.5px] leading-relaxed text-ink/50">
-                      {BRAND} · code for order{" "}
-                      <span className="font-semibold text-ink/75">
+                  <div className="min-w-0 flex-1 rounded-[14px] rounded-tl-[5px] border border-ink/[0.07] bg-white px-3 py-2.5 shadow-[0_1px_3px_rgba(11,27,54,0.06)]">
+                    {/*
+                      Short enough to hold one line at this measure. It read
+                      "code for order #1042" and wrapped onto a second, which
+                      put a two-line caption above a one-line code and made
+                      the bubble top-heavy — and the words it lost are stated
+                      by the heading above and by the code underneath.
+                    */}
+                    <p className="truncate text-[10px] leading-none text-ink/45">
+                      {BRAND} ·{" "}
+                      <span className="font-semibold text-ink/70">
                         {ORDER.id}
                       </span>
                     </p>
 
-                    <div className="mt-1 flex h-[18px] items-center">
+                    <div className="mt-2 flex h-[19px] items-center">
                       <AnimatePresence initial={false} mode="wait">
                         {beat.revealed ? (
                           <motion.p
@@ -446,7 +564,7 @@ export function VerifyScreen() {
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0 }}
                             transition={{ duration: 0.26 }}
-                            className="text-[16px] leading-none font-bold tracking-[0.22em] tabular-nums"
+                            className="text-[17px] leading-none font-bold tracking-[0.22em] tabular-nums"
                           >
                             4927
                           </motion.p>
@@ -483,21 +601,20 @@ export function VerifyScreen() {
                       <span
                         key={`${digit}-${index}`}
                         className={cn(
-                          "grid h-12 flex-1 place-items-center rounded-[13px] border-[1.5px] text-[19px] font-bold tabular-nums",
-                          "transition-[background-color,border-color,color,box-shadow] duration-300 ease-[var(--ease-emphasized)]",
+                          "grid h-[52px] flex-1 place-items-center rounded-[13px] border-[1.5px] text-[21px] font-bold tabular-nums",
+                          "transition-[background-color,border-color,color] duration-300 ease-[var(--ease-emphasized)]",
                           filled
                             ? verified
-                              ? "border-brand-check/50 bg-brand-check/10 text-ink"
+                              ? "border-brand-check/50 bg-brand-check/[0.08] text-ink"
                               : "border-brand/45 bg-white text-ink"
                             : "border-ink/10 bg-ink/[0.02] text-transparent",
-                          active &&
-                            "border-brand bg-white shadow-[0_0_0_3px_color-mix(in_oklab,var(--brand)_14%,transparent)]",
+                          active && "border-brand bg-white",
                         )}
                       >
                         {filled ? (
                           digit
                         ) : active ? (
-                          <span className="h-5 w-px animate-caret bg-brand" />
+                          <span className="h-6 w-px animate-caret bg-brand" />
                         ) : (
                           digit
                         )}
@@ -506,23 +623,48 @@ export function VerifyScreen() {
                   })}
                 </div>
 
-                {/* One reserved slot for the two states this stage has. */}
-                <div className="mt-3.5 h-[38px] px-5">
-                  {verified ? (
-                    <p className="flex h-full items-center gap-2 rounded-xl bg-brand-check/14 px-3 text-[10.5px] font-semibold text-ink/75">
-                      <span className="grid size-4 shrink-0 place-items-center rounded-full bg-brand-check">
-                        <Check
-                          className="size-2.5 text-white"
-                          strokeWidth={3}
-                        />
-                      </span>
-                      Number verified in 8 seconds
-                    </p>
-                  ) : (
-                    <p className="flex h-full items-center rounded-xl bg-ink/[0.03] px-3 text-[10.5px] font-medium text-ink/45">
-                      Enter the code to confirm this order
-                    </p>
-                  )}
+                {/*
+                  The resend line, which is the one thing every real one-time
+                  password screen has and this one did not. It costs a line and
+                  buys the whole field group its credibility.
+                */}
+                <p className="mt-3 px-5 text-[10px] leading-none text-ink/40">
+                  Didn&rsquo;t get it?{" "}
+                  <span className="font-semibold text-brand">
+                    Resend on SMS
+                  </span>
+                </p>
+
+                {/*
+                  The foot of the stage: one reserved slot for the two states
+                  the verification has, and the action under it. `mt-auto`
+                  pins the pair to the bottom of the glass — see
+                  `PrimaryAction` for why every stage ends this way.
+                */}
+                <div className="mt-auto px-5 pt-5">
+                  <div className="h-[38px]">
+                    {verified ? (
+                      <p className="flex h-full items-center gap-2 rounded-[11px] bg-brand-check/12 px-3 text-[11px] font-semibold text-ink/75">
+                        <span className="grid size-[17px] shrink-0 place-items-center rounded-full bg-brand-check">
+                          <Check
+                            className="size-2.5 text-white"
+                            strokeWidth={3}
+                          />
+                        </span>
+                        Number verified in 8 seconds
+                      </p>
+                    ) : (
+                      <p className="flex h-full items-center rounded-[11px] bg-ink/[0.03] px-3 text-[11px] font-medium text-ink/45">
+                        Enter the code to confirm this order
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="mt-2.5">
+                    <PrimaryAction>
+                      {verified ? "Continue" : "Verify & continue"}
+                    </PrimaryAction>
+                  </div>
                 </div>
               </>
             ) : null}
@@ -530,47 +672,75 @@ export function VerifyScreen() {
             {stage === "address" ? (
               <>
                 <StageHead
-                  icon={MapPinHouse}
                   title="Confirm your address"
                   body="We filled this in from your verified number, so there is nothing to type."
                 />
 
                 <div className="mt-5 px-5">
                   <div className="flex items-center justify-between gap-2">
-                    <p className="text-[9px] font-bold tracking-[0.12em] text-ink/35 uppercase">
-                      Delivery address
-                    </p>
-                    <span className="inline-flex items-center gap-1 rounded-full bg-brand-check/14 px-2 py-0.5 text-[8.5px] leading-[1.5] font-bold tracking-[0.04em] text-ink/60 uppercase">
+                    <FieldLabel>Delivery address</FieldLabel>
+                    <span className="inline-flex items-center gap-1 rounded-full bg-brand-check/12 px-2 py-[3px] text-[8.5px] leading-[1.4] font-bold tracking-[0.03em] text-ink/60 uppercase">
                       <Check className="size-2.5" strokeWidth={3} />
                       Prefilled
                     </span>
                   </div>
 
-                  <div className="mt-2 rounded-xl border border-brand-check/40 bg-brand-check/[0.05] px-3 py-3">
-                    <p className="text-[12.5px] leading-tight font-semibold text-ink">
+                  {/*
+                    A neutral card with a green badge above it, rather than a
+                    green card. The tint used to run across the whole panel,
+                    which said "this address is a success state" — it is just
+                    an address. The badge is where the claim belongs.
+                  */}
+                  <div className="mt-2.5 rounded-[13px] border border-ink/10 bg-white px-3.5 py-3.5">
+                    <p className="text-[13px] leading-tight font-semibold text-ink">
                       {ADDRESS.name}
                     </p>
-                    <p className="mt-1.5 text-[11px] leading-[1.55] text-ink/60">
+                    <p className="mt-2 text-[11.5px] leading-[1.6] text-ink/60">
                       {ADDRESS.line}
                       <br />
                       {ADDRESS.area} — {ADDRESS.pin}
                     </p>
-                    <p className="mt-2 flex items-center gap-1.5 text-[10.5px] leading-none font-medium text-ink/50 tabular-nums">
-                      <Smartphone aria-hidden className="size-3 text-ink/35" />
+
+                    <span
+                      aria-hidden
+                      className="mt-3 block h-px bg-ink/[0.07]"
+                    />
+
+                    <p className="mt-3 flex items-center gap-2 text-[11px] leading-none font-medium text-ink/55 tabular-nums">
+                      <Smartphone
+                        aria-hidden
+                        className="size-3.5 text-ink/30"
+                      />
                       {ADDRESS.phone}
+                      <span className="ml-auto inline-flex items-center gap-1 text-[10.5px] font-semibold text-brand">
+                        <Pencil aria-hidden className="size-2.5" />
+                        Edit
+                      </span>
                     </p>
                   </div>
-
-                  <p className="mt-2.5 flex items-center gap-1.5 text-[9.5px] leading-none text-ink/40">
-                    <Pencil aria-hidden className="size-2.5" />
-                    Tap to edit any line before you continue
-                  </p>
                 </div>
 
-                <div className="mt-4 px-5">
-                  <p className="grid h-10 place-items-center rounded-xl bg-brand text-[12.5px] font-semibold text-white">
-                    Use this address
+                {/*
+                  What the order comes to, stated on the step before the one
+                  that offers to reduce it. It is the same figure the payment
+                  stage strikes through a beat later, so the two screens read
+                  as one transaction rather than as two mockups — and it is the
+                  line a real checkout puts here, above the button, for exactly
+                  that reason.
+                */}
+                <div className="mt-auto px-5 pt-5">
+                  <p className="flex items-baseline justify-between rounded-[11px] bg-ink/[0.03] px-3.5 py-3">
+                    <span className="text-[11px] leading-none text-ink/50">
+                      Order total
+                    </span>
+                    <span className="text-[13px] leading-none font-semibold text-ink tabular-nums">
+                      {inr.format(ORDER.total)}
+                    </span>
                   </p>
+
+                  <div className="mt-2.5">
+                    <PrimaryAction>Use this address</PrimaryAction>
+                  </div>
                 </div>
               </>
             ) : null}
@@ -578,22 +748,19 @@ export function VerifyScreen() {
             {stage === "payment" ? (
               <>
                 <StageHead
-                  icon={BadgePercent}
                   title="Choose how to pay"
                   body="Your store's payment rules decide what is offered on this order — and what it costs."
                 />
 
                 <div className="mt-5 px-5">
                   <div className="flex items-center justify-between gap-2">
-                    <p className="text-[9px] font-bold tracking-[0.12em] text-ink/35 uppercase">
-                      Payment rules
-                    </p>
-                    <span className="rounded-full bg-brand/10 px-2 py-0.5 text-[8.5px] leading-[1.5] font-bold tracking-[0.04em] text-brand uppercase">
+                    <FieldLabel>Payment rules</FieldLabel>
+                    <span className="rounded-full bg-brand/10 px-2 py-[3px] text-[8.5px] leading-[1.4] font-bold tracking-[0.03em] text-brand uppercase">
                       Prepaid discount on
                     </span>
                   </div>
 
-                  <div className="mt-2 space-y-2">
+                  <div className="mt-2.5 space-y-2.5">
                     <PaymentOption
                       selected
                       icon={Smartphone}
@@ -613,57 +780,75 @@ export function VerifyScreen() {
                   </div>
                 </div>
 
-                <div className="mt-4 px-5">
-                  <p className="grid h-10 place-items-center rounded-xl bg-brand text-[12.5px] font-semibold text-white">
-                    Pay {inr.format(PREPAID_TOTAL)} now
+                {/* The same slot the address stage fills, carrying the figure
+                    the whole control exists to produce. */}
+                <div className="mt-auto px-5 pt-5">
+                  <p className="flex items-baseline justify-between rounded-[11px] bg-brand/[0.05] px-3.5 py-3">
+                    <span className="text-[11px] leading-none text-ink/55">
+                      You save by paying now
+                    </span>
+                    <span className="text-[13px] leading-none font-semibold text-brand tabular-nums">
+                      {inr.format(DISCOUNT)}
+                    </span>
                   </p>
+
+                  <div className="mt-2.5">
+                    <PrimaryAction>
+                      {`Pay ${inr.format(PREPAID_TOTAL)} now`}
+                    </PrimaryAction>
+                  </div>
                 </div>
               </>
             ) : null}
 
             {stage === "placed" ? (
               <div className="flex flex-1 flex-col items-center justify-center px-5 text-center">
+                {/*
+                  The one badge left in the screen, and the only one that was
+                  ever carrying its weight: a result genuinely wants a mark.
+                  The halo pulsing behind it does not, and has gone with the
+                  rest of them.
+                */}
                 <span
                   aria-hidden
-                  className="relative grid size-14 place-items-center rounded-full bg-brand-check"
+                  className="grid size-14 place-items-center rounded-full bg-brand-check"
                 >
-                  <span className="absolute -inset-2 animate-halo rounded-full bg-brand-check/15" />
-                  <Check
-                    className="relative size-7 text-white"
-                    strokeWidth={3}
-                  />
+                  <Check className="size-7 text-white" strokeWidth={3} />
                 </span>
 
-                <p className="mt-4 text-[18px] leading-tight font-semibold tracking-[-0.02em]">
+                <p className="mt-4 text-[19px] leading-tight font-semibold tracking-[-0.02em]">
                   Order placed
                 </p>
-                <p className="mt-2 max-w-[220px] text-[10.5px] leading-relaxed text-ink/50">
+                <p className="mt-2 max-w-[230px] text-[11px] leading-[1.55] text-ink/50">
                   Order {ORDER.id} is confirmed and paid. {BRAND} will be in
                   touch with the delivery updates.
                 </p>
 
-                <div className="mt-5 w-full space-y-1.5 rounded-xl border border-ink/8 bg-ink/[0.02] px-3 py-3 text-left">
+                <div className="mt-6 w-full space-y-2.5 rounded-[13px] border border-ink/[0.08] bg-ink/[0.015] px-3.5 py-3.5 text-left">
                   <div className="flex items-baseline justify-between gap-2">
-                    <span className="text-[10.5px] text-ink/50">
+                    <span className="text-[11px] text-ink/50">
                       Number verified
                     </span>
-                    <span className="text-[10.5px] font-semibold text-ink/75">
+                    <span className="text-[11px] font-semibold text-ink/75 tabular-nums">
                       {ADDRESS.phone}
                     </span>
                   </div>
                   <div className="flex items-baseline justify-between gap-2">
-                    <span className="text-[10.5px] text-ink/50">
+                    <span className="text-[11px] text-ink/50">
                       Delivering to
                     </span>
-                    <span className="text-[10.5px] font-semibold text-ink/75 tabular-nums">
+                    <span className="text-[11px] font-semibold text-ink/75 tabular-nums">
                       {ADDRESS.pin}
                     </span>
                   </div>
+
+                  <span aria-hidden className="block h-px bg-ink/[0.07]" />
+
                   <div className="flex items-baseline justify-between gap-2">
-                    <span className="text-[10.5px] text-ink/50">
+                    <span className="text-[11px] font-medium text-ink/60">
                       Paid online
                     </span>
-                    <span className="text-[10.5px] font-semibold text-ink tabular-nums">
+                    <span className="text-[13px] font-semibold text-ink tabular-nums">
                       {inr.format(PREPAID_TOTAL)}
                     </span>
                   </div>
@@ -674,15 +859,23 @@ export function VerifyScreen() {
         </AnimatePresence>
       </div>
 
-      {/* Trust, and whose screen this is. */}
-      <div className="relative px-5 pt-4 pb-6">
-        <div className="flex items-center justify-center gap-1.5 rounded-xl bg-ink/[0.03] py-2">
-          <Lock aria-hidden className="size-3 text-ink/40" />
-          <span className="text-[9.5px] font-medium text-ink/50">
+      {/*
+        Trust, and whose screen this is.
+
+        A hairline and two quiet lines rather than a filled pill. The pill was
+        a third rounded container stacked under two others at the one point in
+        the screen where nothing is being asked of the buyer, and the rule does
+        the same job — separating the chrome from the stage — without adding an
+        object to a frame that already had enough of them.
+      */}
+      <div className="relative border-t border-ink/[0.06] px-5 pt-3.5 pb-5">
+        <p className="flex items-center justify-center gap-1.5">
+          <Lock aria-hidden className="size-3 text-ink/35" />
+          <span className="text-[10px] leading-none font-medium text-ink/45">
             Secure · trusted by 10,000+ merchants
           </span>
-        </div>
-        <p className="mt-3 text-center text-[9px] font-medium text-ink/35">
+        </p>
+        <p className="mt-2 text-center text-[9.5px] leading-none font-medium text-ink/30">
           Powered by{" "}
           <span className="font-bold text-ink/55">{siteConfig.name}</span>
         </p>

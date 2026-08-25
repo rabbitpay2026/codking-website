@@ -60,7 +60,29 @@ export function MerchantMark({
       alt=""
       width={logo.width}
       height={logo.height}
-      className={cn("h-auto w-auto max-w-none select-none", className)}
+      /*
+        The box is set in the style rather than left to the attributes, and
+        `w-auto`/`h-auto` are gone from the class list because between them
+        they were throwing the balance away.
+
+        `width: auto` on a replaced element does not mean "use the width
+        attribute" — it means "use the image's own intrinsic width", and the
+        intrinsic width of what Next actually serves is whichever optimised
+        candidate the browser picked. So every mark rendered at 256px across
+        regardless of what the record said: Casio came out at 256x47 against a
+        130x24 box, RedTape and Qwerty at 256 wide as well, and Slobberman —
+        whose artwork is a long thin wordmark — at 256x29. The one mark that
+        looked nearly right, Himalaya, was the one whose candidate happened to
+        be 128 wide.
+
+        That is the whole of why the wall looked unbalanced: it was not
+        rendering the hand-tuned sizes at all, it was rendering five files at
+        one shared width, which is exactly the "logo wall as a row of random
+        sizes" the balancing exists to avoid. An inline style cannot be
+        overridden by the preflight rule that started it.
+      */
+      style={{ width: logo.width, height: logo.height }}
+      className={cn("max-w-none select-none", className)}
     />
   );
 }
