@@ -64,12 +64,17 @@ export const contactChannels: readonly ContactChannel[] = [
 /**
  * The form's fields.
  *
- * Four, and no more. Every extra field on a contact form is a reason not to
- * send it. Three are required because they are what an answer actually needs —
- * who you are, how to reach you, and which store this is about; a Shopify
- * question without the store domain costs a round trip before anyone can even
- * look. Email is optional precisely because the phone number is not: one
- * working channel is the requirement, not two.
+ * Three required, and no more. Every extra *required* field on a contact form
+ * is a reason not to send it. The three that are required are what an answer
+ * actually needs — who you are, how to reach you, and which store this is
+ * about; a Shopify question without the store domain costs a round trip before
+ * anyone can even look. Email is optional precisely because the phone number
+ * is not: one working channel is the requirement, not two.
+ *
+ * Note is optional for a different reason. It costs nothing to skip and it is
+ * last, so a merchant who only wants to be called back is never held up by it;
+ * a merchant who already knows what they want to ask can say so here instead
+ * of waiting for the first reply to ask them.
  */
 export const contactFormFields: readonly ContactField[] = [
   {
@@ -103,6 +108,24 @@ export const contactFormFields: readonly ContactField[] = [
     placeholder: "yourstore.myshopify.com",
     autoComplete: "url",
     required: true,
+  },
+  {
+    /*
+      Last, and a textarea. It is the only field whose answer is a sentence
+      rather than a value, so it goes where a form's open question belongs —
+      after everything that has one right answer, where it cannot stand between
+      the merchant and the fields that are actually required.
+
+      No `autoComplete`: there is nothing in a browser's autofill store that
+      belongs in a free-text note, and offering to fill one is how a saved
+      address ends up in a support inbox.
+    */
+    name: "note",
+    label: "Note",
+    type: "text",
+    placeholder: "Anything else you'd like us to know?",
+    required: false,
+    multiline: true,
   },
 ];
 
