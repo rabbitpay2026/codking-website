@@ -1,5 +1,5 @@
 import { FeatureHero } from "@/components/features/sections";
-import { OperatorRelay } from "@/components/product/messaging-gateways";
+import { MessageThread } from "@/components/product/messaging-gateways";
 import { getGatewayCheckpoints, getGatewayPageCopy } from "@/lib/content";
 
 /**
@@ -19,6 +19,12 @@ import { getGatewayCheckpoints, getGatewayPageCopy } from "@/lib/content";
  * The headline is the blueprint's three lines and the middle one carries the
  * colour, because it is the control in one statement rather than the name
  * above it.
+ *
+ * The scene is the conversation rather than the routing diagram. What a
+ * merchant is buying here is a stream of branded updates reaching a customer;
+ * the relay that explains who gets paid for them is the second band's job, and
+ * opening on it meant the page led with an accounting arrangement instead of
+ * with the product.
  */
 export function Hero() {
   const copy = getGatewayPageCopy();
@@ -33,7 +39,9 @@ export function Hero() {
       description={copy.description}
       checkpoints={getGatewayCheckpoints()}
       primaryLabel="Get started free"
-      visual={<OperatorRelay />}
+      visual={
+        <MessageThread className="mx-auto w-full max-w-[25rem] lg:mx-0 lg:max-w-none" />
+      }
     />
   );
 }

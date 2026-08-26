@@ -71,7 +71,7 @@ export async function FeatureHero({
 
   return (
     <SectionShell
-      containerClassName="pt-5 pb-10 md:pt-6 md:pb-12 lg:pt-7 lg:pb-14"
+      containerClassName="pt-5 pb-12 md:pt-6 md:pb-14 lg:pt-7 lg:pb-16"
       backdrop={<HeroEnvironment />}
     >
       <FeatureBreadcrumb current={current} />
@@ -81,7 +81,7 @@ export async function FeatureHero({
         line — broken across two it stops being one — so the text column takes
         the width that line needs and the scene takes what is left.
       */}
-      <div className="mt-7 grid items-center gap-12 lg:grid-cols-[minmax(0,1.02fr)_minmax(0,0.98fr)] lg:gap-10">
+      <div className="mt-8 grid items-center gap-12 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)] lg:gap-12 xl:gap-16">
         <div className="max-w-xl">
           <p className="inline-flex items-center gap-2 rounded-full border border-brand/20 bg-brand/[0.06] px-3 py-1 text-[11px] font-semibold tracking-[0.12em] text-brand uppercase">
             <span aria-hidden className="size-1.5 rounded-full bg-brand" />
@@ -104,7 +104,7 @@ export async function FeatureHero({
             <span className="block">{headlineTail}</span>
           </h1>
 
-          <p className="mt-5 max-w-lg text-[1.0625rem] leading-relaxed text-pretty text-ink/55">
+          <p className="mt-6 max-w-lg text-[1.125rem] leading-[1.65] text-pretty text-ink/55">
             {description}
           </p>
 
@@ -115,7 +115,7 @@ export async function FeatureHero({
             column at every width, which is what makes it scan as a
             specification rather than as a sentence someone chopped up.
           */}
-          <ul className="mt-7 grid gap-x-8 gap-y-3 sm:grid-flow-col sm:grid-cols-2 sm:grid-rows-3">
+          <ul className="mt-8 grid gap-x-8 gap-y-3.5 sm:grid-flow-col sm:grid-cols-2 sm:grid-rows-3">
             {checkpoints.map((point) => (
               <li key={point.id} className="flex items-center gap-2.5">
                 <span
@@ -124,14 +124,14 @@ export async function FeatureHero({
                 >
                   <Check className="size-2.5 text-ink/60" strokeWidth={3} />
                 </span>
-                <span className="text-[13.5px] leading-snug font-medium text-ink/75">
+                <span className="text-[14px] leading-snug font-medium text-ink/75">
                   {point.label}
                 </span>
               </li>
             ))}
           </ul>
 
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
+          <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center">
             {installAction ? (
               /*
                 Ink, not brand — the homepage's install button to the pixel. A

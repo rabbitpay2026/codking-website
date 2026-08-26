@@ -228,8 +228,12 @@ export const analyticsPageCopy = {
   featuresDescription:
     "Everything COD King reports about your cash-on-delivery orders, and where each figure comes from.",
   audienceTitle: "Best suited for",
+  audienceDescription:
+    "The stores where cash on delivery is large enough that guessing at it is expensive.",
   testimonialsTitle: "What Shopify merchants say",
   faqTip:
     "Analytics & Reports is on the Enterprise plan. Everything it shows is recorded by the controls you already have switched on — there is nothing extra to install.",
-  ctaTitle: "Ready to see what cash on delivery is really costing you?",
+  ctaTitle: "See what your COD operation is really costing you.",
+  ctaDescription:
+    "Verified orders, prepaid share, recovered carts and RTO trends, reported together inside the app.",
 } as const;

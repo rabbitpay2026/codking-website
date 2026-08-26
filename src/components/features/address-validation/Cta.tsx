@@ -16,7 +16,13 @@ import { getAddressPageCopy } from "@/lib/content";
  * clicked.
  */
 export function Cta() {
+  const copy = getAddressPageCopy();
+
   return (
-    <FeatureCtaBand title={getAddressPageCopy().ctaTitle} icon={MapPinHouse} />
+    <FeatureCtaBand
+      title={copy.ctaTitle}
+      description={copy.ctaDescription}
+      icon={MapPinHouse}
+    />
   );
 }

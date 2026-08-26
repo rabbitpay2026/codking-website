@@ -88,7 +88,7 @@ export function FaqCategorySection({ category }: FaqCategorySectionProps) {
               closed state, the warm-on-hover belongs to a card you might open
               and the brand edge stays on the one you did.
             */
-            className="faq-disclosure group rounded-xl border border-border bg-card px-4 transition-colors duration-200 open:border-brand/35 not-open:hover:border-ink/15 sm:px-5"
+            className="group faq-disclosure rounded-xl border border-border bg-card px-4 transition-colors duration-200 open:border-brand/35 not-open:hover:border-ink/15 sm:px-5"
           >
             {/*
               `list-none` and the WebKit marker rule remove the default triangle

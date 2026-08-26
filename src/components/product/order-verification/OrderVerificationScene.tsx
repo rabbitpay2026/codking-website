@@ -1,4 +1,4 @@
-import { BadgeCheck, CircleSlash, PauseCircle } from "lucide-react";
+import { PackageCheck, PauseCircle, XCircle } from "lucide-react";
 
 import { OrderQueuePanel } from "@/components/product/order-verification/OrderQueuePanel";
 import { cn } from "@/lib/utils";
@@ -8,33 +8,46 @@ import type { WithClassName } from "@/types";
 import type { LucideIcon } from "lucide-react";
 
 /**
- * The three things the merchant controls, ringing the thing the panel shows.
+ * What each answer means, under the screen that gives it.
  *
- * Worded as settings rather than as benefits, which is the division that makes
- * the scene worth having two halves: the panel is the screen, these are what
- * the merchant decided about it. The same three words as benefits would be the
- * hero checklist a second time.
+ * Three consequences rather than three settings. The panel above already shows
+ * the buttons; a column of chips beside it repeating "confirm, hold, cancel"
+ * would be labelling a label. What a merchant cannot read off the buttons is
+ * what each one does to the parcel, so that is what this strip says.
  */
-const CONTROLS: readonly { id: string; icon: LucideIcon; label: string }[] = [
-  { id: "confirm", icon: BadgeCheck, label: "Confirm what should ship" },
-  { id: "hold", icon: PauseCircle, label: "Hold what needs a look" },
-  { id: "cancel", icon: CircleSlash, label: "Cancel before packing" },
+const OUTCOMES: readonly {
+  id: string;
+  icon: LucideIcon;
+  label: string;
+  note: string;
+}[] = [
+  {
+    id: "confirm",
+    icon: PackageCheck,
+    label: "Confirm",
+    note: "Goes to fulfilment",
+  },
+  {
+    id: "hold",
+    icon: PauseCircle,
+    label: "Hold",
+    note: "Waits for a second look",
+  },
+  { id: "cancel", icon: XCircle, label: "Cancel", note: "Never gets picked" },
 ];
 
 /**
  * The hero's product scene.
  *
- * The panel, and beside it the settings behind it. Two objects and one
- * relationship: what the screen shows on the left, what the merchant chose on
- * the right — so a visitor understands before reading a word that this is
- * configured rather than fixed.
+ * The queue, at the width the column gives it, with the consequence of each
+ * answer set underneath as a three-part rule. The floating annotation chips
+ * that used to sit beside it are gone: they were the same object on all four
+ * feature pages, they cost the panel a third of its width, and what they said
+ * was already in the hero checklist two columns to the left.
  *
- * The chips are the first thing to go as the column narrows. Below `lg` there
- * is no room for a column of annotation beside a product panel, and a chip
- * crushed against the frame argues against the craft it exists to demonstrate;
- * the three settings are all named in the checklist beside the headline
- * anyway, so nothing is lost. They are hidden from assistive technology for
- * that same reason — a screen reader should hear that list once.
+ * The strip is drawn as one ruled row rather than three cards, so the scene
+ * reads as a single instrument — a screen and its legend — instead of as a
+ * panel with more cards stacked under it.
  */
 export function OrderVerificationScene({ className }: WithClassName) {
   return (
@@ -49,31 +62,33 @@ export function OrderVerificationScene({ className }: WithClassName) {
         }}
       />
 
-      <div className="flex items-center gap-4">
-        <OrderQueuePanel className="mx-auto w-full max-w-[23rem] lg:mx-0 lg:max-w-none lg:flex-1" />
+      <OrderQueuePanel className="mx-auto w-full max-w-[27rem] lg:mx-0 lg:max-w-none" />
 
-        <div
-          aria-hidden
-          className="hidden w-[8.75rem] shrink-0 flex-col gap-2.5 lg:flex"
-        >
-          {CONTROLS.map((control) => (
-            <div
-              key={control.id}
-              className={cn(
-                "rounded-2xl border border-white/90 bg-white/80 px-2.5 py-2.5 backdrop-blur-xl",
-                "shadow-[0_1px_2px_rgba(11,27,54,0.05),0_10px_24px_-14px_rgba(11,27,54,0.4)]",
-              )}
-            >
-              <span className="grid size-6 place-items-center rounded-lg bg-ink/[0.05] ring-1 ring-ink/8">
-                <control.icon className="size-3 text-ink/65" />
-              </span>
-              <span className="mt-2 block text-[10px] leading-[1.3] font-semibold text-balance text-ink/75">
-                {control.label}
-              </span>
-            </div>
-          ))}
-        </div>
-      </div>
+      <ul
+        aria-hidden
+        className="mx-auto mt-3 grid w-full max-w-[27rem] grid-cols-3 overflow-hidden rounded-xl border border-ink/[0.07] bg-white/70 backdrop-blur-sm lg:mx-0 lg:max-w-none"
+      >
+        {OUTCOMES.map((outcome, index) => (
+          <li
+            key={outcome.id}
+            className={cn(
+              "px-3 py-2.5 text-center",
+              index > 0 && "border-l border-ink/[0.07]",
+            )}
+          >
+            <outcome.icon
+              className="mx-auto size-4 text-ink/35"
+              strokeWidth={1.7}
+            />
+            <span className="mt-1.5 block text-[11px] leading-none font-semibold text-ink/75">
+              {outcome.label}
+            </span>
+            <span className="mt-1 block text-[10px] leading-tight text-ink/40">
+              {outcome.note}
+            </span>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

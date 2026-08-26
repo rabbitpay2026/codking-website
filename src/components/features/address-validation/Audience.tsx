@@ -31,6 +31,7 @@ export function Audience() {
   return (
     <FeatureAudienceRow
       title={copy.audienceTitle}
+      description={copy.audienceDescription}
       segments={getAddressAudience()}
       iconFor={iconFor}
       fallbackIcon={MapPinHouse}

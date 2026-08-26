@@ -28,6 +28,7 @@ export function Audience() {
   return (
     <FeatureAudienceRow
       title={copy.audienceTitle}
+      description={copy.audienceDescription}
       segments={getOrderVerificationAudience()}
       iconFor={iconFor}
       fallbackIcon={Package}

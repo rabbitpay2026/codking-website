@@ -16,9 +16,12 @@ import { getOrderVerificationPageCopy } from "@/lib/content";
  * clicked.
  */
 export function Cta() {
+  const copy = getOrderVerificationPageCopy();
+
   return (
     <FeatureCtaBand
-      title={getOrderVerificationPageCopy().ctaTitle}
+      title={copy.ctaTitle}
+      description={copy.ctaDescription}
       icon={BadgeCheck}
     />
   );

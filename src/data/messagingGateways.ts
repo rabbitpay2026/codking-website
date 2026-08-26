@@ -277,5 +277,7 @@ export const gatewayPageCopy = {
   testimonialsTitle: "What Shopify merchants say",
   faqTip:
     "Local SMS Operator Integration is on the Enterprise plan. The operator is chosen from a dropdown in the COD King dashboard — no theme edits, no code.",
-  ctaTitle: "Ready to send every COD message on your own operator?",
+  ctaTitle: "Keep every customer update on brand.",
+  ctaDescription:
+    "OTP codes, order updates and cart reminders, sent on the operator you selected and billed by them directly.",
 } as const;

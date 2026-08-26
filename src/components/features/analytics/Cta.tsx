@@ -16,9 +16,12 @@ import { getAnalyticsPageCopy } from "@/lib/content";
  * clicked.
  */
 export function Cta() {
+  const copy = getAnalyticsPageCopy();
+
   return (
     <FeatureCtaBand
-      title={getAnalyticsPageCopy().ctaTitle}
+      title={copy.ctaTitle}
+      description={copy.ctaDescription}
       icon={ChartNoAxesCombined}
     />
   );

@@ -16,9 +16,12 @@ import { getGatewayPageCopy } from "@/lib/content";
  * clicked.
  */
 export function Cta() {
+  const copy = getGatewayPageCopy();
+
   return (
     <FeatureCtaBand
-      title={getGatewayPageCopy().ctaTitle}
+      title={copy.ctaTitle}
+      description={copy.ctaDescription}
       icon={MessageSquareText}
     />
   );

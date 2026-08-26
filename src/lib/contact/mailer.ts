@@ -50,18 +50,10 @@ interface MailConfig {
   readonly region: string;
   readonly from: string;
   readonly to: string;
-  /**
-   * Absent when the deployment supplies credentials some other way — see
-   * `readConfig`.
-   */
-  readonly credentials?: {
-    readonly accessKeyId: string;
-    readonly secretAccessKey: string;
-  };
 }
 
 /**
- * Where the message goes, who it comes from, and what signs for it.
+ * Where the message goes and who it comes from. Not what signs for it.
  *
  * `to` falls back to the mailbox the published legal pages already answer on —
  * read from `constants/external.ts` rather than retyped, so there is still one
@@ -71,35 +63,42 @@ interface MailConfig {
  * failure than saying it is not configured. `region` likewise — SES identities
  * are per-region, so the wrong region is not a smaller mistake than none.
  *
- * The credentials are the one part treated as optional, and deliberately.
- * `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` are what a local machine and
- * most CI use, and when both are present they are passed explicitly. When
- * neither is, the client is left to the SDK's own credential chain, which is
- * what picks up the task or instance role on a container host — the site
- * already deploys to one. Demanding static keys there would mean minting a
- * long-lived secret for something the platform hands out automatically and
- * rotates on its own.
+ * ── Credentials are not read here, and must not be ───────────────────────
+ * There is deliberately no `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` in
+ * this function. Credentials are the SDK's job, resolved through its default
+ * provider chain, and the chain is strictly better at it than anything this
+ * file could assemble by hand.
  *
- * The failure mode of that choice is honest: with no keys and no role, the send
- * fails at the SDK rather than here, and the log below says which.
+ * The previous version read those two variables and, when both were present,
+ * passed them to the client explicitly. That is correct for a long-lived IAM
+ * user key and wrong everywhere else, because it silently drops the third
+ * component. A role-based runtime — Amplify's SSR compute, a Lambda, an ECS
+ * task — publishes *temporary* credentials under those same two names plus
+ * `AWS_SESSION_TOKEN`, and temporary credentials without their session token
+ * do not sign: SES answers `UnrecognizedClientException`. So the old code took
+ * the platform's own role credentials, threw a third of them away, and
+ * presented the remainder as if they were static keys. It worked on a laptop
+ * with a user key in `.env.local` and could not work on the deploy.
+ *
+ * Passing `credentials` also *overrides* the chain, so the SDK never got the
+ * chance to resolve them correctly. Reading none of them is what fixes both
+ * environments at once: the chain's own env provider picks up the same
+ * `.env.local` keys Next.js loads into `process.env` locally, and picks up the
+ * role — session token included, refreshed on expiry — in production.
+ *
+ * If there is no usable identity at all the send fails at the SDK rather than
+ * here, and the log at the foot of this file names it
+ * (`CredentialsProviderError`) rather than swallowing it.
+ * ──────────────────────────────────────────────────────────────────────────
  */
 function readConfig(): MailConfig | null {
   const region = process.env.CODK_AWS_REGION?.trim();
-  const accessKeyId = process.env.AWS_ACCESS_KEY_ID?.trim();
-  const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY?.trim();
   const from = process.env.CONTACT_EMAIL_FROM?.trim();
   const to = process.env.CONTACT_EMAIL_TO?.trim() || externalLinks.supportEmail;
 
   if (!region || !from || !to) return null;
 
-  return {
-    region,
-    from,
-    to,
-    ...(accessKeyId && secretAccessKey
-      ? { credentials: { accessKeyId, secretAccessKey } }
-      : {}),
-  };
+  return { region, from, to };
 }
 
 /**
@@ -113,6 +112,13 @@ function readConfig(): MailConfig | null {
  *
  * The configuration it captures comes from the environment, which does not
  * change while the process is alive, so there is nothing to invalidate.
+ *
+ * Caching the client is only safe *because* no credentials are passed to it.
+ * The SDK's provider chain lives inside the client and refreshes an expiring
+ * role credential on its own; a static credential object handed in here would
+ * be captured once and then held past its expiry for the life of the process,
+ * which on a warm serverless instance is exactly long enough to start failing.
+ * Region, retry policy and nothing else.
  */
 let client: SESv2Client | undefined;
 
@@ -120,7 +126,6 @@ function getClient(config: MailConfig): SESv2Client {
   client ??= new SESv2Client({
     region: config.region,
     maxAttempts: MAX_ATTEMPTS,
-    ...(config.credentials ? { credentials: config.credentials } : {}),
   });
 
   return client;

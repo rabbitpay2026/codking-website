@@ -193,14 +193,23 @@ export const orderVerificationAudience: readonly AudienceSegment[] = [
 
 /** The page's own headline and supporting copy. */
 export const orderVerificationPageCopy = {
-  /** What the page calls the control — the controls repository's name too. */
-  name: "Order Verification",
+  /**
+   * What the page calls the control.
+   *
+   * "COD Order Verification", not the record's bare `name`. The control is
+   * called Order Verification inside the product, but the site sells it beside
+   * OTP Verification and a merchant scanning a menu of ten controls needs the
+   * two told apart at a glance — so the features index publishes it under the
+   * longer name and this page agrees with the index. The record, the slug and
+   * the URL are all unchanged.
+   */
+  name: "COD Order Verification",
   /**
    * The category, not the feature. The headline directly below already carries
    * the name, and an eyebrow repeating it word for word is a label on a label.
    */
   eyebrow: "Before dispatch",
-  headlineLead: "Order Verification",
+  headlineLead: "COD Order Verification",
   /**
    * Kept short enough to hold one line inside the hero's text column at every
    * width. The shared hero draws this statement in brand across a measure of
@@ -209,23 +218,27 @@ export const orderVerificationPageCopy = {
    * than one string.
    */
   headlineAccent: "Decide Before You Ship.",
-  headlineTail: "Not After It Comes Back.",
+  headlineTail: "Not After It Returns.",
   description:
     "Cash-on-delivery orders reach COD King as a queue rather than as a decision already made. Confirm the ones you are happy to send, hold the ones you want to look at again, and cancel the rest — all of it before the parcel is picked, packed or dispatched.",
   outcomesEyebrow: "Why review a cash order?",
   outcomesTitle: "A refused parcel is decided long before it is refused",
   outcomesDescription:
     "It is decided at the moment nobody looked at the order. Everything after that — the picking, the packing, the freight out and the freight back — is the cost of not having looked.",
-  flowEyebrow: "How Order Verification works",
-  flowTitle: "Every cash order waits for a decision.",
+  flowEyebrow: "How COD Order Verification works",
+  flowTitle: "Every cash order waits for a decision",
   flowDescription:
     "Confirm, hold or cancel. Three answers, taken before the order becomes a parcel rather than after it becomes a return.",
   featuresTitle: "Key features",
   featuresDescription:
     "Everything you need to decide which cash-on-delivery orders leave your warehouse.",
   audienceTitle: "Best suited for",
+  audienceDescription:
+    "The stores where one refused parcel costs more than the minute it takes to look at the order.",
   testimonialsTitle: "What Shopify merchants say",
   faqTip:
-    "Order Verification is on the Enterprise plan. Orders are reviewed from the COD King dashboard — no theme edits, no code.",
-  ctaTitle: "Ready to decide which cash orders ship?",
+    "COD Order Verification is on the Enterprise plan. Orders are reviewed from the COD King dashboard — no theme edits, no code.",
+  ctaTitle: "Decide which COD orders actually ship.",
+  ctaDescription:
+    "Confirm, hold or cancel every cash order before it is picked, packed or dispatched.",
 } as const;

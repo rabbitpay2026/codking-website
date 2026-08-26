@@ -224,8 +224,12 @@ export const addressPageCopy = {
   featuresDescription:
     "Everything you need to take the typing out of a cash-on-delivery checkout, without changing the checkout itself.",
   audienceTitle: "Best suited for",
+  audienceDescription:
+    "The stores where the address is the slowest part of the checkout and the most expensive thing to get wrong.",
   testimonialsTitle: "What Shopify merchants say",
   faqTip:
     "Prefilled Address is on every plan, including the free Standard plan. It runs on your existing Shopify checkout — no theme edits, no code.",
-  ctaTitle: "Ready to take the typing out of your COD checkout?",
+  ctaTitle: "Take the typing out of your COD checkout.",
+  ctaDescription:
+    "One field the customer was going to fill anyway brings back everything you already hold about them.",
 } as const;

@@ -13,6 +13,16 @@ const numberFormat = new Intl.NumberFormat("en");
 interface FeatureCtaBandProps {
   /** The one thing the page changes about its close. */
   readonly title: string;
+  /**
+   * The line under it, in the page's own words.
+   *
+   * Optional, and it falls back to the merchant count — the line every close
+   * carried before this was added. A page that has something specific to say
+   * about the decision the merchant is about to make says it here; a page that
+   * does not falls back to the proof rather than to filler, and the count is
+   * still drawn beside it either way.
+   */
+  readonly description?: string;
   readonly icon: LucideIcon;
 }
 
@@ -29,6 +39,7 @@ interface FeatureCtaBandProps {
  */
 export async function FeatureCtaBand({
   title,
+  description,
   icon: Icon,
 }: FeatureCtaBandProps) {
   const proof = await getProofMetrics();
@@ -73,9 +84,21 @@ export async function FeatureCtaBand({
               <h2 className="text-[1.65rem] leading-[1.12] font-semibold tracking-[-0.03em] text-pretty text-ink sm:text-[2rem]">
                 {title}
               </h2>
-              <p className="mt-3 text-[14px] leading-relaxed text-pretty text-ink/55">
-                Join {numberFormat.format(proof.merchantCount)}+ Shopify
-                merchants who trust COD King.
+              <p className="mt-3 max-w-xl text-[14.5px] leading-relaxed text-pretty text-ink/55">
+                {description ? (
+                  <>
+                    {description}{" "}
+                    <span className="text-ink/40">
+                      Join {numberFormat.format(proof.merchantCount)}+ Shopify
+                      merchants who trust COD King.
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    Join {numberFormat.format(proof.merchantCount)}+ Shopify
+                    merchants who trust COD King.
+                  </>
+                )}
               </p>
             </div>
 
