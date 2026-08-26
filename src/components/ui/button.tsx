@@ -10,8 +10,12 @@ import type { ComponentProps } from "react";
  *
  * Variants map onto the action hierarchy the architecture fixes in §4.2
  * rather than onto an abstract palette: `primary` is Install Free and is the
- * only filled action on any screen, `secondary` is Book a Demo, and `quiet`
- * is Log in — present, but never competing with the install.
+ * only filled action on any screen, and `secondary` is Book a Demo.
+ *
+ * `quiet` was the weight Log in carried, and that action was removed at a
+ * review's instruction. The variant stays here because it is a primitive
+ * rather than a role — the pricing preview's "compare all plans" link uses it
+ * — but nothing in the utility bar holds it any more.
  */
 const buttonVariants = cva(
   [

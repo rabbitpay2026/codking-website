@@ -26,12 +26,12 @@ const numberFormat = new Intl.NumberFormat("en");
  *
  * The architecture calls the footer the full index of the site, so every page
  * a merchant can actually read is reachable from here — and, just as
- * deliberately, nothing else is. The Features column is the six features the
- * product ships, read from the same selection the mega-menu opens, rather than
- * all ten records in the controls repository: four of those have no finished
- * page, and a footer that indexes pages the site has not written is an index of
- * disappointments. Solutions sits beside it as the second door into those same
- * six, for a merchant who knows their problem but not our name for the control
+ * deliberately, nothing else is. The Features column is read from the same
+ * selection the mega-menu opens — every control the product ships, now that all
+ * ten have a page of their own. It was cut to six while four of them did not,
+ * because a footer that indexes pages the site has not written is an index of
+ * disappointments. Solutions sits beside it as the second door into the same
+ * set, for a merchant who knows their problem but not our name for the control
  * that solves it.
  *
  * Nothing here is authored in this file. Every destination comes from the
@@ -166,14 +166,14 @@ export async function SiteFooter() {
         {/*
           One grid, four headings, no second band.
 
-          Features holds six links against two to five in the others, and its
+          Features holds ten links against three to six in the others, and its
           labels are the longest on the site — "Partial COD Payment – Upfront
           Payments" in a Company-width column wraps to three lines. So it takes
-          two column widths and runs its own links in two sub-columns of three.
-          That trades the one tall column for a block three rows deep, which is
-          within a row of every column beside it: the row has a level bottom
-          edge instead of one spike and four short stacks, and no column is left
-          holding a rectangle of empty page.
+          two column widths and runs its own links in two sub-columns. That
+          trades one very tall column for a block five rows deep, which is
+          shorter than Product and Solutions beside it: the row has a level
+          bottom edge instead of one spike and four short stacks, and no column
+          is left holding a rectangle of empty page.
 
           The steps follow from that. At `lg` the six tracks are Features twice
           plus Product, Solutions, Company and Resources, all on one row. At `sm`

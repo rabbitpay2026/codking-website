@@ -71,9 +71,6 @@ export function MobileNav({
   const close = () => setOpen(false);
 
   const directLinks = items.filter((item) => item.behaviour === "link");
-  const loginAction = utilityActions.find(
-    (action) => action.variant === "link",
-  );
   const installAction = utilityActions.find(
     (action) => action.variant === "primary",
   );
@@ -214,12 +211,6 @@ export function MobileNav({
                 block
                 className="mt-2"
               />
-            ) : null}
-
-            {loginAction ? (
-              <div className="mt-2 text-center">
-                <ActionLink action={loginAction} size="sm" />
-              </div>
             ) : null}
           </div>
         </Dialog.Content>

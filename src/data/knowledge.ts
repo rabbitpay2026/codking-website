@@ -63,7 +63,7 @@ export const productOverview: readonly string[] = [
   "It is built for merchants whose orders are largely cash on delivery, and who are carrying the cost of that in fake orders, returns and working capital tied up in transit. It runs on stores from single-product launches to established brands, across the markets where cash on delivery dominates — COD King works in 100+ countries, including India, the Philippines, the UAE, Saudi Arabia, Pakistan, Bangladesh and Egypt, and local SMS provider integration is available in most of them.",
   "Cash on delivery creates problems a prepaid order does not, and they do not arrive as one line on a statement. A cash order costs the buyer nothing to place, so an order placed carelessly or maliciously looks exactly like one placed seriously. A refused delivery costs freight out, freight back and the packaging in between, on a sale that never happened — and the marketing spend that won the order is gone either way. The courier charges a fee to collect and remit cash. Until that cash is remitted, the money is somewhere on a road rather than in the business. And a buyer who leaves mid-checkout leaves no way to follow up unless something is set up to do it.",
   "COD King is best understood as one system rather than six separate features. The product models an order in stages — before the order is placed, at the order, after the order, and across the store — and each control acts at one of them. Controls are switched on independently, so a merchant can start with the one costing them the most and add the others later, but they are designed to compose: a rule decides whether cash on delivery is offered, a fee decides what it costs, a discount offers a way out of it, verification and a deposit test the orders that still arrive as cash, and recovery chases the checkouts that never became orders at all.",
-  "The product publishes ten controls in total. Six of them have a full feature page of their own and are the ones described in detail in this document: OTP Verification, Partial COD Payment, COD to Prepaid, Abandoned Cart Recovery, COD Show/Hide (also called COD Rules) and COD Fees. The remaining four — Prefilled Address, Order Verification, Messaging Gateways and Analytics & Reports — exist in the product and appear on plans, but do not yet have a dedicated page, so this document names them without linking to one.",
+  "The product publishes ten controls in total, and every one of them has a feature page of its own: OTP Verification, Partial COD Payment, COD to Prepaid, Abandoned Cart Recovery, COD Show/Hide (also called COD Rules), COD Fees, Messaging Gateways (marketed as Local SMS Gateway), Prefilled Address, Order Verification and Analytics & Reports. All ten are described in detail in this document, and each entry carries the canonical URL of its page. The last four publish less than the first six do, and their entries are correspondingly shorter rather than padded.",
 ];
 
 /**
@@ -117,7 +117,7 @@ export const interventionPoints: readonly InterventionPoint[] = [
   {
     id: "reporting",
     title: "Reporting — is any of it working?",
-    body: "COD King reports verified against unverified orders, prepaid share and recovered carts inside the app, and reports RTO, fake-order and prepaid trends in one place, so the effect of the controls is a figure a merchant can check rather than a feeling. Reporting has no feature page of its own yet; it is part of the app.",
+    body: "COD King reports verified against unverified orders, prepaid share and recovered carts inside the app, and reports RTO, fake-order and prepaid trends in one place, so the effect of the controls is a figure a merchant can check rather than a feeling. Nothing is installed to make this work: the figures are a record of what the controls already switched on actually did.",
     controlSlugs: ["analytics", "order-verification"],
   },
 ];
@@ -238,11 +238,12 @@ export const merchantProblems: readonly MerchantProblem[] = [
 /**
  * The per-control knowledge entries, keyed by slug.
  *
- * Partial rather than complete, and deliberately: an entry belongs to a
- * control with a finished, indexable page, and the four controls still served
- * by the generic template have no canonical URL to send an assistant to. A
- * slug gains an entry in the same commit that gives it a page — the rule
- * `dedicatedControlPages` already follows.
+ * Complete today, and still typed as partial: an entry belongs to a control
+ * with a finished, indexable page, and a control can be added to the
+ * repository before its page exists. A slug gains an entry in the same commit
+ * that gives it a page — the rule `dedicatedControlPages` already follows —
+ * and `getControlDossier()` drops a control missing one rather than describing
+ * it from half its sources.
  *
  * Each entry carries only what the feature page does not already hold in
  * structured form. The page's flow steps, capability grid, audience list,
@@ -981,6 +982,387 @@ export const controlKnowledge: Partial<Record<ControlSlug, ControlKnowledge>> =
           slug: "cod-to-prepaid",
           distinction:
             "Both move buyers toward online payment by changing the relative price. The fee adds cost to cash on delivery and produces revenue toward what it costs; the discount reduces the total on prepaid orders and does not.",
+        },
+      ],
+    },
+    /*
+      The four controls that gained a feature page in the change this comment
+      was written for. Their entries are deliberately shorter than the six
+      above, and the reason is the same one that kept them off the Features
+      page for so long: the product publishes far less about them. An entry as
+      long as COD Fees' would be four fifths invention.
+    */
+    "messaging-gateways": {
+      overview: [
+        "Messaging Gateways — marketed as Local SMS Gateway, and shown in the dashboard as Local SMS Operators — is the control that decides which operator COD King’s messages leave on. A merchant selects one of fifteen local SMS and WhatsApp operators from a dropdown, and from then on every one-time password, order notification and abandoned-cart reminder the product sends goes out through it.",
+        "The reason to do this is cost, and the product calls the arrangement the direct-to-operator payment model. SMS charges are paid to the selected operator directly, at that operator’s standard rates, with no markup added by COD King; the COD King subscription pays for platform features and support and nothing else. Integrating a local operator reduces messaging costs by up to 60%. The saving is a ceiling rather than an average.",
+        "Four of the operators carry worldwide coverage — Twilio, Wavecell, Chat API for WhatsApp, and ProWebSms (Smshare). The other eleven are each listed for a single market: Veevotech and Branded SMS in Pakistan, iSmart in Oman, Winsmspro in Tunisia, eSMS in Vietnam, PalPigeon in Turkey, Movider in the Philippines, BoomCast and BulkSmsBdService in Bangladesh, SmsMisr in Egypt and ThaiBulkSMS in Thailand. Local operator integration is available for all regions except India.",
+      ],
+      problemDetail: [
+        "Every control in this product that touches a buyer touches them through a message, and messages are billed per send. A store verifying every cash order pays for a code on every cash order; a store recovering abandoned checkouts pays for each step of the sequence. At volume the messaging bill stops being incidental.",
+        "The default arrangement — buying messages through the app — puts a platform between the merchant and the operator carrying the traffic. Selecting the operator that already serves the market moves the volume onto that operator’s own rates and moves the billing relationship to the party actually carrying it, which is what removes the markup.",
+      ],
+      behaviour: [
+        "The merchant selects an operator from the network operator dropdown in the COD King dashboard. There are no theme edits and no code; the operator is a setting rather than an integration project. Until one is selected the picker sits on its default, Cod King, and messages leave on COD King’s own sending.",
+        "From that point COD King sends through the selected operator, and that operator bills the merchant for the SMS charges directly at their standard rates. Nothing about what the messages say changes — the store name, the wording and the branding on an OTP are configured with the OTP control, not here.",
+      ],
+      configuration: [
+        {
+          id: "operator",
+          option: "Which operator",
+          detail:
+            "One of the fifteen the network operator dropdown lists. The Local SMS Operator Integration page renders that list in full, with each operator’s coverage.",
+        },
+        {
+          id: "billing",
+          option: "Who bills for volume",
+          detail:
+            "The selected operator, directly, at their standard rates. COD King adds no markup and the subscription covers platform features and support only.",
+        },
+        {
+          id: "scope",
+          option: "What sends through it",
+          detail:
+            "Every message COD King sends — one-time passwords, order notifications and abandoned-cart reminders.",
+        },
+        {
+          id: "coverage",
+          option: "Where it is available",
+          detail:
+            "All regions except India. Four operators carry worldwide coverage; the other eleven are each listed for a single market.",
+        },
+        {
+          id: "where",
+          option: "Where it is configured",
+          detail: "The COD King dashboard. No theme edits, no code.",
+        },
+      ],
+      useCases: [
+        "A store verifying every cash-on-delivery order with a one-time password, where the messaging bill scales directly with order volume.",
+        "A merchant selling in one cash-on-delivery market the picker lists an operator for — Pakistan, Oman, Tunisia, Vietnam, Turkey, the Philippines, Bangladesh, Egypt or Thailand.",
+        "A merchant whose customers read WhatsApp rather than SMS, selecting Chat API for worldwide WhatsApp coverage.",
+        "A brand selling into several cash-on-delivery markets, on one of the operators whose coverage is worldwide.",
+      ],
+      audienceReasons: {
+        volume:
+          "The messaging bill scales with order count, so the per-message rate is the whole of the difference at volume.",
+        regional:
+          "Eleven of the fifteen operators are listed for a single market, so a store selling into one of them can select the operator that already serves it.",
+        whatsapp:
+          "Chat API is listed for WhatsApp worldwide, so a store whose customers read WhatsApp is not restricted to SMS.",
+        multi:
+          "Four operators carry worldwide coverage, which is what a brand selling into several markets on one setting needs.",
+      },
+      planFeatureIds: ["local-sms-gateway", "notification-discount"],
+      terminology: [
+        "local SMS gateway for Shopify",
+        "local SMS operators for Shopify",
+        "reduce COD messaging cost",
+        "local SMS operator integration",
+        "direct-to-operator payment model",
+        "cheaper OTP SMS",
+        "pay SMS operator directly",
+        "COD notification cost",
+      ],
+      related: [
+        {
+          slug: "otp-verification",
+          reason:
+            "verification is the control that sends the most messages, so it is the one whose cost this changes most.",
+          whenBoth:
+            "Run both when every cash order is verified: the OTP decides what is sent, the gateway decides what it costs.",
+        },
+        {
+          slug: "abandoned-cart-recovery",
+          reason:
+            "a multi-step reminder sequence is several messages per abandoned checkout, all of which leave on the connected gateway.",
+          whenBoth:
+            "Run both when recovery volume is high enough that the sequence itself is a cost worth pricing.",
+        },
+      ],
+      differences: [
+        {
+          slug: "otp-verification",
+          distinction:
+            "OTP Verification decides what a message says and when it is sent. Local SMS Gateway decides which provider carries it and who bills for it. One is a checkout control; the other is a routing and billing setting.",
+        },
+        {
+          slug: "abandoned-cart-recovery",
+          distinction:
+            "Abandoned Cart Recovery is the sequence of reminders. Local SMS Gateway is the connection those reminders leave on. Changing the gateway does not change the sequence, and changing the sequence does not change the gateway.",
+        },
+      ],
+    },
+    "address-validation": {
+      overview: [
+        "Prefilled Address fills the delivery step of the Shopify checkout from details the merchant already holds. When a customer enters the mobile number the parcel will be delivered to, COD King fetches their information from that number or from the orders they have placed with the store before, and the name and address arrive on the screen already written.",
+        "The purpose is a shorter checkout and a more accurate one. Every field a customer does not type is a field they cannot mistype, and a mistyped address is a parcel that leaves the warehouse and cannot be delivered. Prefilled values are ordinary checkout fields, so a customer who has moved simply types over them.",
+        "It runs on the Shopify checkout the store already has, with no theme edits and no code, and it is available on every plan including the free Standard one.",
+      ],
+      problemDetail: [
+        "The delivery step is the longest part of a cash-on-delivery checkout, and in the markets where cash on delivery dominates it is usually being typed on a phone. Name, address, area, city, PIN code — five or six fields, entered by someone who has entered them before, at the exact point in the purchase where a buyer is most likely to abandon.",
+        "The cost of getting one of them wrong lands later. A wrong digit in a PIN code or a missing line of an address produces an order that looks completely normal in the admin and a parcel that cannot be delivered. The freight out, the freight back and the packaging are all spent before anyone discovers it.",
+      ],
+      behaviour: [
+        "A buyer reaches the checkout and enters their mobile number, which is a field they were going to fill anyway. COD King looks up their details from that number or from their past orders with the store, and populates the remaining delivery fields automatically — there is nothing for the customer to press.",
+        "The customer checks what is on screen, changes anything that has moved, and places the order. Nothing about the store's design changes; the fields are the checkout's own.",
+      ],
+      configuration: [
+        {
+          id: "source",
+          option: "Where the details come from",
+          detail:
+            "The customer's phone number, or the delivery details on the orders they have placed with this store before.",
+        },
+        {
+          id: "trigger",
+          option: "Trigger",
+          detail:
+            "Automatic, once the customer is recognised. There is no per-order selection and nothing for the buyer to press.",
+        },
+        {
+          id: "editable",
+          option: "Whether the customer can change it",
+          detail:
+            "Yes. Prefilled values are ordinary checkout fields and are typed over like any other.",
+        },
+        {
+          id: "where",
+          option: "Where it is configured",
+          detail:
+            "The COD King dashboard. It runs on the existing Shopify checkout with no theme edits and no code.",
+        },
+      ],
+      useCases: [
+        "A mobile-first store where the delivery address is being typed with a thumb and every field costs completion.",
+        "A store with a base of repeat buyers whose details it already holds from previous orders.",
+        "A cash-on-delivery catalogue where the address is not a billing detail but the delivery itself, and getting it wrong means the parcel comes back.",
+        "A store watching buyers give up part-way through a long checkout form.",
+      ],
+      audienceReasons: {
+        mobile:
+          "Typing an address on a phone is where checkout length turns into abandonment, and this removes most of the typing.",
+        repeat:
+          "A returning customer's details are already in the store's own order history, so asking for them again is asking twice.",
+        cod: "On a cash order the address is the delivery, so an error in it is a parcel that travels twice and is never paid for.",
+        dropoff:
+          "The delivery step is the longest part of the form, and shortening it is the most direct thing a merchant can do about drop-off there.",
+      },
+      terminology: [
+        "prefilled address Shopify checkout",
+        "autofill customer address COD",
+        "fetch customer details from phone number",
+        "faster COD checkout",
+        "reduce address errors Shopify",
+        "prefill delivery details returning customer",
+      ],
+      related: [
+        {
+          slug: "otp-verification",
+          reason:
+            "both start from the mobile number the parcel will be delivered to.",
+          whenBoth:
+            "Run both and the number does two jobs at once: it verifies the buyer and it brings back their address.",
+        },
+        {
+          slug: "order-verification",
+          reason:
+            "a prefilled address is one fewer reason for an order to need a second look before dispatch.",
+          whenBoth:
+            "Run both when address quality is the reason orders are being held: fewer errors arrive, and the ones that do are still caught before packing.",
+        },
+      ],
+      differences: [
+        {
+          slug: "otp-verification",
+          distinction:
+            "OTP Verification proves the number belongs to the buyer. Prefilled Address uses the number to fill the form. One is a check on the order; the other is a convenience on the checkout, and neither depends on the other.",
+        },
+      ],
+    },
+    "order-verification": {
+      overview: [
+        "Order Verification is the merchant's own decision about a cash-on-delivery order, taken after the order exists and before the parcel does. Every COD order waits for one of three answers — confirm it, hold it, or cancel it — rather than passing straight through to fulfilment.",
+        "Confirmed orders carry on and are packed. Held orders wait for a second look without being cancelled, which is what a merchant needs for the order they are not sure about rather than the one they have decided against. Cancelled orders stop before they are picked, packed or handed to a courier, which is the cheapest moment there is to stop one.",
+        "It acts on cash orders. An order already paid online is not waiting on a decision. Orders are reviewed from the COD King dashboard, with no theme edits and no code, and the control is on the Enterprise plan.",
+      ],
+      problemDetail: [
+        "The order stage this control belongs to states the problem plainly: orders are placed but unverified orders ship anyway and come back. A cash order that nobody looked at is a cash order that has already been approved by default, and default approval is how a store discovers a bad order at the door rather than in the admin.",
+        "Everything that happens after that point costs money on a sale that never happened — the picking, the packing, the freight out, the freight back. None of it is recoverable, and all of it was decided at the moment nobody looked.",
+      ],
+      behaviour: [
+        "A buyer completes the Shopify checkout and the cash-on-delivery order lands in the store. COD King holds it for a decision rather than passing it to fulfilment.",
+        "The merchant confirms the orders they are happy to send, holds the ones they want to look at again, and cancels the rest. Only confirmed orders move on, so the parcel that gets packed is one somebody decided to send.",
+      ],
+      configuration: [
+        {
+          id: "decisions",
+          option: "The decisions available",
+          detail: "Confirm, hold, or cancel.",
+        },
+        {
+          id: "scope",
+          option: "Which orders it applies to",
+          detail:
+            "Cash-on-delivery orders. An order already paid online is not waiting on anything.",
+        },
+        {
+          id: "timing",
+          option: "When the decision is taken",
+          detail:
+            "Before dispatch — ahead of picking, packing and handing the parcel to a courier.",
+        },
+        {
+          id: "where",
+          option: "Where it is configured",
+          detail:
+            "The COD King dashboard. Orders are reviewed inside the app; nothing is added to the checkout.",
+        },
+      ],
+      useCases: [
+        "A store whose cash orders are large enough that a single refusal is worth a minute of somebody's attention.",
+        "A merchant selling made-to-order or custom products, where a refused parcel cannot go back on the shelf.",
+        "A store working on its RTO rate that wants a gate between the order and the warehouse.",
+        "A team already calling buyers to confirm cash orders, which needs one place to record what the call decided.",
+      ],
+      audienceReasons: {
+        highvalue:
+          "The larger the cash order, the more a single refusal costs and the more a deliberate decision is worth.",
+        custom:
+          "A custom or made-to-order item that comes back cannot be resold, so stopping the order is the only recovery available.",
+        rto: "Return-to-origin is decided before dispatch, and this is the last point at which that decision can still be changed.",
+        manual:
+          "A team already phoning buyers has the information; what it lacks is somewhere for the answer to live that fulfilment will respect.",
+      },
+      terminology: [
+        "confirm COD orders before shipping",
+        "hold COD order Shopify",
+        "cancel cash on delivery order before dispatch",
+        "COD order review queue",
+        "manual COD order confirmation",
+        "stop RTO before dispatch",
+      ],
+      related: [
+        {
+          slug: "otp-verification",
+          reason:
+            "verification removes the orders that were never real; this decides on the ones that were.",
+          whenBoth:
+            "Run both when fake orders and doubtful ones are separate problems: the OTP filters at checkout, and the review decides what is left.",
+        },
+        {
+          slug: "cod-show-hide",
+          reason:
+            "a rule stops an order being cash at all; this stops a cash order that was allowed through.",
+          whenBoth:
+            "Run both when some orders should never have been cash and others simply need looking at — the rule is the policy, the review is the exception.",
+        },
+      ],
+      differences: [
+        {
+          slug: "otp-verification",
+          distinction:
+            "OTP Verification is automatic and happens at the checkout: it proves a real, reachable buyer is behind the order. Order Verification is the merchant's own judgement, taken afterwards, about whether to send it. One tests the buyer; the other decides the order.",
+        },
+        {
+          slug: "cod-show-hide",
+          distinction:
+            "COD Show/Hide decides before the order exists whether cash on delivery may be used at all. Order Verification decides after it exists whether it ships. The first is a rule applied to every checkout; the second is a decision taken per order.",
+        },
+      ],
+    },
+    analytics: {
+      overview: [
+        "Analytics & Reports is where the effect of every other control becomes a figure. COD King reports verified against unverified orders, COD-to-prepaid conversion, recovered carts, and RTO and fake-order trends, together in one place inside the app.",
+        "Nothing is installed to make it work. The figures are a record of what the controls the merchant already switched on actually did, which is why there is no tag to add and no tracking to configure — and why the numbers describe this store's own orders rather than a benchmark.",
+        "It is on the Enterprise plan. The individual reports it gathers are the ones the controls themselves publish: OTP's verified-against-unverified reporting, COD to Prepaid's real-time conversion tracking, and the recovery outcome of the abandoned-cart sequence.",
+      ],
+      problemDetail: [
+        "Cash on delivery is the part of an ecommerce business that is least measured, because the numbers that describe it are not the numbers a storefront reports. Orders that were never real, orders that came back, the share of revenue that arrived already paid — all of it exists in the data somewhere and none of it is anywhere a merchant can look at once.",
+        "Without that, every control is switched on and left on faith. A merchant who cannot see whether verification reduced fake orders cannot tell whether the messaging it costs was worth buying, and a merchant who cannot see prepaid share cannot tell whether a discount or a fee moved it.",
+      ],
+      behaviour: [
+        "The controls run on orders as they are configured to. COD King records what each one did — which orders verified, which moved to prepaid, which abandoned checkouts came back — as it happens.",
+        "Those records are reported inside the app as trends rather than as a list of events, so a merchant can see RTO, fake orders and prepaid share moving together and change the control that is not working.",
+      ],
+      configuration: [
+        {
+          id: "reports",
+          option: "What is reported",
+          detail:
+            "Verified against unverified orders, COD-to-prepaid conversion, recovered carts, and RTO and fake-order trends.",
+        },
+        {
+          id: "setup",
+          option: "Setup required",
+          detail:
+            "None. The figures come from the controls already switched on; there is nothing to tag or install.",
+        },
+        {
+          id: "scope",
+          option: "Whose figures they are",
+          detail:
+            "The merchant's own orders. Nothing in the reporting is a benchmark or an industry average.",
+        },
+        {
+          id: "where",
+          option: "Where it is found",
+          detail: "The COD King dashboard, beside the controls it reports on.",
+        },
+      ],
+      useCases: [
+        "A high-volume store where a percentage point of RTO or prepaid share is a material amount of money.",
+        "A merchant tuning rules and fees, who needs to change one thing and then see whether it worked.",
+        "A team that has to justify what the app is doing to somebody who did not configure it.",
+        "A brand selling into several cash-on-delivery markets, where each market behaves differently and an average across them hides it.",
+      ],
+      audienceReasons: {
+        volume:
+          "At volume the difference between a control working and nearly working is a number large enough to act on.",
+        tuning:
+          "Rules and fees are adjusted by trial, and trial without measurement is guessing.",
+        teams:
+          "A figure taken from the app is defensible in a way that an impression of improvement is not.",
+        multi:
+          "Markets behave differently enough that a single blended number can hide a control failing in one of them.",
+      },
+      terminology: [
+        "COD analytics Shopify",
+        "RTO report",
+        "fake order tracking",
+        "prepaid share report",
+        "verified vs unverified orders report",
+        "abandoned cart recovery reporting",
+        "cash on delivery dashboard",
+      ],
+      related: [
+        {
+          slug: "otp-verification",
+          reason:
+            "the verified-against-unverified report is what turns verification from a setting into a measured effect.",
+          whenBoth:
+            "Run both to answer how many of your cash orders had a real buyer behind them, rather than assuming.",
+        },
+        {
+          slug: "cod-to-prepaid",
+          reason:
+            "prepaid conversion is tracked in real time, and the report is where that tracking is read.",
+          whenBoth:
+            "Run both when the goal is a payment mix rather than a single order: the nudge moves it, the report shows by how much.",
+        },
+        {
+          slug: "abandoned-cart-recovery",
+          reason:
+            "the recovery sequence costs messages, and the recovered-cart figure is what it is measured against.",
+          whenBoth:
+            "Run both to know whether the reminders are returning more than they cost to send.",
+        },
+      ],
+      differences: [
+        {
+          slug: "otp-verification",
+          distinction:
+            "OTP Verification produces the verified-against-unverified figure as a by-product of doing its job. Analytics & Reports is where that figure is shown next to every other control's, so the effects can be read together rather than one at a time.",
         },
       ],
     },

@@ -50,14 +50,19 @@ export function getMobileActions(): readonly UtilityAction[] {
 }
 
 /**
- * The six features the header and the footer offer, in the order the Features
- * page ranks them (§4.1).
+ * The features the header and the footer offer, in the order the Features page
+ * ranks them (§4.1).
  *
  * Read from the same selection the Features page renders, so the menu is a
  * table of contents for the page it opens onto rather than a second, longer
  * list a merchant has to reconcile with it. The label is the page's own
  * headline for the feature and the description is the control's outcome line —
  * neither is authored here.
+ *
+ * That selection listed six of the ten controls and now lists all ten, at the
+ * reviewer's instruction. Nothing in this file changed to make that happen,
+ * which is the point of deriving it: the menu, the drawer and the footer each
+ * gained four entries from one data edit.
  */
 export function getFeatureNavItems(): readonly FeatureNavItem[] {
   return getFeatureIndex().map(({ control, title }) => ({
@@ -69,7 +74,8 @@ export function getFeatureNavItems(): readonly FeatureNavItem[] {
 }
 
 /**
- * The Features menu: the six, plus the closing row (§4.1).
+ * The Features menu: every feature the index ranks, plus the closing row
+ * (§4.1).
  *
  * Built once here and handed to both the desktop menu and the mobile drawer,
  * so the two cannot list different features and the set crosses the
@@ -83,14 +89,14 @@ export function getFeaturesMegaMenu(): FeaturesMegaMenu {
 }
 
 /**
- * The footer's Features column (§4.5) — the six features the product ships.
+ * The footer's Features column (§4.5) — the features the product ships.
  *
  * The same selection the header's mega-menu opens and the Features page ranks,
- * read from one place. That is the whole point of deriving it: the footer used
- * to list all ten controls grouped by order stage, which meant it advertised
- * four pages the site does not have finished, and taught a model the header no
- * longer teaches. Six links, in the Features page's own order, under the
- * Features page's own names.
+ * read from one place. It once listed all ten controls grouped by order stage,
+ * was cut to six because four of those had no finished page, and is back to ten
+ * now that they do — and not one of those three states was a change to this
+ * function. The links are in the Features page's own order, under the Features
+ * page's own names.
  */
 export function getFooterFeatureLinks(): readonly NavItem[] {
   return getFeatureNavItems();
@@ -105,8 +111,8 @@ export function getFooterFeatureLinks(): readonly NavItem[] {
  * that decision belongs here rather than in the markup that draws them.
  *
  * Features is returned separately by `getFooterFeatureLinks()` because the
- * footer gives it two column widths rather than one — six labels at the width
- * of a Company column is six links wrapping to three lines each.
+ * footer gives it two column widths rather than one — these labels at the width
+ * of a Company column would wrap to three lines each.
  *
  * Resources is assembled rather than authored: it is the header's Resources
  * dropdown, unchanged. Authoring it would mean the Docs and Blog URLs existing

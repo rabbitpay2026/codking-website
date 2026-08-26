@@ -49,12 +49,19 @@ export type ControlSlug = (typeof CONTROL_SLUGS)[number];
 /**
  * How much of the Features page one control gets (§6.2).
  *
- * The page is a hierarchy rather than a list: one control leads it with a
- * working demonstration, two carry what they do in full, and three close it
- * as a row. Which control sits in which tier is an editorial decision, so it
- * is declared with the selection rather than inferred in markup.
+ * The page is a hierarchy rather than a list: the controls that publish what
+ * they actually do are given two-across cards with room to say it, and the
+ * ones that publish an outcome line alone close the page as a compact row.
+ * Which control sits in which tier is an editorial decision, so it is declared
+ * with the selection rather than inferred in markup.
+ *
+ * There was a third weight, `lead`, and it gave one control the page's full
+ * measure. The reviewer asked for that block to be a card like the others, so
+ * the weight went with it rather than staying in the union unused — an
+ * emphasis nothing holds is one that gets reused for something it was not
+ * designed to say.
  */
-export type FeatureEmphasis = "lead" | "highlight" | "supporting";
+export type FeatureEmphasis = "highlight" | "supporting";
 
 /**
  * One row of the Features index selection (§6.2).
@@ -87,14 +94,15 @@ export interface Control {
    * The second name this control is published under, where the product uses
    * two.
    *
-   * Only `cod-show-hide` has one. Its `name` is "COD Rules" — what the
+   * Two controls have one. `cod-show-hide` is named "COD Rules" — what the
    * mega-menu, the footer and the app's admin call it — while the product
-   * markets it, and titles its page and its URL, as "COD Show/Hide". A
-   * merchant searches for either, so `llms.txt` names both; every other
-   * surface keeps rendering the canonical `name` alone, and nothing about
-   * which name is canonical changes.
+   * markets it, and titles its page and its URL, as "COD Show/Hide";
+   * `messaging-gateways` is named for the subsystem while the plans and the
+   * FAQ call it "Local SMS Gateway". A merchant searches for either name, so
+   * `llms.txt` gives both; every other surface keeps rendering the canonical
+   * `name` alone, and nothing about which name is canonical changes.
    *
-   * Optional, and absent on the nine controls the product calls one thing.
+   * Optional, and absent on the eight controls the product calls one thing.
    */
   readonly alias?: string;
   readonly stage: OrderStageId;

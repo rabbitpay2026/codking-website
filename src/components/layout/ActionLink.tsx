@@ -10,14 +10,17 @@ import type { ReactNode } from "react";
 /**
  * Maps the architecture's action hierarchy onto button variants.
  *
- *  assigns the weight, not the component: Install Free is the only filled
- * action, Book a Demo is present but quieter, and Log in stays a text link so
- * returning merchants never compete with the install for attention.
+ * The data assigns the weight, not the component: Install Free is the only
+ * filled action, and Book a Demo is present but quieter beside it.
+ *
+ * There were three weights until the reviewer removed Log in. The text-link
+ * weight went with it rather than staying behind unused — a variant nothing
+ * holds is a variant that quietly acquires a second, unrelated meaning the
+ * next time someone needs a quiet action.
  */
 const variantForAction: Record<UtilityActionVariant, ButtonProps["variant"]> = {
   primary: "primary",
   secondary: "secondary",
-  link: "quiet",
 };
 
 interface ActionLinkProps {

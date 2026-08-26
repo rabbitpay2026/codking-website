@@ -343,8 +343,73 @@ export const faqs: readonly FaqItem[] = [
     id: "local-sms",
     question: "How do I set up local SMS providers to save on costs?",
     answer:
-      "COD King supports regional SMS providers including MSG91, Textlocal and Gupshup in India, and Semaphore in the Philippines. Once connected, you pay your provider directly in local currency, cutting costs by up to 70% against international rates.",
+      "COD King’s operator picker lists fifteen local SMS and WhatsApp operators — Twilio, Wavecell, Chat API and ProWebSms worldwide, and eleven more for a single market each, from Veevotech in Pakistan to ThaiBulkSMS in Thailand. Select yours from the network operator dropdown and you pay that operator directly at their standard rates, reducing messaging costs by up to 60%. It is available for all regions except India.",
     tags: ["pricing", "integrations", "control:messaging-gateways"],
+  },
+  /*
+    The four controls that gained a feature page in the same change these were
+    written for: Local SMS Gateway Integration, Prefilled Address, Order
+    Verification and Analytics & Reports.
+
+    Every answer is assembled from what this repository already states — the
+    control's own `outcome` and `benefits` in `src/data/controls.ts`, the plan
+    rows in `src/data/pricing.ts`, the `local-sms` answer directly above, and
+    each page's own copy module — rather than written fresh, so a feature page
+    cannot describe its control differently from the mega-menu or the Features
+    index. Nothing here claims a capability the control record does not carry.
+
+    None of them is tagged `home` or `faq`, so the homepage set and the
+    dedicated FAQ page are unchanged by them; they surface on the control page
+    that asks for them and nowhere else.
+  */
+  {
+    id: "gateway-messages",
+    question: "Which messages go through my own SMS gateway?",
+    answer:
+      "All of them. Once your provider is connected, COD King sends one-time passwords, order notifications and abandoned-cart reminders through it, and your provider bills you for the volume directly.",
+    tags: ["control:messaging-gateways"],
+  },
+  {
+    id: "prefill-source",
+    question: "Where do the prefilled details come from?",
+    answer:
+      "From details you already hold. COD King fetches the customer's information from the phone number the parcel will be delivered to, or from the orders they have placed with you before, and fills the checkout with it.",
+    tags: ["control:address-validation"],
+  },
+  {
+    id: "prefill-edit",
+    question: "Can the customer change a prefilled address?",
+    answer:
+      "Yes. Prefilled values are ordinary fields on your Shopify checkout, so a customer who has moved simply types over them before placing the order.",
+    tags: ["control:address-validation"],
+  },
+  {
+    id: "verification-decisions",
+    question: "What can I do with a COD order before it ships?",
+    answer:
+      "Confirm it, hold it, or cancel it. Confirmed orders carry on to fulfilment, held orders wait for a second look, and cancelled orders stop before they are picked or packed.",
+    tags: ["control:order-verification"],
+  },
+  {
+    id: "verification-vs-otp",
+    question: "Is Order Verification the same as OTP verification?",
+    answer:
+      "No. OTP verification checks at the checkout that a real, reachable buyer is behind the order. Order Verification is your own decision, after the order exists, about whether to send it — confirm, hold or cancel.",
+    tags: ["control:order-verification", "control:otp-verification"],
+  },
+  {
+    id: "analytics-reports",
+    question: "What does COD King report on?",
+    answer:
+      "Verified against unverified orders, COD-to-prepaid conversion, recovered carts, and RTO and fake-order trends — reported together in one place inside the app.",
+    tags: ["control:analytics"],
+  },
+  {
+    id: "analytics-setup",
+    question: "Do I need to install anything for reporting?",
+    answer:
+      "No. The figures are a record of what the controls you already switched on actually did, so there is nothing to tag and nothing extra to install.",
+    tags: ["control:analytics"],
   },
   {
     id: "support",

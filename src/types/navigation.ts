@@ -115,15 +115,15 @@ export interface FeatureNavItem extends NavItem {
 }
 
 /**
- * The Features menu: the six features this site leads with, plus a footer row
+ * The Features menu: the features this site leads with, plus a footer row
  * (§4.1).
  *
  * A flat set rather than a column per order stage. The stage grouping is how
  * the controls are *modelled* (§6.1), but a menu is read in one glance and four
- * headed columns of ten make a merchant classify their problem before they can
- * find it. The six are the same six the Features page shows and the footer
- * lists, in the same order, assembled from the same selection — so no two
- * surfaces on the site can disagree about what the product ships.
+ * headed columns make a merchant classify their problem before they can find
+ * it. The set is the same one the Features page shows and the footer lists, in
+ * the same order, assembled from the same selection — so no two surfaces on the
+ * site can disagree about what the product ships.
  */
 export interface FeaturesMegaMenu {
   readonly items: readonly FeatureNavItem[];
@@ -134,10 +134,13 @@ export interface FeaturesMegaMenu {
  * Visual weight of a utility action (§4.2).
  *
  * `primary` is Install Free and appears on every page including mobile;
- * `secondary` is Book a Demo; `link` is Log in, which must not compete with
- * the install button for attention.
+ * `secondary` is Book a Demo, and on the mobile bar it is WhatsApp.
+ *
+ * There was a third, `link`, and it existed for Log in alone. The reviewer
+ * removed that action, so the weight went with it: a variant with no holder is
+ * one that gets reused for something it was not designed to say.
  */
-export type UtilityActionVariant = "primary" | "secondary" | "link";
+export type UtilityActionVariant = "primary" | "secondary";
 
 /**
  * An action that leaves this site — the App Store, the app itself, the demo

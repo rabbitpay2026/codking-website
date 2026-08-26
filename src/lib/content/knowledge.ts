@@ -9,6 +9,22 @@ import {
   questionRoutes,
 } from "@/data/knowledge";
 import {
+  getAddressAudience,
+  getAddressCheckpoints,
+  getAddressFeatures,
+  getAddressFlowResult,
+  getAddressFlowSteps,
+  getAddressPageCopy,
+} from "@/lib/content/addressValidation";
+import {
+  getAnalyticsAudience,
+  getAnalyticsCheckpoints,
+  getAnalyticsFeatures,
+  getAnalyticsFlowResult,
+  getAnalyticsFlowSteps,
+  getAnalyticsPageCopy,
+} from "@/lib/content/analytics";
+import {
   getCartAudience,
   getCartCheckpoints,
   getCartDemoPoints,
@@ -47,6 +63,22 @@ import {
 import { getControlBySlug, getPublishedControls } from "@/lib/content/controls";
 import { getFaqsByTag } from "@/lib/content/faq";
 import {
+  getGatewayAudience,
+  getGatewayCheckpoints,
+  getGatewayFeatures,
+  getGatewayFlowResult,
+  getGatewayFlowSteps,
+  getGatewayPageCopy,
+} from "@/lib/content/messagingGateways";
+import {
+  getOrderVerificationAudience,
+  getOrderVerificationCheckpoints,
+  getOrderVerificationFeatures,
+  getOrderVerificationFlowResult,
+  getOrderVerificationFlowSteps,
+  getOrderVerificationPageCopy,
+} from "@/lib/content/orderVerification";
+import {
   getOtpCapabilities,
   getOtpCheckpoints,
   getOtpDemoPoints,
@@ -76,9 +108,13 @@ import { getPlanForControl } from "@/lib/content/pricing";
   qualitative statements the pages already make, and those are what survive.
 */
 import { cartOutcomes } from "@/data/abandonedCartRecovery";
+import { addressOutcomes } from "@/data/addressValidation";
+import { analyticsOutcomes } from "@/data/analytics";
 import { codFeesOutcomes } from "@/data/codFees";
 import { codShowHideOutcomes } from "@/data/codShowHide";
 import { prepaidOutcomes } from "@/data/codToPrepaid";
+import { gatewayOutcomes } from "@/data/messagingGateways";
+import { orderVerificationOutcomes } from "@/data/orderVerification";
 import { otpOutcomes } from "@/data/otpVerification";
 import { partialOutcomes } from "@/data/partialCodPayment";
 
@@ -128,11 +164,11 @@ export function getDocumentationScope(): typeof documentationScope {
 /**
  * What each published control's own page says, in one shape.
  *
- * The six feature pages were built one at a time and their content modules
- * name their exports after themselves — `otpFlowSteps`, `partialFeatures`,
+ * The feature pages were built a few at a time and their content modules name
+ * their exports after themselves — `otpFlowSteps`, `partialFeatures`,
  * `codShowHideAudience`. That is right for the pages, which each read one
- * module, and useless for a reader that has to describe all six in the same
- * terms. This table is the only place those six vocabularies are reconciled.
+ * module, and useless for a reader that has to describe all ten in the same
+ * terms. This table is the only place those vocabularies are reconciled.
  *
  * OTP Verification is the one that does not fit the later shape. It was built
  * first, before the "key features + best suited for" pattern settled, so it
@@ -140,6 +176,11 @@ export function getDocumentationScope(): typeof documentationScope {
  * payoff under its flow, names no audience segments, and carries no closing
  * configuration note. Its entry says so by omission rather than by having
  * something invented for it.
+ *
+ * The last four entries carry no `demoPoints`. Those pages have no recording
+ * of their own and do not borrow the site's general one, so there is no
+ * demonstration for this table to describe — an empty list is the record, in
+ * the same way an absent entry in the demo registry is.
  */
 const PAGE_CONTENT: Partial<
   Record<
@@ -222,6 +263,50 @@ const PAGE_CONTENT: Partial<
     capabilities: getCodFeesFeatures(),
     audience: getCodFeesAudience(),
     configurationNote: getCodFeesPageCopy().faqTip,
+  },
+  "messaging-gateways": {
+    summary: getGatewayPageCopy().description,
+    checkpoints: getGatewayCheckpoints(),
+    outcomes: gatewayOutcomes,
+    steps: getGatewayFlowSteps(),
+    result: getGatewayFlowResult(),
+    demoPoints: [],
+    capabilities: getGatewayFeatures(),
+    audience: getGatewayAudience(),
+    configurationNote: getGatewayPageCopy().faqTip,
+  },
+  "address-validation": {
+    summary: getAddressPageCopy().description,
+    checkpoints: getAddressCheckpoints(),
+    outcomes: addressOutcomes,
+    steps: getAddressFlowSteps(),
+    result: getAddressFlowResult(),
+    demoPoints: [],
+    capabilities: getAddressFeatures(),
+    audience: getAddressAudience(),
+    configurationNote: getAddressPageCopy().faqTip,
+  },
+  "order-verification": {
+    summary: getOrderVerificationPageCopy().description,
+    checkpoints: getOrderVerificationCheckpoints(),
+    outcomes: orderVerificationOutcomes,
+    steps: getOrderVerificationFlowSteps(),
+    result: getOrderVerificationFlowResult(),
+    demoPoints: [],
+    capabilities: getOrderVerificationFeatures(),
+    audience: getOrderVerificationAudience(),
+    configurationNote: getOrderVerificationPageCopy().faqTip,
+  },
+  analytics: {
+    summary: getAnalyticsPageCopy().description,
+    checkpoints: getAnalyticsCheckpoints(),
+    outcomes: analyticsOutcomes,
+    steps: getAnalyticsFlowSteps(),
+    result: getAnalyticsFlowResult(),
+    demoPoints: [],
+    capabilities: getAnalyticsFeatures(),
+    audience: getAnalyticsAudience(),
+    configurationNote: getAnalyticsPageCopy().faqTip,
   },
 };
 

@@ -9,12 +9,17 @@ import { cn } from "@/lib/utils";
 import type { FeatureIndexItem } from "@/types";
 
 /**
- * A control below the lead, at one of two weights.
+ * One control, at one of two weights.
  *
  * `highlight` carries what the control actually does — the record's benefit
  * list, trimmed to three so two of these sit beside each other without either
- * becoming a wall. `supporting` carries the outcome line alone, because three
- * across is a row to scan rather than to read.
+ * becoming a wall. `supporting` carries the outcome line alone, because a row
+ * of four is scanned rather than read.
+ *
+ * This is now every card on the page. There used to be a third, wider block
+ * above these carrying the first control across the full measure; the reviewer
+ * asked for that one to be a card too, so it is this component at `highlight`
+ * like its neighbours.
  *
  * One component for both rather than two nearly-identical ones: the difference
  * between the tiers is how much they say, not how they look, and two files

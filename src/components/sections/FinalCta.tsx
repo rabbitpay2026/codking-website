@@ -1,11 +1,12 @@
 import { ShopifyMark } from "@/components/brand/ShopifyMarks";
 import { ActionLink } from "@/components/layout/ActionLink";
-import { CtaOrderProtection } from "@/components/sections/cta/CtaOrderProtection";
 import { CtaVideo } from "@/components/sections/cta/CtaVideo";
+import { WhatsAppAutomationDemo } from "@/components/sections/cta/whatsapp";
 import {
   getProofMetrics,
   getRegisteredDemoVideoId,
   getUtilityActions,
+  getWhatsAppJourneyCopy,
 } from "@/lib/content";
 
 const numberFormat = new Intl.NumberFormat("en");
@@ -29,12 +30,27 @@ const numberFormat = new Intl.NumberFormat("en");
  * its framing are all still here. Restoring a video is one line in
  * `src/data/demoVideos.ts`; nothing in this file has to change.
  *
- * What stands in the slot meanwhile is `CtaOrderProtection`, and it is a
- * product visual rather than a stand-in for the missing video: no poster
+ * What stands in the slot meanwhile is `WhatsAppAutomationDemo`, and it is a
+ * product demonstration rather than a stand-in for the missing video: no poster
  * frame, no play button, nothing that suggests there is something to watch.
  * Without it the column ended at the buttons while the questions beside it ran
  * on for another six rows, which left the half of the panel doing the asking
  * looking like the half that had run out of things to say.
+ *
+ * It runs the customer journey at the reviewer's instruction: a branded
+ * WhatsApp thread with the six automated messages of a cash-on-delivery order
+ * arriving one at a time, in the channel the product actually sends over. It is
+ * the only moving thing in the band, and it carries its own two-line caption —
+ * passed in from here, because the demonstration is a client component and the
+ * content repository is not something to ship to the browser.
+ *
+ * This column is the band's ruler. Its height is the sum of three fixed things
+ * — the heading, the buttons and a demonstration whose conversation viewport is
+ * a constant height no matter which message is in it — so it does not change as
+ * the sequence runs. The questions beside it are elastic and stretch to match,
+ * which is the whole mechanism behind the band's alignment: neither half can
+ * end before the other, and nothing in the section carries a fixed height of
+ * its own.
  *
  * It reads the registry through `getRegisteredDemoVideoId()`, never
  * `getDemoVideoId()`. The difference matters: the latter substitutes the
@@ -49,6 +65,7 @@ export async function FinalCta() {
   const proof = await getProofMetrics();
   const actions = getUtilityActions();
   const videoId = getRegisteredDemoVideoId("home");
+  const journey = getWhatsAppJourneyCopy();
   const installAction = actions.find((action) => action.variant === "primary");
   const demoAction = actions.find((action) => action.variant === "secondary");
 
@@ -60,7 +77,7 @@ export async function FinalCta() {
       to it. Nothing carries its own top margin, which is
       what keeps that spacing from drifting when any one of them changes.
     */
-    <div className="flex flex-col items-start gap-5">
+    <div className="flex h-full flex-col items-start gap-5">
       <h2 className="text-[1.4rem] leading-[1.15] font-semibold tracking-[-0.03em] text-balance text-ink sm:text-[1.55rem]">
         Ready to stop losing money on fake COD orders?
       </h2>
@@ -110,13 +127,20 @@ export async function FinalCta() {
         With a recording registered for the homepage it plays that recording;
         with none — which is where the registry stands — it holds the product
         visual instead. What it will not do is fake the first with the second:
-        `CtaOrderProtection` is an order card, not a poster frame, and there is
-        no play button anywhere on it.
+        `WhatsAppAutomationDemo` is a message thread, not a poster frame, and
+        there is no play button anywhere on it.
 
         This is what closed the empty column. The block above it is three short
         elements, the questions beside it are six, and the difference was a
         third of the panel's height of nothing on the side that is asking for
         the install.
+
+        No `flex-1` on it, and that is deliberate. The demonstration's height
+        is now a constant — a header, a fixed conversation viewport and a status
+        rail — so this column measures the same on every beat of the sequence,
+        and the questions beside it, which stretch to match, therefore measure
+        the same too. Letting the thread stretch would hand the band's height
+        back to whichever message happened to be showing.
       */}
       {videoId ? (
         <CtaVideo
@@ -125,7 +149,11 @@ export async function FinalCta() {
           className="w-full"
         />
       ) : (
-        <CtaOrderProtection className="w-full" />
+        <WhatsAppAutomationDemo
+          title={journey.title}
+          description={journey.description}
+          className="w-full"
+        />
       )}
     </div>
   );

@@ -12,6 +12,8 @@
  * the indirection exists to be swapped, not to add behaviour.
  */
 export * from "./abandonedCartRecovery";
+export * from "./addressValidation";
+export * from "./analytics";
 export * from "./announcement";
 export * from "./announcement";
 export * from "./calculator";
@@ -27,9 +29,12 @@ export * from "./homepage";
 export * from "./integrations";
 export * from "./knowledge";
 export * from "./legal";
+export * from "./messagingGateways";
 export * from "./navigation";
+export * from "./orderVerification";
 export * from "./otpVerification";
 export * from "./partialCodPayment";
 export * from "./pricing";
 export * from "./proof";
 export * from "./resources";
+export * from "./smsOperators";

@@ -2,11 +2,31 @@ import { cn } from "@/lib/utils";
 
 import type { WithClassName } from "@/types";
 
+import type { ReactNode } from "react";
+
 interface SectionHeadingProps extends WithClassName {
   /** Short label above the title, e.g. "The COD loss". */
-  readonly eyebrow?: string;
-  readonly title: string;
-  readonly description?: string;
+  readonly eyebrow?: ReactNode;
+  /**
+   * How the eyebrow is drawn.
+   *
+   * `rule` is the homepage's original treatment — spaced capitals between two
+   * hairlines — and reads as the top line of the heading beneath it. `pill`
+   * sets the same words inside a bordered chip, which reads as a label on the
+   * whole section rather than as part of its title. A section that is a *board*
+   * rather than an argument wants the second: there is no sentence under the
+   * heading for a ruled eyebrow to introduce.
+   */
+  readonly eyebrowAs?: "rule" | "pill";
+  /**
+   * `ReactNode` rather than `string`, so a section can colour part of its own
+   * heading without owning the type scale. Everything about how a heading is
+   * set — size, tracking, balance, the space above and below it — stays this
+   * component's decision; the only thing a caller gains is which words inside
+   * it carry an accent.
+   */
+  readonly title: ReactNode;
+  readonly description?: ReactNode;
   readonly align?: "left" | "center";
   /**
    * Heading level. Sections on a page that already has an `<h1>` use `h2`;
@@ -27,6 +47,7 @@ interface SectionHeadingProps extends WithClassName {
  */
 export function SectionHeading({
   eyebrow,
+  eyebrowAs = "rule",
   title,
   description,
   align = "center",
@@ -34,6 +55,7 @@ export function SectionHeading({
   className,
 }: SectionHeadingProps) {
   const centered = align === "center";
+  const pill = eyebrowAs === "pill";
 
   return (
     <div
@@ -46,13 +68,23 @@ export function SectionHeading({
       {eyebrow ? (
         <p
           className={cn(
-            "inline-flex items-center gap-2 text-xs font-semibold tracking-[0.14em] text-brand uppercase",
+            "inline-flex items-center font-semibold text-brand",
             centered && "justify-center",
+            pill
+              ? /* `self-center` so the chip is only as wide as its words:
+                   without it a centred flex column stretches the paragraph to
+                   the full measure and the border draws a bar across the page. */
+                [
+                  "gap-1.5 rounded-full border border-brand/20 bg-brand/[0.06] px-3.5 py-1.5",
+                  "text-[12px] tracking-[0.02em]",
+                  centered ? "self-center" : "self-start",
+                ]
+              : "gap-2 text-xs tracking-[0.14em] uppercase",
           )}
         >
-          <span aria-hidden className="h-px w-6 bg-brand/40" />
+          {pill ? null : <span aria-hidden className="h-px w-6 bg-brand/40" />}
           {eyebrow}
-          {centered ? (
+          {!pill && centered ? (
             <span aria-hidden className="h-px w-6 bg-brand/40" />
           ) : null}
         </p>

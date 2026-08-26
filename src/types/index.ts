@@ -12,6 +12,7 @@ export * from "./legal";
 export * from "./feature";
 export * from "./media";
 export * from "./navigation";
+export * from "./operator";
 export * from "./pricing";
 export * from "./proof";
 export * from "./resource";

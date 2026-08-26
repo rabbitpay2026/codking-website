@@ -26,11 +26,18 @@ export const metadata: Metadata = createMetadata({
  * reads its own content from the repository, so this page states the order of
  * the argument and holds no copy of its own.
  *
- * The order is fixed by the approved homepage blueprint and is not to be
- * shuffled — establish credibility, show the problem, show the system, prove
- * it, price it, remove doubt, close. Each section asks for slightly more
- * commitment than the one before it, which is why the install is not
- * requested until the merchant has seen what it is worth.
+ * The order follows the approved homepage blueprint — establish credibility,
+ * show the system, name what it costs not to have it, prove it, remove doubt,
+ * close. Each section asks for slightly more commitment than the one before
+ * it, which is why the install is not requested until the merchant has seen
+ * what it is worth.
+ *
+ * The problem section moved at the reviewer's instruction: it used to sit
+ * directly above the capability board and now sits directly below it. The
+ * argument still runs in two halves and they are still adjacent — the board
+ * answers, then the costs say what the answer is worth — which is why the two
+ * are next to each other in either arrangement and why nothing else on the
+ * page had to move to accommodate the swap.
  *
  * The setup flow that used to sit between the capability board and the
  * integrations board is gone at the reviewer's instruction. `HowItWorks` is
@@ -49,8 +56,8 @@ export default function HomePage() {
       <Hero />
       <TrustBar />
       <Metrics />
-      <PainPoints />
       <FeatureShowcase />
+      <PainPoints />
       <Integrations />
       <Worldwide />
       <Results />
