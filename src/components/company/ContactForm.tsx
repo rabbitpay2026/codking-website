@@ -345,22 +345,50 @@ function Field({
         )}
       </label>
 
-      <input
-        id={id}
-        name={field.name}
-        type={field.type}
-        required={field.required}
-        placeholder={field.placeholder}
-        autoComplete={field.autoComplete}
-        aria-invalid={error ? true : undefined}
-        aria-describedby={error ? errorId : undefined}
-        onInput={onInput}
-        className={cn(
-          controlClass,
-          "mt-2",
-          error && "border-red-500/50 hover:border-red-500/60",
-        )}
-      />
+      {/*
+        A `textarea` where the answer is prose and an `input` everywhere else.
+        Both take the same `controlClass`, so the note sits in the column
+        looking like the four fields above it rather than like something bolted
+        on afterwards.
+
+        `resize-y` and nothing else: a box the merchant can make taller is
+        useful, and one they can make wider is one that can be dragged out of
+        the card and past the edge of the page.
+      */}
+      {field.multiline ? (
+        <textarea
+          id={id}
+          name={field.name}
+          rows={4}
+          required={field.required}
+          placeholder={field.placeholder}
+          aria-invalid={error ? true : undefined}
+          aria-describedby={error ? errorId : undefined}
+          onInput={onInput}
+          className={cn(
+            controlClass,
+            "mt-2 min-h-24 resize-y",
+            error && "border-red-500/50 hover:border-red-500/60",
+          )}
+        />
+      ) : (
+        <input
+          id={id}
+          name={field.name}
+          type={field.type}
+          required={field.required}
+          placeholder={field.placeholder}
+          autoComplete={field.autoComplete}
+          aria-invalid={error ? true : undefined}
+          aria-describedby={error ? errorId : undefined}
+          onInput={onInput}
+          className={cn(
+            controlClass,
+            "mt-2",
+            error && "border-red-500/50 hover:border-red-500/60",
+          )}
+        />
+      )}
 
       {/*
         The message sits under the input it belongs to and is wired to it with
@@ -395,7 +423,12 @@ function focusFirstInvalid(
   if (!first) return;
 
   const control = form.elements.namedItem(first);
-  if (control instanceof HTMLInputElement) control.focus();
+  if (
+    control instanceof HTMLInputElement ||
+    control instanceof HTMLTextAreaElement
+  ) {
+    control.focus();
+  }
 }
 
 function omit(

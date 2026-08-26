@@ -167,12 +167,29 @@ function buildSubject(submission: ContactSubmission): string {
   return `Website enquiry: ${label.replace(/[\r\n]+/g, " ").slice(0, 160)}`;
 }
 
+/**
+ * The message, as label-and-value pairs, for both parts to render.
+ *
+ * The note is appended only when there is one. It is not given the "— not
+ * given —" treatment `email` gets, and the difference is deliberate: an absent
+ * reply-to changes how the person triaging the mailbox has to answer, so it is
+ * worth a line saying so, whereas an absent note changes nothing and a row
+ * announcing that the merchant had nothing to add is noise in every message
+ * that does not have one.
+ *
+ * It goes last, after the four things support needs to act, because it is the
+ * only row whose length is unbounded — putting it above `Shop URL` would push
+ * the store domain off the first screen of a long enquiry.
+ */
 function buildRows(submission: ContactSubmission): readonly [string, string][] {
   return [
     ["Name", submission.name],
     ["Phone", submission.phone],
     ["Email", submission.email || "— not given —"],
     ["Shop URL", submission.shopUrl],
+    ...(submission.note
+      ? ([["Note", submission.note]] as [string, string][])
+      : []),
   ];
 }
 

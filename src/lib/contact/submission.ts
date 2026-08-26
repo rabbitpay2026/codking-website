@@ -29,6 +29,15 @@ const MAX_LENGTH = {
   phone: 32,
   email: 254,
   shopUrl: 253,
+  /*
+    The note is the one field whose answer is a paragraph, so its ceiling is
+    the only one measured in paragraphs rather than in what the value can
+    legally be. Two thousand characters is several times longer than anyone
+    writes in a "anything else?" box and still an order of magnitude under the
+    route's body cap, so a merchant who genuinely has a lot to say is answered
+    inline here rather than by a 413 they cannot act on.
+  */
+  note: 2000,
 } as const;
 
 /**
@@ -103,6 +112,7 @@ export function parseContactSubmission(input: unknown): {
     phone: text(source.phone),
     email: text(source.email),
     shopUrl: shopHost(text(source.shopUrl)),
+    note: text(source.note),
   };
 
   const errors: ContactFieldErrors = {};
@@ -140,6 +150,14 @@ export function parseContactSubmission(input: unknown): {
     errors.shopUrl = "That URL is too long.";
   } else if (!SHOP_HOST_SHAPE.test(data.shopUrl)) {
     errors.shopUrl = "Use the store domain, like yourstore.myshopify.com.";
+  }
+
+  // Optional, and there is deliberately no `if (!data.note)` branch: an empty
+  // note is a complete submission, not a mistake to report. The only thing
+  // that can be wrong with a note is that there is too much of it, and nothing
+  // about its content is checked — it is prose, and prose has no shape.
+  if (data.note && data.note.length > MAX_LENGTH.note) {
+    errors.note = "That note is too long — keep it under 2000 characters.";
   }
 
   return { data, errors, isValid: Object.keys(errors).length === 0 };

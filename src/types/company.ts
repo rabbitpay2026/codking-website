@@ -79,6 +79,15 @@ export interface ContactField {
   readonly placeholder: string;
   readonly autoComplete?: string;
   readonly required: boolean;
+  /**
+   * Draws the control as a `textarea` instead of an `input`.
+   *
+   * A flag rather than a `"textarea"` member of `type`, because `type` is
+   * written straight onto the element as its HTML type attribute and a
+   * textarea does not have one. This keeps every existing record untouched and
+   * keeps the two concerns — what kind of value, what kind of box — apart.
+   */
+  readonly multiline?: boolean;
 }
 
 /**
@@ -93,6 +102,15 @@ export interface ContactSubmission {
   readonly phone: string;
   readonly email: string;
   readonly shopUrl: string;
+  /**
+   * Anything else the merchant wanted to say. Optional.
+   *
+   * Typed as `string` rather than `string | undefined`, exactly as `email`
+   * already is: the parser normalises every field to a trimmed string, so
+   * "not given" is the empty string throughout and no caller has to handle two
+   * shapes of absent. The mailer is what decides an empty one is not printed.
+   */
+  readonly note: string;
 }
 
 /** Per-field messages, keyed by field name. Absent keys are valid fields. */
