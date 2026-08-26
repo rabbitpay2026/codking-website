@@ -155,6 +155,10 @@ export const trustedBrands: readonly TrustedBrand[] = [
  * priced, filtered by risk, moved to prepaid, addressed, messaged, measured,
  * recovered.
  *
+ * Every one of the ten now has a feature page of its own, so every card on the
+ * board and every line of the hero checklist is a link to something finished
+ * rather than to the generic template.
+ *
  * Every entry is resolved by slug against the controls repository before it
  * renders — one naming a control that does not exist is dropped rather than
  * shown, so neither surface can promise something the feature pages do not
@@ -205,6 +209,18 @@ export const homepageFeatures: readonly ControlBoardCard[] = [
     blurb: "Fetch customer details from their phone number or past orders.",
   },
   {
+    /*
+      Named for the channel rather than for the subsystem, and the review was
+      explicit about it: this card is "Branded WhatsApp & SMS". A merchant
+      reading a homepage board is being told what reaches their buyer, not
+      which provider account carries it — the routing is the same control's
+      other half, and the Features menu and its own page publish it under the
+      name it is sold as, Local SMS Gateway Integration.
+
+      One card, not two. There is exactly one control behind both halves and a
+      second entry pointing at the same page would be the board advertising the
+      same feature twice.
+    */
     slug: "messaging-gateways",
     label: "Branded WhatsApp & SMS",
     blurb: "Send order updates, OTP and notifications via WhatsApp or SMS.",
@@ -223,6 +239,56 @@ export const homepageFeatures: readonly ControlBoardCard[] = [
 
 /** The board's own heading. */
 export const controlBoardTitle = "Everything you need to control COD";
+
+/**
+ * The two things the board's opening says beyond the heading itself.
+ *
+ * `eyebrow` is the hero's own words for the product — "The Complete COD
+ * Management Platform for Shopify Brands" — reduced to the noun. A label above
+ * a heading has one job, which is to say what class of thing is below it, and
+ * borrowing the phrase the top of the page already used means the section is
+ * introduced in the site's vocabulary rather than in a new one written for it.
+ *
+ * `titleAccent` is the tail of `controlBoardTitle` and nothing else: the board
+ * draws the heading with its last two words in brand, and this is the
+ * substring it splits on. Held as data rather than as a character count in the
+ * markup, so rewording the heading cannot silently colour the wrong half — a
+ * tail that no longer occurs simply renders the heading in one colour.
+ *
+ * There is no description here. The section reads `siteConfig.description`,
+ * which is the product's own one-line definition and is already what the
+ * Features page prints under this same heading; a second sentence written for
+ * the homepage would be the two surfaces introducing one set of controls
+ * differently.
+ */
+export const controlBoardCopy = {
+  eyebrow: "COD Management Platform",
+  titleAccent: "control COD",
+} as const;
+
+/**
+ * The two sentences the closing WhatsApp demonstration says in words.
+ *
+ * The block beside the questions shows six automated messages arriving over a
+ * cash-on-delivery order, and a demonstration that shows without saying leaves
+ * the visitor to work out what they are looking at. These are the caption: what
+ * the merchant gets, and when.
+ *
+ * The sequence itself — the messages, their order and their timing — is the
+ * mock the scene plays rather than copy the page owns, so it lives beside the
+ * component in `components/sections/cta/whatsapp/messages.ts`. Only these two
+ * lines are content, and only these two are read through the repository.
+ *
+ * Neither claims anything new. Branded WhatsApp and SMS updates are what the
+ * homepage board already calls this control, and "every stage of the customer
+ * journey" is a description of the six stages the demonstration draws — each
+ * of which is a capability published on its own feature page.
+ */
+export const whatsappJourneyCopy = {
+  title: "Have complete control over WhatsApp in simple steps",
+  description:
+    "Automate every customer update from verification to fulfilment.",
+} as const;
 
 /**
  * Setup, stated with the effort it actually takes (§5.1 #7).

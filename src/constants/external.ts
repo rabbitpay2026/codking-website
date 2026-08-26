@@ -125,8 +125,6 @@ export const externalLinks = {
    * There is no external booking tool, so this resolves to the contact page.
    */
   bookDemo: externalUrl(process.env.NEXT_PUBLIC_BOOK_DEMO_URL, "/contact"),
-  /** Existing merchants signing in to the app (§4.2). */
-  login: externalUrl(process.env.NEXT_PUBLIC_APP_LOGIN_URL),
   /** Secondary action on the persistent mobile bar (§4.4). */
   whatsapp: externalUrl(process.env.NEXT_PUBLIC_WHATSAPP_URL, WHATSAPP_CONTACT),
 

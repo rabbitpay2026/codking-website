@@ -343,8 +343,171 @@ export const faqs: readonly FaqItem[] = [
     id: "local-sms",
     question: "How do I set up local SMS providers to save on costs?",
     answer:
-      "COD King supports regional SMS providers including MSG91, Textlocal and Gupshup in India, and Semaphore in the Philippines. Once connected, you pay your provider directly in local currency, cutting costs by up to 70% against international rates.",
+      "COD King’s operator picker lists fifteen local SMS and WhatsApp operators — Twilio, Wavecell, Chat API and ProWebSms worldwide, and eleven more for a single market each, from Veevotech in Pakistan to ThaiBulkSMS in Thailand. Select yours from the network operator dropdown and you pay that operator directly at their standard rates, reducing messaging costs by up to 60%. It is available for all regions except India.",
     tags: ["pricing", "integrations", "control:messaging-gateways"],
+  },
+  /*
+    The four controls that gained a feature page in the same change these were
+    written for: Local SMS Gateway Integration, Prefilled Address, Order
+    Verification and Analytics & Reports.
+
+    Every answer is assembled from what this repository already states — the
+    control's own `outcome` and `benefits` in `src/data/controls.ts`, the plan
+    rows in `src/data/pricing.ts`, the `local-sms` answer directly above, and
+    each page's own copy module — rather than written fresh, so a feature page
+    cannot describe its control differently from the mega-menu or the Features
+    index. Nothing here claims a capability the control record does not carry.
+
+    None of them is tagged `home` or `faq`, so the homepage set and the
+    dedicated FAQ page are unchanged by them; they surface on the control page
+    that asks for them and nowhere else.
+  */
+  {
+    id: "gateway-messages",
+    question: "Which messages go through my own SMS gateway?",
+    answer:
+      "All of them. Once your operator is selected, COD King sends one-time passwords, order notifications and abandoned-cart reminders through it, and that operator bills you for the volume directly.",
+    tags: ["control:messaging-gateways"],
+  },
+  {
+    id: "gateway-whatsapp",
+    question: "Can I send on WhatsApp rather than SMS?",
+    answer:
+      "Yes. Chat API is listed in the operator picker for WhatsApp worldwide, so the channel your customers actually read on is a choice rather than a constraint.",
+    tags: ["control:messaging-gateways"],
+  },
+  {
+    id: "gateway-markup",
+    question: "Does COD King add a markup to my messages?",
+    answer:
+      "No. SMS charges are settled with the operator you selected at that operator’s own standard rates. Your COD King subscription pays for platform features and support, and nothing else.",
+    tags: ["control:messaging-gateways"],
+  },
+  {
+    id: "gateway-india",
+    question: "Is local operator integration available everywhere?",
+    answer:
+      "It is available for all regions except India. Elsewhere you select an operator from the picker; in India messaging stays on COD King’s own sending.",
+    tags: ["control:messaging-gateways"],
+  },
+  {
+    id: "prefill-source",
+    question: "Where do the prefilled details come from?",
+    answer:
+      "From details you already hold. COD King fetches the customer's information from the phone number the parcel will be delivered to, or from the orders they have placed with you before, and fills the checkout with it.",
+    tags: ["control:address-validation"],
+  },
+  {
+    id: "prefill-edit",
+    question: "Can the customer change a prefilled address?",
+    answer:
+      "Yes. Prefilled values are ordinary fields on your Shopify checkout, so a customer who has moved simply types over them before placing the order.",
+    tags: ["control:address-validation"],
+  },
+  {
+    id: "prefill-checkout",
+    question: "Does it work with my existing checkout?",
+    answer:
+      "Yes. It fills the Shopify checkout you already have rather than replacing it, so there are no theme edits, no code and nothing to deploy.",
+    tags: ["control:address-validation"],
+  },
+  {
+    id: "prefill-new-customer",
+    question: "What happens for a first-time customer?",
+    answer:
+      "The checkout behaves exactly as it does today. There is nothing on file to fetch for a buyer you have not sold to before, so they type their details once — and the next order is the one that fills itself.",
+    tags: ["control:address-validation"],
+  },
+  {
+    id: "prefill-why",
+    question: "Why does typing less matter on a COD order?",
+    answer:
+      "Because a mistyped address is a parcel that cannot be delivered, and on cash on delivery an undeliverable parcel is freight paid twice with nothing collected. Fewer fields typed by hand is fewer places for that to start.",
+    tags: ["control:address-validation"],
+  },
+  {
+    id: "verification-decisions",
+    question: "What can I do with a COD order before it ships?",
+    answer:
+      "Confirm it, hold it, or cancel it. Confirmed orders carry on to fulfilment, held orders wait for a second look, and cancelled orders stop before they are picked or packed.",
+    tags: ["control:order-verification"],
+  },
+  {
+    id: "verification-vs-otp",
+    question: "Is COD Order Verification the same as OTP verification?",
+    answer:
+      "No. OTP verification checks at the checkout that a real, reachable buyer is behind the order. COD Order Verification is your own decision, after the order exists, about whether to send it — confirm, hold or cancel.",
+    tags: ["control:order-verification", "control:otp-verification"],
+  },
+  {
+    id: "verification-trigger",
+    question: "When is an order held for review?",
+    answer:
+      "As soon as it is placed. A cash-on-delivery order reaches COD King as a queue entry rather than as a decision already made, so it waits for confirm, hold or cancel instead of passing straight through to fulfilment.",
+    tags: ["control:order-verification"],
+  },
+  {
+    id: "verification-hold",
+    question: "What happens to an order I put on hold?",
+    answer:
+      "It stops where it is and waits for a second look. A held order is not cancelled and not confirmed — it stays in the queue until you decide, and nothing is picked or packed for it in the meantime.",
+    tags: ["control:order-verification"],
+  },
+  {
+    id: "verification-cancel",
+    question: "Can I cancel a COD order before dispatch?",
+    answer:
+      "Yes, and that is the point of reviewing before the parcel exists. A cancelled order stops before it is picked, packed or handed to a courier, so there is no freight out and no freight back.",
+    tags: ["control:order-verification"],
+  },
+  {
+    id: "verification-where",
+    question: "Where are orders reviewed?",
+    answer:
+      "In the COD King dashboard, inside the app. There are no theme edits and no code, and nothing is added to your Shopify checkout.",
+    tags: ["control:order-verification"],
+  },
+  {
+    id: "analytics-reports",
+    question: "What does COD King report on?",
+    answer:
+      "Verified against unverified orders, COD-to-prepaid conversion, recovered carts, and RTO and fake-order trends — reported together in one place inside the app.",
+    tags: ["control:analytics"],
+  },
+  {
+    id: "analytics-setup",
+    question: "Do I need to install anything for reporting?",
+    answer:
+      "No. The figures are a record of what the controls you already switched on actually did, so there is nothing to tag and nothing extra to install.",
+    tags: ["control:analytics"],
+  },
+  {
+    id: "analytics-rto",
+    question: "Can I track RTO?",
+    answer:
+      "Yes. RTO and fake-order trends are reported alongside the rest, so the two figures cash on delivery actually costs you are read together rather than reconstructed by hand.",
+    tags: ["control:analytics"],
+  },
+  {
+    id: "analytics-compare",
+    question: "Can I compare COD against prepaid?",
+    answer:
+      "Yes. Prepaid share is one of the reported figures, so you can see what proportion of your orders arrive already paid and which way that is moving.",
+    tags: ["control:analytics"],
+  },
+  {
+    id: "analytics-source",
+    question: "Whose numbers are in the report?",
+    answer:
+      "Yours. Every figure is drawn from your own orders and what the controls did to them — COD King reports what happened in your store rather than an industry benchmark.",
+    tags: ["control:analytics"],
+  },
+  {
+    id: "analytics-controls",
+    question: "Which controls report into it?",
+    answer:
+      "All of them. Verified against unverified orders comes from OTP Verification, prepaid share from COD to Prepaid, recovered carts from Abandoned Cart Recovery, and RTO trends from what shipped and came back.",
+    tags: ["control:analytics"],
   },
   {
     id: "support",

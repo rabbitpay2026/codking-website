@@ -137,7 +137,6 @@ actually needs before it is used.
 | `NEXT_PUBLIC_SITE_URL`        | Optional   | Absolute origin for canonical URLs, Open Graph, `robots.txt`, `sitemap.xml`, `llms.txt` and the Organization schema. Falls back to `https://codking.tech`; set it locally to `http://localhost:3000` |
 | `NEXT_PUBLIC_SHOPIFY_APP_URL` | Production | Install Free — the primary action on every page   |
 | `NEXT_PUBLIC_BOOK_DEMO_URL`   | Production | Book a Demo, the secondary action                 |
-| `NEXT_PUBLIC_APP_LOGIN_URL`   | Production | Log in, for existing merchants                    |
 | `NEXT_PUBLIC_WHATSAPP_URL`    | Production | Secondary action on the mobile bar                |
 
 An unset external URL resolves to `null`, so the UI can render a disabled
@@ -147,8 +146,8 @@ action rather than a link that goes nowhere.
 
 - Every page body is still a placeholder and is `noIndex`; the shell around
   them is real.
-- External destinations are unset, so Install Free, Book a Demo, Log in and
-  WhatsApp render disabled until the env vars are supplied.
+- External destinations are unset, so Install Free, Book a Demo and WhatsApp
+  render disabled until the env vars are supplied.
 - Pricing, FAQ, testimonials and integrations are empty typed collections
   awaiting content.
 - Proof figures (rating, review count) are static and unverified; §11 calls

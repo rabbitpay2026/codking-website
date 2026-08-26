@@ -1,4 +1,5 @@
 import {
+  controlBoardCopy,
   controlBoardTitle,
   homepageFeatures,
   howItWorksSteps,
@@ -8,6 +9,7 @@ import {
   painPointsCopy,
   platformsCopy,
   trustedBrands,
+  whatsappJourneyCopy,
 } from "@/data/homepage";
 import { getControlBySlug } from "@/lib/content/controls";
 import { getProofMetrics } from "@/lib/content/proof";
@@ -125,4 +127,14 @@ export function getHomepageFeatures(): readonly ControlBoardCard[] {
 
 export function getControlBoardTitle(): string {
   return controlBoardTitle;
+}
+
+/** The board's eyebrow, and which tail of its heading carries the colour. */
+export function getControlBoardCopy(): typeof controlBoardCopy {
+  return controlBoardCopy;
+}
+
+/** The caption on the closing WhatsApp demonstration (§5.1 #10). */
+export function getWhatsAppJourneyCopy(): typeof whatsappJourneyCopy {
+  return whatsappJourneyCopy;
 }

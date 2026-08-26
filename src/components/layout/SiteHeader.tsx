@@ -68,12 +68,14 @@ export function SiteHeader({
 
         <div className="flex items-center gap-2">
           <div className="hidden items-center gap-1.5 lg:flex xl:gap-2">
+            {/*
+              Both actions at one size. The row used to hold a third — Log in,
+              drawn a step smaller so it read as a text link beside two buttons
+              — and with it gone the pair are peers, so the size is a constant
+              rather than a decision made per action.
+            */}
             {utilityActions.map((action) => (
-              <ActionLink
-                key={action.label}
-                action={action}
-                size={action.variant === "link" ? "sm" : "md"}
-              />
+              <ActionLink key={action.label} action={action} size="md" />
             ))}
           </div>
 

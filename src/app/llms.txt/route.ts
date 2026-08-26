@@ -36,6 +36,7 @@ import {
   getProductOverview,
   getQuestionRoutes,
   getResolvedCalculatorPathways,
+  getSmsOperators,
 } from "@/lib/content";
 import { formatPlanPrice } from "@/utils/price";
 import { absoluteUrl } from "@/utils/url";
@@ -368,8 +369,23 @@ function ecosystem(): readonly string[] {
     return parts.join(" ");
   });
 
-  const gateways = getIntegrationsByCategory("sms-gateway").map(
-    (integration) => integration.name,
+  /*
+    The operator repository rather than the integrations one.
+
+    `sms-gateway` in `src/data/integrations.ts` is a marketing compatibility
+    list and predates the operator picker. The picker is what the product
+    actually offers for this control, it excludes India, and it states each
+    operator's coverage — so an assistant answering "can I use <operator> with
+    COD King?" has to be reading that list and not the older one.
+  */
+  const operators = getSmsOperators().map((operator) =>
+    [
+      operator.name,
+      operator.alias ? `(${operator.alias})` : "",
+      `(${operator.coverage})`,
+    ]
+      .filter(Boolean)
+      .join(" "),
   );
 
   /*
@@ -395,9 +411,9 @@ function ecosystem(): readonly string[] {
     "",
     heading(3, "Messaging"),
     "",
-    "OTP verification, order notifications, prepaid reminders and cart-recovery messages all reach the buyer over SMS or WhatsApp. Messages are charged per message on every plan; the Professional and Enterprise plans earn a discount on notification rates, and a store can connect its own regional provider and pay that provider directly in local currency instead.",
+    "OTP verification, order notifications, prepaid reminders and cart-recovery messages all reach the buyer over SMS or WhatsApp. Messages are charged per message on every plan; the Professional and Enterprise plans earn a discount on notification rates, and on Enterprise a store can select a local SMS or WhatsApp operator instead and pay that operator directly at their standard rates, with no markup added. That is the direct-to-operator payment model, and it is available for all regions except India.",
     "",
-    `Supported SMS gateways named by the product: ${joinList(gateways)}.`,
+    `Local SMS operators the product offers, with the coverage it states for each: ${joinList(operators)}. Until one is selected the picker sits on its default, Cod King, and messages leave on COD King's own sending — COD King is the default rather than one of the local operators.`,
     "",
     heading(3, "Payment gateways"),
     "",

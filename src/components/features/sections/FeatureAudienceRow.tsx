@@ -1,5 +1,4 @@
 import { SectionShell } from "@/components/sections/SectionShell";
-import { cardHoverClass } from "@/constants/theme";
 import { cn } from "@/lib/utils";
 
 import type { AudienceSegment } from "@/types";
@@ -11,7 +10,7 @@ import type { LucideIcon } from "lucide-react";
  *
  * Written out rather than interpolated, because a class name assembled at
  * runtime is a class name the compiler never sees and therefore never emits.
- * Anything outside this range falls back to five across and wraps, which is
+ * Anything outside this range falls back to four across and wraps, which is
  * ragged rather than broken.
  */
 const columnsClass: Record<number, string> = {
@@ -23,6 +22,8 @@ const columnsClass: Record<number, string> = {
 
 interface FeatureAudienceRowProps {
   readonly title: string;
+  /** One line under the heading. Optional — several pages need none. */
+  readonly description?: string;
   readonly segments: readonly AudienceSegment[];
   readonly iconFor: Record<string, LucideIcon>;
   readonly fallbackIcon: LucideIcon;
@@ -31,80 +32,83 @@ interface FeatureAudienceRowProps {
 /**
  * Who this is for.
  *
- * Categories on one line, deliberately the smallest objects on the page. This
- * section answers one question — *is my kind of store on the list* — and that
- * is a question answered by scanning, not by reading. Cards at the size of the
- * key features above would give a list of nouns the same weight as the
- * capabilities they qualify.
+ * Four blocks, on the page's own surface rather than in a bordered panel each.
+ * The band used to be a row of pills at ten-and-a-half point, which made the
+ * one section on the page that answers "is this for a store like mine" the
+ * hardest thing on it to read — a question that important cannot be set at
+ * caption size.
  *
- * So: a pill each, a small mark, the category, and the examples underneath
- * where an abstract name needs them. A segment may carry no examples at all
- * and that is on purpose — some categories are already concrete, and inventing
- * a parenthetical for them would be padding the row to look symmetrical.
+ * So the pills are gone and what is left is the content: a mark, the category,
+ * and the line that makes it concrete. They are separated by a hairline rather
+ * than boxed, which keeps the row light without making each entry a rectangle
+ * — this page already has enough of those, and a category is not an object the
+ * way a capability is.
  *
- * A short heading and nothing else. Any supporting line here would be
- * explaining a list that explains itself.
+ * A segment may carry no note at all and that is on purpose: some categories
+ * are already concrete, and inventing a parenthetical for them would be
+ * padding the row to look symmetrical.
  */
 export function FeatureAudienceRow({
   title,
+  description,
   segments,
   iconFor,
   fallbackIcon,
 }: FeatureAudienceRowProps) {
   return (
-    <SectionShell
-      size="compact"
-      className="border-t border-ink/[0.07]"
-      containerClassName="py-7 md:py-9"
-    >
-      <h2 className="text-center text-[1.5rem] leading-[1.12] font-semibold tracking-[-0.03em] text-balance text-ink sm:text-[1.75rem]">
-        {title}
-      </h2>
+    <SectionShell size="compact" className="border-t border-ink/[0.07]">
+      <div className="mx-auto max-w-2xl text-center">
+        <h2 className="text-[1.5rem] leading-[1.12] font-semibold tracking-[-0.03em] text-balance text-ink sm:text-[1.875rem]">
+          {title}
+        </h2>
+
+        {description ? (
+          <p className="mt-4 text-[15px] leading-relaxed text-pretty text-ink/55">
+            {description}
+          </p>
+        ) : null}
+      </div>
 
       {/*
-        Two shared tracks — the category, and the examples under it — adopted
-        by every pill with `subgrid`. Several of the names take two lines at
-        this width and some carry no examples at all, so independently sized
-        pills would put the notes at different heights and leave the ones
-        without one looking short. Sharing the tracks makes the row one object.
-        A browser without subgrid falls back to each pill sizing itself, held
-        level by `items-stretch`.
+        The rule sits to the left of every block but the first, and only at the
+        width where the blocks are actually side by side. Stacked, they are
+        separated by space instead — a vertical rule running down a stacked
+        column would be pointing across a gap that is not there.
       */}
       <ul
         className={cn(
-          "mt-7 grid items-stretch gap-3 sm:grid-cols-2",
-          columnsClass[segments.length] ?? "lg:grid-cols-5",
-          "lg:grid-rows-[auto_auto]",
+          "mt-9 grid gap-y-7 sm:grid-cols-2 sm:gap-x-8",
+          columnsClass[segments.length] ?? "lg:grid-cols-4",
         )}
       >
-        {segments.map((segment) => {
+        {segments.map((segment, index) => {
           const Icon = iconFor[segment.id] ?? fallbackIcon;
 
           return (
             <li
               key={segment.id}
               className={cn(
-                "grid h-full grid-cols-[auto_minmax(0,1fr)] items-start gap-x-2.5 rounded-xl border border-ink/[0.08] bg-card px-3.5 py-3",
-                "lg:row-span-2 lg:grid-rows-subgrid lg:gap-y-0",
-                cardHoverClass,
+                index % 2 === 1 && "sm:border-l sm:border-ink/[0.07] sm:pl-8",
+                "lg:border-l lg:border-ink/[0.07] lg:pl-8",
+                index === 0 && "lg:border-l-0 lg:pl-0",
               )}
             >
               <span
                 aria-hidden
-                className="col-start-1 row-start-1 grid size-7 shrink-0 place-items-center self-center rounded-lg border border-border bg-sky-50 text-ink/45 lg:row-span-2"
+                className="grid size-10 place-items-center rounded-xl border border-border bg-sky-50 text-ink/45"
               >
-                <Icon className="size-[15px]" strokeWidth={1.7} />
+                <Icon className="size-[18px]" strokeWidth={1.7} />
               </span>
 
-              <span className="col-start-2 row-start-1 self-center text-[12.5px] leading-tight font-semibold text-balance text-ink">
+              <h3 className="mt-4 text-[14.5px] leading-snug font-semibold tracking-[-0.012em] text-balance text-ink">
                 {segment.title}
-              </span>
+              </h3>
 
-              <span className="col-start-2 row-start-2 self-start text-[10.5px] leading-tight text-pretty text-ink/45">
-                {segment.note ? (
-                  <span className="mt-1 block">{segment.note}</span>
-                ) : null}
-              </span>
+              {segment.note ? (
+                <p className="mt-2 text-[12.5px] leading-relaxed text-pretty text-ink/50">
+                  {segment.note}
+                </p>
+              ) : null}
             </li>
           );
         })}

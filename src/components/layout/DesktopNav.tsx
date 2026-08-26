@@ -107,10 +107,18 @@ export function DesktopNav({ items, megaMenu, resources }: DesktopNavProps) {
                 <NavigationMenu.Content className="absolute top-full left-1/2 mt-2 w-[min(47rem,calc(100vw-2rem))] -translate-x-1/2">
                   <div className={panelClass}>
                     {/*
-                      Two across, three down. The Features page's own order,
-                      read as a menu: each row is one feature with its mark, so
-                      the set is scanned by icon and name rather than read as
-                      four headed lists of ten.
+                      Two across, and as many rows as the repository holds. The
+                      Features page's own order, read as a menu: each row is one
+                      feature with its mark, so the set is scanned by icon and
+                      name rather than read as four headed lists grouped by
+                      order stage.
+
+                      The panel grew from three rows to five when the four
+                      controls that had no page of their own gained one. Nothing
+                      about its width or its type had to change — a row is 2.5rem
+                      of content in a 47rem panel, and five of them clear the
+                      header with room under the viewport at every width the
+                      desktop nav appears at.
                     */}
                     <ul className="grid grid-cols-2 gap-1">
                       {megaMenu.items.map((feature) => (

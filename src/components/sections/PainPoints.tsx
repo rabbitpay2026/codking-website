@@ -21,13 +21,18 @@ const iconFor: Record<string, LucideIcon> = {
 /**
  * The COD loss, made visible (§5.1 #4).
  *
- * This is the section the rest of the page depends on. Everything above it says
- * how big and how trusted the product is; nothing yet has said why a merchant
- * should care. So it answers one question — why am I losing money on cash on
- * delivery — and deliberately does not answer the next one. The controls that
- * fix each of these are the following section's argument, and offering the cure
- * in the same breath as the diagnosis is what makes a page read as a pitch
- * rather than as an explanation.
+ * This is the section the rest of the page depends on. It answers one question
+ * — why am I losing money on cash on delivery — in the merchant's own words,
+ * and it names no cure of its own. The controls that fix each of these are the
+ * board immediately above it, and each card here already carries the slug of
+ * the one that removes it, so the answer is one scroll away rather than
+ * restated here.
+ *
+ * It used to open that pair and now closes it, at the reviewer's instruction.
+ * Nothing about the argument changed: the board and the costs are still
+ * adjacent and still one thing in two halves. What moved with it is the
+ * trimmed padding that closes the seam between them — it was on the bottom
+ * edge and is now on the top.
  *
  * Three named costs in a row and the line they total to underneath. The costs
  * are set as cards because this is the first section with weight to carry: the
@@ -77,21 +82,20 @@ export function PainPoints() {
 
   return (
     /*
-      The bottom padding is cut well below the section scale. The default is
-      tuned for a section that ends on a paragraph; this one ends on a bordered
-      bar, and a bar already reads as a stop — leaving the full gap under it puts
-      a corridor between the problem and the answer to it, which is the one join
-      on this page that should feel immediate.
+      The top padding is cut well below the section scale, so this arrives
+      directly under the board rather than across a corridor from it — the one
+      join on this page that should feel immediate. The full gap stays under the
+      section, where the next subject genuinely begins.
 
       Every breakpoint the section scale defines has to be overridden, not just
       the first two. Tailwind orders utilities by breakpoint, so an unanswered
-      `lg:py-section-lg` lands after `md:pb-8` in the stylesheet and quietly puts
+      `lg:py-section-lg` lands after `md:pt-8` in the stylesheet and quietly puts
       the full padding back on the widest screens — the only ones anyone reviews
       the page on.
     */
     <SectionShell
       backdrop={<PageEnvironment />}
-      containerClassName="pb-7 md:pb-8 lg:pb-9"
+      containerClassName="pt-7 md:pt-8 lg:pt-9"
     >
       {/*
         No eyebrow. The title is already the plainest possible statement of the

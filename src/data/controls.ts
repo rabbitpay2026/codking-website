@@ -40,10 +40,22 @@ export const orderStages: readonly OrderStage[] = [
  * Declared once and read twice: the control record below carries it as its
  * `alias`, and the page's own copy uses it for the headline, the breadcrumb
  * and the document title. One marketing name written in two files is the drift
- * this repository is built to avoid, and this is the only control that has a
- * second name to drift.
+ * this repository is built to avoid.
  */
 export const COD_SHOW_HIDE_ALIAS = "COD Show/Hide";
+
+/**
+ * The name the product markets the `messaging-gateways` control under.
+ *
+ * "Messaging Gateways" is what the subsystem is called; "Local SMS Gateway" is
+ * what the Enterprise plan row in `src/data/pricing.ts` calls it, what the
+ * `local-sms` answer in the FAQ pool describes, and what a merchant actually
+ * searches for. The review asked for it to be visible in the features list
+ * under that name, so — exactly as COD Show/Hide does — the record keeps its
+ * canonical `name` and publishes the marketing one as its `alias`, and the
+ * Features index carries the headline override.
+ */
+export const MESSAGING_GATEWAYS_ALIAS = "Local SMS Gateway";
 
 /**
  * The ten controls (§6.2), in stage order.
@@ -154,14 +166,15 @@ export const controls: readonly Control[] = [
   {
     slug: "messaging-gateways",
     name: "Messaging Gateways",
+    alias: MESSAGING_GATEWAYS_ALIAS,
     stage: "across-the-store",
     outcome:
-      "Connect a local SMS provider and cut messaging costs by up to 70%.",
+      "Connect a local SMS operator and cut messaging costs by up to 60%.",
     featured: false,
     benefits: [
-      "Route messages through regional providers",
-      "Pay your provider directly in local currency",
-      "Reach customers in their preferred language and number format",
+      "Route messages through a local SMS or WhatsApp operator",
+      "Pay the operator directly, with no markup added",
+      "Choose the operator listed for the market you sell in",
     ],
   },
   {
@@ -176,10 +189,16 @@ export const controls: readonly Control[] = [
 /**
  * The controls that have a hand-built feature page of their own (§6.3).
  *
- * The remaining four are still served by the generic `features/[control]`
- * template, which renders the control's record above a line saying the page is
- * implemented in a later phase — so they are `noIndex` and belong in neither
- * the sitemap nor `llms.txt`.
+ * All ten, as of the review that asked for the four missing features to be
+ * added to the menu, to the Features page and to pages of their own. Until
+ * then the last four were served by the generic `features/[control]` template,
+ * which rendered the control's record above a line saying the page was
+ * implemented in a later phase — so they were `noIndex` and belonged in
+ * neither the sitemap nor `llms.txt`.
+ *
+ * The template still exists and still serves nothing. That is deliberate: it
+ * is the safety net for a control added to the repository before its page is
+ * written, and removing it would turn that state from a thin page into a 404.
  *
  * This list lived inside `features/[control]/page.tsx`, where it existed only
  * to keep `generateStaticParams` from prerendering a path another file owns.
@@ -196,4 +215,8 @@ export const dedicatedControlPages: readonly ControlSlug[] = [
   "abandoned-cart-recovery",
   "cod-show-hide",
   "cod-fees",
+  "messaging-gateways",
+  "address-validation",
+  "order-verification",
+  "analytics",
 ];

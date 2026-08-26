@@ -17,9 +17,19 @@ import { getFaqsByTag } from "@/lib/content";
  * The blueprint sets the questions beside the call to action rather than above
  * it, and that is the better arrangement: a merchant working through the FAQ
  * is resolving their final doubt, and the install should be in view the moment
- * it resolves rather than one scroll further on. The split is roughly a third
- * to two thirds, because the questions are a list of one-line prompts and the
- * close carries a video.
+ * it resolves rather than one scroll further on.
+ *
+ * The two halves are near enough to equal — 42/58 — because they now carry
+ * comparable weight: six questions on one side, and on the other a headline,
+ * two buttons and a working demonstration of the product's WhatsApp
+ * automation. The close keeps the wider share only because a message thread
+ * has a legible minimum width and a one-line question does not.
+ *
+ * Both halves are `items-stretch` grid cells and everything inside them is
+ * elastic, so the taller half sets the row and the shorter one grows into it.
+ * That is the entire alignment mechanism: the questions and the close start on
+ * the same line and end on the same line, at every width, with no fixed height
+ * anywhere in the band.
  *
  * Questions are drawn from the single tagged pool by tag, so an answer written
  * once appears on the homepage, the pricing page and the relevant control page
@@ -53,30 +63,59 @@ export function Faq() {
         happen to be adjacent. So the border lives here and nothing inside
         draws another.
 
-        Nothing is stretched and nothing is centred: both halves hang from the
-        same top edge, so the FAQ heading, the CTA heading and the player all
-        start on one line.
+        Nothing is centred: both halves hang from the same top edge, so the FAQ
+        heading and the CTA heading start on one line, and both stretch to the
+        same bottom edge, so the rule between them runs the full height of what
+        it divides.
       */}
-      <div className="grid gap-8 rounded-[20px] border border-border bg-card p-6 lg:grid-cols-[minmax(0,0.34fr)_minmax(0,0.66fr)] lg:gap-10 lg:p-8">
-        <div>
+      <div className="grid items-stretch gap-8 rounded-[20px] border border-border bg-card p-6 lg:grid-cols-[minmax(0,0.42fr)_minmax(0,0.58fr)] lg:gap-10 lg:p-8">
+        {/*
+          The questions, filling their half of the row.
+
+          Every box down this column is a flex parent and the list inside it is
+          `flex-1`, which is what makes the two halves of the band end on the
+          same line without a fixed height anywhere. Six one-line questions are
+          naturally shorter than a headline, two buttons and a message thread,
+          so the list is given the leftover space to absorb.
+
+          The cards absorb it, not the gaps. Spare height poured into `gap`
+          pushes six small cards apart until they read as six unrelated
+          objects drifting down a column; poured into the cards themselves it
+          reads as a roomy list, which is what it is. `flex-1` on the items
+          therefore splits the leftover evenly between them and the question
+          centres in whatever height its card ends up with, so every card is
+          the same size whether its question runs to one line or two.
+        */}
+        <div className="flex min-w-0 flex-col">
           <h2 className="text-[1.4rem] leading-[1.15] font-semibold tracking-[-0.03em] text-balance text-ink sm:text-[1.5rem]">
             Frequently asked questions
           </h2>
 
           {faqs.length > 0 ? (
-            <BlurFade inView className="mt-4">
-              <Accordion type="single" collapsible className="space-y-2">
+            <BlurFade inView className="mt-4 flex flex-1 flex-col">
+              <Accordion
+                type="single"
+                collapsible
+                className="flex flex-1 flex-col gap-2.5"
+              >
                 {faqs.map((faq) => (
                   <AccordionItem
                     key={faq.id}
                     value={faq.id}
                     /* `last:border-b` restores the bottom edge the primitive
-                       drops for a ruled list, which these are not. */
-                    className="rounded-2xl border border-border bg-card px-4 transition-colors duration-200 last:border-b hover:border-ink/12"
+                       drops for a ruled list, which these are not.
+
+                       `[&>h3]:flex-1` grows Radix's header rather than the
+                       item, which is what centres the question inside a card
+                       that is taller than its text. Targeting the header by
+                       element keeps the primitive unchanged — no other
+                       accordion on the site stretches, and none of them
+                       should. */
+                    className="flex flex-1 flex-col rounded-2xl border border-border bg-card px-4 transition-colors duration-200 last:border-b hover:border-ink/12 [&>h3]:flex-1"
                   >
                     <AccordionTrigger
                       indicator={<PlusMinus />}
-                      className="group gap-3 py-2.5 text-[14px] leading-snug font-medium text-ink hover:text-ink"
+                      className="group gap-3 py-3 text-[14px] leading-snug font-medium text-ink hover:text-ink"
                     >
                       {faq.question}
                     </AccordionTrigger>
@@ -95,7 +134,7 @@ export function Faq() {
         <BlurFade
           delay={0.08}
           inView
-          className="lg:border-l lg:border-border lg:pl-8"
+          className="flex min-w-0 flex-col lg:border-l lg:border-border lg:pl-8"
         >
           <FinalCta />
         </BlurFade>

@@ -83,11 +83,16 @@ export const megaMenuFooterLinks: readonly NavItem[] = [
  * Utility area, right side of the header (§4.2).
  *
  * Order is significant: it is also the visual weight order. Install Free is the
- * only primary action, and Log in stays a text link so existing merchants do
- * not compete with it for attention.
+ * only primary action and Book a Demo is the quieter one beside it.
+ *
+ * There is no Log in. It was removed at the reviewer's instruction, and the
+ * removal is here rather than in a stylesheet: the header, the mobile drawer
+ * and every feature page's call to action are all assembled from this list, so
+ * dropping the entry takes the action off all of them at once and leaves no
+ * hidden control for a keyboard or a screen reader to find. Existing merchants
+ * sign in from the Shopify admin, which is where the app runs.
  */
 export const utilityActions: readonly UtilityAction[] = [
-  { label: "Log in", href: externalLinks.login, variant: "link" },
   { label: "Book a Demo", href: externalLinks.bookDemo, variant: "secondary" },
   { label: "Install Free", href: externalLinks.install, variant: "primary" },
 ];

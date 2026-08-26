@@ -14,6 +14,7 @@ import {
 
 import { WhatsappMark } from "@/components/brand/BrandMarks";
 import { StatusBar } from "@/components/sections/hero/PhoneChrome";
+import { demoMerchant } from "@/constants/demoMerchant";
 import { siteConfig } from "@/constants/site";
 import { useStepTimeline } from "@/hooks/use-step-timeline";
 import { cn } from "@/lib/utils";
@@ -23,13 +24,14 @@ const CODE = ["4", "9", "2", "7"] as const;
 /**
  * The store the widget is wearing.
  *
- * Deliberately not COD King. The widget is rendered inside the merchant's own
- * checkout under the merchant's own name, and the header used to say "COD King
- * Verification" — which told a visitor the product brands their buyers'
- * screens for us. It says theirs instead, and the only mention of ours is the
- * "powered by" line at the foot, which is where it belongs.
+ * Deliberately not COD King, and deliberately not a literal either: the
+ * WhatsApp thread that closes the homepage wears the same store, and a visitor
+ * scrolling from the hero to the close is meant to recognise it. The name is
+ * therefore read from `demoMerchant` rather than typed here, so the two scenes
+ * cannot drift apart. See that file for why the merchant's name is on the
+ * buyer's screen and ours is not.
  */
-const BRAND = "Your Awesome Brand";
+const BRAND = demoMerchant.name;
 
 /**
  * The order on the screen.
