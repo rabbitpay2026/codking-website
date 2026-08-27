@@ -45,6 +45,7 @@ export function PricingHero() {
           <ActionLink
             action={{ ...installAction, label: "Start for Free" }}
             size="md"
+            location="pricing-hero"
             className="mt-6"
           />
         ) : null}

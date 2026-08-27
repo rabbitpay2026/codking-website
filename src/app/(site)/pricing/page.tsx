@@ -1,3 +1,4 @@
+import { ViewTracker } from "@/components/analytics/ViewTracker";
 import { PlanFitSection } from "@/components/pricing/PlanFitSection";
 import { PricingBenefits } from "@/components/pricing/PricingBenefits";
 import { PricingComparison } from "@/components/pricing/PricingComparison";
@@ -6,6 +7,7 @@ import { PricingFaqSection } from "@/components/pricing/PricingFaqSection";
 import { PricingHero } from "@/components/pricing/PricingHero";
 import { PricingPlans } from "@/components/pricing/PricingPlans";
 import { routes } from "@/constants/routes";
+import { analyticsEnabled } from "@/lib/analytics";
 import { createMetadata } from "@/lib/metadata";
 
 import type { Metadata } from "next";
@@ -29,10 +31,20 @@ export const metadata: Metadata = createMetadata({
  * buying, what am I still unsure about, and then the install. Cost comes
  * before proof here, unlike the homepage, because someone on this URL has
  * already been persuaded and arrived to see the number.
+ *
+ * `pricing_view` is the one piece of tracking any page on this site declares
+ * for itself, and it is here because there is one pricing page rather than a
+ * family of them — the eleven feature pages share a segment layout that
+ * declares `feature_view` once for all of them. It duplicates nothing: the
+ * page view says a URL was opened, and this says the page a merchant reaches
+ * when they have decided to check the price was one of them, which is the
+ * event a funnel is built on.
  */
 export default function PricingPage() {
   return (
     <>
+      {analyticsEnabled ? <ViewTracker event="pricing_view" /> : null}
+
       <PricingHero />
       <PricingPlans />
       <PlanFitSection />

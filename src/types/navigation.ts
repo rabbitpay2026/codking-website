@@ -143,11 +143,31 @@ export interface FeaturesMegaMenu {
 export type UtilityActionVariant = "primary" | "secondary";
 
 /**
+ * Which action this is, independent of what it currently says or where it
+ * currently points.
+ *
+ * The label is not that identity: Install Free is written five different ways
+ * across the site — "Install Free on Shopify" in the hero, "Install on
+ * Shopify" in a feature band — and every one of those is a call site spreading
+ * the action with a new label. Neither is the destination: Book a Demo falls
+ * back to `/contact` until a booking tool exists, which would make it
+ * indistinguishable from a contact link.
+ *
+ * So the identity is declared. `ActionLink` maps it to the analytics event the
+ * press reports, which is why it is required rather than optional — a new
+ * action that nobody classified would otherwise be a button the site cannot
+ * measure and nobody would notice.
+ */
+export type UtilityActionId =
+  "install" | "book-demo" | "whatsapp" | "demo-store";
+
+/**
  * An action that leaves this site — the App Store, the app itself, the demo
  * booker, or WhatsApp. `href` is `null` when the destination is not yet
  * configured, so the UI can render a disabled state instead of a dead link.
  */
 export interface UtilityAction {
+  readonly id: UtilityActionId;
   readonly label: string;
   readonly href: string | null;
   readonly variant: UtilityActionVariant;

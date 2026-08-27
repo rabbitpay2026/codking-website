@@ -142,6 +142,7 @@ export function PricingPreview() {
                       variant: plan.recommended ? "primary" : "secondary",
                     }}
                     size="md"
+                    location="homepage-pricing-preview"
                     block
                     className="relative mt-8"
                   />

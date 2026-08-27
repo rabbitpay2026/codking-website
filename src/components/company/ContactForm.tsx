@@ -5,6 +5,7 @@ import { useRef, useState } from "react";
 
 import { WhatsAppMark } from "@/components/brand/SocialMarks";
 import { Button } from "@/components/ui/button";
+import { trackEvent } from "@/lib/analytics";
 import { parseContactSubmission } from "@/lib/contact/submission";
 import { cn } from "@/lib/utils";
 
@@ -59,6 +60,13 @@ type Status = "idle" | "sending" | "sent" | "error";
  *
  * A client component because a form with a state transition needs one — and the
  * only one on either company page, which is why it is this narrow.
+ *
+ * Two things are reported: that someone started filling it in, and that a
+ * message was delivered. Neither carries a word the merchant typed. The name,
+ * the email, the store URL and the note go to the support mailbox and nowhere
+ * else — what analytics receives is `form_name: "contact"`, which is enough to
+ * answer "how many people who start this finish it" and cannot answer anything
+ * about who they were.
  */
 export function ContactForm({
   fields,
@@ -75,6 +83,22 @@ export function ContactForm({
    */
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const sending = useRef(false);
+  /**
+   * Whether `contact_form_start` has been reported for this form.
+   *
+   * A ref rather than state, because nothing on screen changes when it flips —
+   * and it is reported once per mount rather than once per field, since the
+   * useful number is how many people began, not how many boxes they visited.
+   */
+  const started = useRef(false);
+
+  /** Fires on the first focus in the form, and never again. */
+  function handleStart() {
+    if (started.current) return;
+    started.current = true;
+
+    trackEvent("contact_form_start", { form_name: "contact" });
+  }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -112,6 +136,12 @@ export function ContactForm({
         .catch(() => null)) as ContactResponse | null;
 
       if (response.ok && result?.ok) {
+        // Reported here and nowhere else in the handler: this is the one
+        // branch where the mailbox actually has the message. A rejected
+        // submission, a 422, a rate limit and an offline browser all fall
+        // through to the panels below, and none of them is a submission.
+        trackEvent("contact_form_submit", { form_name: "contact" });
+
         // Cleared rather than left filled. The message is gone, and a form
         // still holding it invites the merchant to press send again.
         form.reset();
@@ -158,7 +188,18 @@ export function ContactForm({
         {copy.description}
       </p>
 
-      <form onSubmit={handleSubmit} noValidate className="mt-7">
+      {/*
+        `onFocus` on the form rather than a handler on each of the five fields:
+        focus bubbles through React's synthetic events, so one listener sees the
+        first interaction wherever it happens, and `Field` stays a presentational
+        component with nothing to say about analytics.
+      */}
+      <form
+        onSubmit={handleSubmit}
+        onFocus={handleStart}
+        noValidate
+        className="mt-7"
+      >
         {/*
           One field per row, not two.
 
@@ -238,6 +279,9 @@ export function ContactForm({
                   href={whatsappHref}
                   target="_blank"
                   rel="noopener noreferrer"
+                  data-ga-event="whatsapp_click"
+                  data-ga-name="Message us on WhatsApp"
+                  data-ga-location="contact-form-error"
                   className="mt-3 inline-flex items-center gap-1.5 rounded-sm text-[13px] font-medium text-brand transition-colors duration-200 hover:text-brand-deep focus-visible:ring-2 focus-visible:ring-ring/60 focus-visible:outline-none"
                 >
                   <WhatsAppMark className="size-3.5" />

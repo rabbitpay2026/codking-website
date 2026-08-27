@@ -111,6 +111,7 @@ export function PricingPlanCard({ plan, action }: PricingPlanCardProps) {
             variant: plan.recommended ? "primary" : "secondary",
           }}
           size="md"
+          location="pricing-plans"
           block
           className={cn(
             "mt-7 font-semibold",

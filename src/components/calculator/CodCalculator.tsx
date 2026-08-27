@@ -1,7 +1,7 @@
 "use client";
 
 import { RotateCcw } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 
 import { CalculatorForm } from "@/components/calculator/CalculatorForm";
 import { LeakageBreakdown } from "@/components/calculator/LeakageBreakdown";
@@ -9,6 +9,7 @@ import { RecoverySummary } from "@/components/calculator/RecoverySummary";
 import { ResultsPanel } from "@/components/calculator/ResultsPanel";
 import { ScenarioPresets } from "@/components/calculator/ScenarioPresets";
 import { SolutionPathways } from "@/components/calculator/SolutionPathways";
+import { trackEvent } from "@/lib/analytics";
 import {
   computeCalculator,
   parseCalculatorValues,
@@ -25,6 +26,9 @@ import type {
   Control,
   ResolvedCalculatorPathway,
 } from "@/types";
+
+/** The surface these events belong to — the route, not the merchant's data. */
+const CALCULATOR_NAME = "cod-calculator";
 
 interface CodCalculatorProps {
   readonly fields: readonly CalculatorFieldDefinition[];
@@ -52,6 +56,12 @@ interface CodCalculatorProps {
  * is derived from public assumptions and the merchant's own numbers, and a
  * calculator that quietly remembers a store's margins across sessions is
  * carrying data it was never asked to keep.
+ *
+ * The same rule decides what is measured. This tool asks a merchant for their
+ * order volume, their margin and their RTO rate — a description of their
+ * business that nobody has agreed to publish — so not one of those numbers is
+ * reported. What is reported is that the tool was used and how far it was
+ * taken: two events and a count of inputs answered.
  */
 export function CodCalculator({
   fields,
@@ -96,11 +106,56 @@ export function CodCalculator({
     return match?.id ?? null;
   }, [presets, input]);
 
+  /**
+   * What "started" and "finished" mean for a tool with no submit button.
+   *
+   * Started is the first edit, whether it was typed into a field or applied by
+   * a scenario preset — before that the merchant is reading defaults, not using
+   * a calculator. Finished is every one of the five business inputs answered:
+   * that is the point at which the result on the right describes their store
+   * rather than the example it shipped with, and it is as close to a completion
+   * state as a panel that recomputes on every keystroke has.
+   *
+   * Refs rather than state throughout. Not one of these values is rendered, and
+   * putting them in state would re-render the whole calculator on a keystroke
+   * that has already re-rendered it.
+   */
+  const started = useRef(false);
+  const completed = useRef(false);
+  const answered = useRef(new Set<CalculatorFieldId>());
+
+  const businessFieldIds = useMemo(
+    () => grouped.business.map((field) => field.id),
+    [grouped.business],
+  );
+
+  function reportInteraction(ids: readonly CalculatorFieldId[]) {
+    if (!started.current) {
+      started.current = true;
+      trackEvent("cod_calculator_start", { calculator_name: CALCULATOR_NAME });
+    }
+
+    for (const id of ids) answered.current.add(id);
+
+    if (completed.current) return;
+    if (!businessFieldIds.every((id) => answered.current.has(id))) return;
+
+    completed.current = true;
+    // A count of the inputs answered, never the figures answered with.
+    trackEvent("cod_calculator_complete", {
+      calculator_name: CALCULATOR_NAME,
+      fields_completed: answered.current.size,
+    });
+  }
+
   function handleChange(id: CalculatorFieldId, value: string) {
+    reportInteraction([id]);
     setValues((current) => ({ ...current, [id]: value }));
   }
 
   function handlePreset(preset: CalculatorPreset) {
+    reportInteraction(Object.keys(preset.values) as CalculatorFieldId[]);
+
     setValues((current) => {
       const next = { ...current };
 

@@ -42,6 +42,7 @@ export function CtaLiveDemoStore({ className }: WithClassName) {
     contract every other outbound action on the site honours.
   */
   const action: UtilityAction = {
+    id: "demo-store",
     label: "Try Live Demo Store",
     href: externalLinks.demoStore,
     variant: "secondary",
@@ -93,6 +94,7 @@ export function CtaLiveDemoStore({ className }: WithClassName) {
           <ActionLink
             action={action}
             size="md"
+            location="live-demo-store"
             icon={<Store aria-hidden className="size-[17px]" />}
             className={cn(
               "mt-5 gap-2.5 border-brand/25 bg-white px-4 text-[14px] font-semibold text-brand",

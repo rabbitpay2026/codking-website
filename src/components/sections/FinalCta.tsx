@@ -103,6 +103,7 @@ export async function FinalCta() {
           <ActionLink
             action={{ ...installAction, label: "Install Free on Shopify" }}
             size="md"
+            location="homepage-final-cta"
             icon={<ShopifyMark className="size-[19px]" />}
             className="gap-2.5 bg-ink px-4 text-[14px] font-semibold text-white shadow-[0_1px_2px_rgba(11,27,54,0.24),0_10px_28px_-12px_rgba(11,27,54,0.7)] hover:bg-ink/90"
           />
@@ -112,6 +113,7 @@ export async function FinalCta() {
           <ActionLink
             action={demoAction}
             size="md"
+            location="homepage-final-cta"
             className="border-ink/10 px-4 text-[14px] font-semibold text-ink/80 hover:border-ink/16 hover:bg-accent hover:text-ink"
           />
         ) : null}
