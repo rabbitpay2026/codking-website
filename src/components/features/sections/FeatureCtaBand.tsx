@@ -107,6 +107,7 @@ export async function FeatureCtaBand({
                 <ActionLink
                   action={{ ...installAction, label: "Install on Shopify" }}
                   size="lg"
+                  location="feature-cta"
                   icon={<ShopifyMark className="size-[20px]" />}
                   className="h-12 gap-2.5 bg-ink px-6 text-[15px] font-semibold text-white shadow-[0_1px_2px_rgba(11,27,54,0.24),0_10px_28px_-12px_rgba(11,27,54,0.7)] hover:bg-ink/90"
                 />
@@ -116,6 +117,7 @@ export async function FeatureCtaBand({
                 <ActionLink
                   action={demoAction}
                   size="lg"
+                  location="feature-cta"
                   className="h-12 border-ink/10 bg-white/80 px-6 text-[15px] font-semibold text-ink/80 backdrop-blur-md hover:border-ink/16 hover:bg-white hover:text-ink"
                 />
               ) : null}

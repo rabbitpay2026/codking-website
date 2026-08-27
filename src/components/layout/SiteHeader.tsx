@@ -75,7 +75,12 @@ export function SiteHeader({
               rather than a decision made per action.
             */}
             {utilityActions.map((action) => (
-              <ActionLink key={action.label} action={action} size="md" />
+              <ActionLink
+                key={action.label}
+                action={action}
+                size="md"
+                location="header"
+              />
             ))}
           </div>
 

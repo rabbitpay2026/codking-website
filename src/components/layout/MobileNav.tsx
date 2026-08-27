@@ -201,13 +201,19 @@ export function MobileNav({
 
           <div className="shrink-0 border-t border-border bg-background px-4 py-4">
             {installAction ? (
-              <ActionLink action={installAction} size="lg" block />
+              <ActionLink
+                action={installAction}
+                size="lg"
+                block
+                location="mobile-nav"
+              />
             ) : null}
 
             {demoAction ? (
               <ActionLink
                 action={demoAction}
                 size="md"
+                location="mobile-nav"
                 block
                 className="mt-2"
               />

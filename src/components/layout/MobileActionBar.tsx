@@ -29,7 +29,13 @@ export function MobileActionBar({ actions }: MobileActionBarProps) {
     >
       <Container className="flex h-action-bar items-center gap-2">
         {actions.map((action) => (
-          <ActionLink key={action.label} action={action} size="md" block />
+          <ActionLink
+            key={action.label}
+            action={action}
+            size="md"
+            block
+            location="mobile-action-bar"
+          />
         ))}
       </Container>
     </div>

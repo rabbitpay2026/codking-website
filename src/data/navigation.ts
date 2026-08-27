@@ -93,8 +93,18 @@ export const megaMenuFooterLinks: readonly NavItem[] = [
  * sign in from the Shopify admin, which is where the app runs.
  */
 export const utilityActions: readonly UtilityAction[] = [
-  { label: "Book a Demo", href: externalLinks.bookDemo, variant: "secondary" },
-  { label: "Install Free", href: externalLinks.install, variant: "primary" },
+  {
+    id: "book-demo",
+    label: "Book a Demo",
+    href: externalLinks.bookDemo,
+    variant: "secondary",
+  },
+  {
+    id: "install",
+    label: "Install Free",
+    href: externalLinks.install,
+    variant: "primary",
+  },
 ];
 
 /**
@@ -104,6 +114,16 @@ export const utilityActions: readonly UtilityAction[] = [
  * are always visible rather than being reachable through the drawer.
  */
 export const mobileActions: readonly UtilityAction[] = [
-  { label: "Install Free", href: externalLinks.install, variant: "primary" },
-  { label: "WhatsApp", href: externalLinks.whatsapp, variant: "secondary" },
+  {
+    id: "install",
+    label: "Install Free",
+    href: externalLinks.install,
+    variant: "primary",
+  },
+  {
+    id: "whatsapp",
+    label: "WhatsApp",
+    href: externalLinks.whatsapp,
+    variant: "secondary",
+  },
 ];

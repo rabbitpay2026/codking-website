@@ -2,6 +2,7 @@ import "./globals.css";
 
 import { Geist_Mono, Poppins } from "next/font/google";
 
+import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics";
 import { JsonLd } from "@/components/shared/JsonLd";
 import { siteConfig } from "@/constants/site";
 import { buildOrganizationSchema } from "@/lib/seo/organization";
@@ -94,6 +95,14 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         */}
         <JsonLd id="organization-schema" schema={buildOrganizationSchema()} />
         {children}
+
+        {/*
+          Google Analytics, declared once for the whole app for the reason the
+          Organization node above it is: it describes the site rather than a
+          document. It renders nothing at all when no measurement ID is
+          configured, so a local checkout loads no third-party script.
+        */}
+        <GoogleAnalytics />
       </body>
     </html>
   );

@@ -21,6 +21,11 @@ import { cn } from "@/lib/utils";
  *
  * It renders nothing when no number is configured, rather than rendering a card
  * whose button goes nowhere.
+ *
+ * The `data-ga-*` attributes are read by the site's single click listener
+ * (`components/analytics/ClickTracker.tsx`), which is what keeps this a server
+ * component: a card that exists to be one large link should not ship a
+ * component tree to the browser to report that it was pressed.
  */
 export function ContactWhatsAppCard() {
   const whatsapp = getContactWhatsApp();
@@ -32,6 +37,9 @@ export function ContactWhatsAppCard() {
       href={whatsapp.href}
       target="_blank"
       rel="noopener noreferrer"
+      data-ga-event="whatsapp_click"
+      data-ga-name={whatsapp.actionLabel}
+      data-ga-location="contact-whatsapp-card"
       className={cn(
         "group relative block overflow-hidden rounded-2xl border border-border bg-gradient-to-b from-sky-100 to-background p-6",
         "outline-none focus-visible:ring-2 focus-visible:ring-ring/60",

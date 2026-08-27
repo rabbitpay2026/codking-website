@@ -41,6 +41,17 @@ export function SocialLinks({ className }: WithClassName) {
               href={link.href}
               target="_blank"
               rel="noopener noreferrer"
+              /*
+                Only the WhatsApp tile reports. The other three open a profile
+                rather than a conversation, and folding them into the same
+                event would make "merchants who asked us something" and
+                "merchants who looked at our Instagram" the same number.
+              */
+              data-ga-event={
+                link.id === "whatsapp" ? "whatsapp_click" : undefined
+              }
+              data-ga-name={link.label}
+              data-ga-location="social-links"
               className={cn(
                 "group grid size-10 place-items-center rounded-xl border border-ink/[0.08] bg-background text-ink/45",
                 "transition-[color,border-color,background-color,box-shadow] duration-300 ease-emphasized",

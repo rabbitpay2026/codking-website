@@ -48,6 +48,7 @@ export async function AboutHero() {
           <ActionLink
             action={{ ...installAction, label: "Install on Shopify" }}
             size="lg"
+            location="about-hero"
             icon={<ShopifyMark className="size-[22px]" />}
             className="h-12 gap-2.5 bg-ink px-6 text-[15px] font-semibold text-white shadow-[0_1px_2px_rgba(11,27,54,0.24),0_10px_28px_-12px_rgba(11,27,54,0.7)] hover:bg-ink/90 hover:shadow-[0_2px_4px_rgba(11,27,54,0.24),0_14px_32px_-12px_rgba(11,27,54,0.75)]"
           />
@@ -57,6 +58,7 @@ export async function AboutHero() {
           <ActionLink
             action={demoAction}
             size="lg"
+            location="about-hero"
             className="h-12 border-ink/10 bg-white/80 px-6 text-[15px] font-semibold text-ink/80 shadow-[0_1px_2px_rgba(11,27,54,0.05)] backdrop-blur-md hover:border-ink/16 hover:bg-white hover:text-ink"
           />
         ) : null}

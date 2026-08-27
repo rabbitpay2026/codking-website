@@ -22,6 +22,9 @@ export function FaqContactPrompt() {
         Still have a question about your own store?{" "}
         <Link
           href={routes.contact}
+          data-ga-event="contact_click"
+          data-ga-name="Contact us"
+          data-ga-location="faq"
           className="rounded-sm font-medium text-brand transition-colors duration-200 hover:text-brand-deep focus-visible:ring-2 focus-visible:ring-ring/60 focus-visible:outline-none"
         >
           Contact us

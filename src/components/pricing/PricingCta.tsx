@@ -65,6 +65,7 @@ export async function PricingCta() {
             <ActionLink
               action={{ ...installAction, label: "Install on Shopify" }}
               size="md"
+              location="pricing-cta"
               icon={<ShopifyMark className="size-[18px]" />}
               className="gap-2.5 bg-ink px-4 text-[14px] font-semibold text-white hover:bg-ink/90"
             />
@@ -74,6 +75,7 @@ export async function PricingCta() {
             <ActionLink
               action={{ ...demoAction, label: "Book a Demo" }}
               size="md"
+              location="pricing-cta"
               className="px-4 text-[14px] font-semibold text-ink/80 hover:text-ink"
             />
           ) : null}
