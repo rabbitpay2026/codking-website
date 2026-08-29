@@ -1,8 +1,7 @@
 import { CompanyHero } from "@/components/company";
 import {
   ReviewCard,
-  ReviewControls,
-  ReviewPagination,
+  ReviewLoadMore,
   ReviewSummary,
 } from "@/components/customers";
 import { SectionShell } from "@/components/sections/SectionShell";
@@ -15,12 +14,9 @@ import {
 } from "@/lib/content";
 import { createMetadata } from "@/lib/metadata";
 import {
-  countByStar,
-  paginateReviews,
-  parsePage,
-  parseSort,
-  parseStar,
-  selectReviews,
+  parseShown,
+  revealReviews,
+  selectPositiveReviews,
 } from "@/utils/reviews";
 
 import type { Metadata } from "next";
@@ -28,7 +24,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = createMetadata({
   title: "Customer Reviews",
   description:
-    "Shopify merchants share their experience of running COD King on their stores — the reviews they left on the Shopify App Store, in full.",
+    "Shopify merchants share their experience of running COD King on their stores — their four- and five-star reviews from the Shopify App Store, in their own words.",
   path: routes.customers,
 });
 
@@ -40,19 +36,29 @@ export const metadata: Metadata = createMetadata({
  * It holds no copy and no review of its own.
  *
  * ── Why it is a server component with no state ────────────────────────────
- * The filter, the sort and the pager are links. Every view of this page is a
- * real URL, so a filtered list can be linked to and opened in a new tab, and
- * the page ships no JavaScript for any of it. `searchParams` is what makes the
- * route dynamic — it is rendered per request rather than prerendered, which is
- * the correct trade for a page whose whole job is to answer a query.
+ * "Load more reviews" is a link. Every view of this page is a real URL, so a
+ * longer list can be linked to and opened in a new tab, and the page ships no
+ * JavaScript for any of it. `searchParams` is what makes the route dynamic —
+ * it is rendered per request rather than prerendered, which is the correct
+ * trade for a page whose whole job is to answer a query.
+ *
+ * ── What this page shows, and what it does not ────────────────────────────
+ * The four- and five-star reviews, ordered five-star first. This is a
+ * testimonial section rather than a mirror of the listing, and the filtering
+ * is by rating only: no review is rewritten, shortened or improved, and every
+ * name, country, date, rating and word is the marketplace's.
+ *
+ * What keeps that honest is the panel above the list. `ReviewSummary` prints
+ * the marketplace's own average, its total, and its full distribution — the
+ * one- and two-star rows included, at their real counts — and links to the
+ * listing itself. So the page states the shape of the whole record directly
+ * above a list that admits to being the positive part of it, rather than
+ * implying the list is everything there is.
  *
  * ── On the two ratings ────────────────────────────────────────────────────
- * The site presents a 5.0; the Shopify listing reports 4.9 across 958 reviews.
+ * The site presents a 5.0; the Shopify listing reports 4.9 across 962 reviews.
  * `ReviewSummary` shows both and names which is which, and nothing on this
- * page describes the site's figure as the marketplace's. The reviews below are
- * the marketplace's own, critical ones included — this page represents the
- * feed, it does not curate it. The homepage band is where a selection is
- * appropriate; here it would be a page about reviews that hides reviews.
+ * page describes the site's figure as the marketplace's.
  */
 export default async function CustomersPage({
   searchParams,
@@ -64,12 +70,10 @@ export default async function CustomersPage({
     getAppStoreReviews(),
   ]);
 
-  const star = parseStar(params.rating);
-  const sort = parseSort(params.sort);
-  const selected = selectReviews(reviews, { star, sort });
-  const { items, page, pageCount, total } = paginateReviews(
-    selected,
-    parsePage(params.page),
+  const published = selectPositiveReviews(reviews);
+  const { items, shown, total, next } = revealReviews(
+    published,
+    parseShown(params.show),
   );
 
   return (
@@ -82,15 +86,11 @@ export default async function CustomersPage({
             Trusted by <span className="text-brand">Shopify merchants</span>
           </>
         }
-        description="Every review on this page was left by a merchant running COD King on their own store. They are reproduced from the Shopify App Store exactly as written — the critical ones alongside the rest."
+        description="Every review on this page was left by a merchant running COD King on their own store, and is reproduced from the Shopify App Store exactly as written. These are the four- and five-star reviews; the full listing, every rating included, is a click away."
       />
 
       <SectionShell size="compact" className="border-t border-ink/[0.07]">
-        <ReviewSummary
-          proof={proof}
-          listing={listing}
-          captured={reviews.length}
-        />
+        <ReviewSummary proof={proof} listing={listing} published={total} />
       </SectionShell>
 
       <SectionShell
@@ -98,32 +98,26 @@ export default async function CustomersPage({
         className="border-t border-ink/[0.07]"
         ariaLabel="Customer reviews"
       >
-        <ReviewControls
-          star={star}
-          sort={sort}
-          counts={countByStar(reviews)}
-          total={reviews.length}
-        />
-
         {/*
-          An empty result is a real state — a star level with nothing behind it
-          reached by a hand-typed URL — and it renders as a sentence rather
-          than as a blank stretch of page.
+          An empty feed is a real state — the content repository is allowed to
+          return nothing — and it renders as a sentence rather than as a blank
+          stretch of page.
         */}
         {items.length === 0 ? (
-          <p className="mt-10 text-[14px] leading-relaxed text-ink/55">
-            No reviews match this filter.
+          <p className="text-[14px] leading-relaxed text-ink/55">
+            Reviews are on their way. In the meantime they can all be read on
+            the Shopify App Store.
           </p>
         ) : (
           <>
-            <ul className="mt-8 grid items-stretch gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <ul className="grid items-stretch gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {items.map((review, index) => (
                 <li key={review.id} className="h-full">
                   {/*
                     A short stagger down the grid, capped by the row rather
-                    than by the index: twelve cards each waiting a little
-                    longer than the last would leave the final one arriving
-                    half a second after the first.
+                    than by the index: nine cards each waiting a little longer
+                    than the last would leave the final one arriving half a
+                    second after the first.
                   */}
                   <BlurFade delay={0.03 * (index % 3)} className="h-full">
                     <ReviewCard review={review} />
@@ -132,19 +126,14 @@ export default async function CustomersPage({
               ))}
             </ul>
 
-            <p className="mt-8 text-center text-[12.5px] leading-none text-ink/45">
-              Page {page} of {pageCount} · {total}{" "}
-              {total === 1 ? "review" : "reviews"}
-            </p>
+            {next === null ? null : (
+              <ReviewLoadMore next={next} remaining={total - shown} />
+            )}
 
-            <div className="mt-4">
-              <ReviewPagination
-                page={page}
-                pageCount={pageCount}
-                star={star}
-                sort={sort}
-              />
-            </div>
+            <p className="mt-8 text-center text-[12.5px] leading-none text-ink/45">
+              Showing {shown} of {total} {total === 1 ? "review" : "reviews"}{" "}
+              published here
+            </p>
           </>
         )}
       </SectionShell>

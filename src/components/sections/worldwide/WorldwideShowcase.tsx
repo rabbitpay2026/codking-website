@@ -170,7 +170,7 @@ function HighlightRow({
             </span>
           </div>
           <div className="mt-0.5 text-[12px] font-medium whitespace-nowrap text-muted-foreground">
-            Growing every month
+            Growing Every Day
           </div>
         </div>
 

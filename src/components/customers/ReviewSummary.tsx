@@ -13,15 +13,15 @@ const numberFormat = new Intl.NumberFormat("en");
 interface ReviewSummaryProps {
   readonly proof: ProofMetrics;
   readonly listing: AppStoreListing;
-  /** How many reviews this site holds locally, for the capture note. */
-  readonly captured: number;
+  /** How many reviews the page below publishes, for the note under the bars. */
+  readonly published: number;
 }
 
 /**
  * The two ratings, side by side and clearly labelled as different things.
  *
  * This is the whole reason the panel exists. The site presents a 5.0; the
- * Shopify listing reports 4.9 across 958 reviews. Both are true statements
+ * Shopify listing reports 4.9 across 962 reviews. Both are true statements
  * about different things, and a page that shows one without the other is
  * either hiding the marketplace's number or contradicting the site's. So the
  * left panel is the site's presentation, named for what it actually is —
@@ -39,7 +39,7 @@ interface ReviewSummaryProps {
 export function ReviewSummary({
   proof,
   listing,
-  captured,
+  published,
 }: ReviewSummaryProps) {
   const rating = formatRating(proof.rating);
   const listingRating = formatRating(listing.averageRating);
@@ -138,12 +138,19 @@ export function ReviewSummary({
 
           {/*
             What this page actually holds, stated rather than implied. The
-            summary above is the marketplace's total; the list below is a
-            capture of part of it, and a visitor counting cards deserves to
-            know which number they are looking at.
+            summary above is the marketplace's total; the list below is part of
+            it, and a visitor counting cards deserves to know which number they
+            are looking at.
+
+            That the part shown is the four- and five-star reviews is said in
+            the hero, and the bars directly above carry the marketplace's full
+            distribution at its real counts, critical levels included, with the
+            button beside this line leading to all of them. So the omission is
+            on the page in words and in figures; this line only has to reconcile
+            the count.
           */}
           <p className="text-[11.5px] leading-snug text-ink/45">
-            {numberFormat.format(captured)} of them are published on this page.
+            {numberFormat.format(published)} of them are published on this page.
           </p>
         </div>
       </div>

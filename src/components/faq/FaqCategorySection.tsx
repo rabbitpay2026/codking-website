@@ -79,6 +79,19 @@ export function FaqCategorySection({ category }: FaqCategorySectionProps) {
             name={`faq-${category.id}`}
             data-slot="faq-disclosure"
             /*
+              What the search on this page matches against, built here rather
+              than read back off the DOM.
+
+              Question and answer in one pre-lowercased string, so filtering is
+              a substring test on a value the server already produced: no
+              `textContent` walk and no case folding on every keystroke. It is
+              also what keeps the link row under an answer out of the haystack
+              — a reader searching "pricing" should match an answer that
+              discusses it, not every answer that happens to link to the
+              pricing page.
+            */
+            data-faq-text={`${faq.question} ${faq.answer}`.toLowerCase()}
+            /*
               `not-open:hover:` rather than a bare `hover:`, and it is not a
               refinement — it is the difference between this card and the Radix
               one it replaces. Tailwind emits `hover:` *after* `open:`, so a

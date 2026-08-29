@@ -3,18 +3,21 @@ import type { AppStoreListing, AppStoreReview } from "@/types";
 /**
  * COD King's Shopify App Store reviews, captured from the public listing.
  *
+ * GENERATED FILE — do not edit by hand. Run `node scripts/harvest-reviews.mjs`
+ * to refresh it. The words here are the reviewers' own: no trimming, no
+ * tidying, no rewording, and no review that is not on the listing.
+ *
  * ── Source ────────────────────────────────────────────────────────────────
  * https://apps.shopify.com/cash-on-delivery-cod-order-confirmation/reviews
- * Captured 2026-08-24 from the listing's own pages: the first twelve pages in
- * the marketplace's default relevance order, plus every page of the one-, two-,
- * three- and four-star filters.
+ * Captured 2026-08-30 from the listing's own pages: the marketplace's default
+ * relevance order, plus every page of the one-, two-, three- and four-star
+ * filters.
  *
  * ── How it was captured, and why that matters ─────────────────────────────
- * Each review was read out of its own `data-merchant-review` block in the
- * listing's markup — the store from the `title` attribute, the stars from the
- * block's own rating widget, the date, the country and the body from their
- * elements inside that same block. Nothing was transcribed from a rendered
- * page or a summary of one.
+ * Each review is read out of its own `data-merchant-review` block — the store
+ * from the `title` attribute, the stars from the block's own rating widget,
+ * the date, the country and the body from their elements inside that same
+ * block. Nothing is transcribed from a rendered page or a summary of one.
  *
  * That is not a detail. An earlier pass built this content by reading the
  * page top to bottom, and the store names shifted by a row against the review
@@ -24,37 +27,44 @@ import type { AppStoreListing, AppStoreReview } from "@/types";
  * the marketplace put them in the same block.
  *
  * ── What this is and is not ───────────────────────────────────────────────
- * It is a capture, not the whole listing. The marketplace holds 958 reviews;
- * 133 are here. What it does hold in full is every review below five stars —
- * all 15 of them, matching the listing's own distribution exactly — so nothing
- * critical has been filtered out to flatter the page. `appStoreListing` below
- * carries the marketplace's real totals, and the customers page reports its
- * summary from those rather than from the size of this array.
+ * It is a capture, not the whole listing. The marketplace holds
+ * 962 reviews; 171 are here. What it does hold in full is every
+ * review below five stars — all 15 of them, matching the listing's own
+ * distribution exactly — so nothing critical has been filtered out of the
+ * capture to flatter the site.
  *
- * Nothing in this file may be written by hand. A review that is not on the
- * listing does not belong here, and the words are the reviewer's: no trimming,
- * no tidying, no rewording. To refresh or extend the capture, re-run the
- * harvester against more pages — reviews are keyed by the marketplace's own
- * id, so a second run adds what is new and leaves what is already here.
+ * The capture is complete; the `/customers` page is not the capture. That page
+ * publishes the 159 four- and five-star reviews held here and links to the
+ * listing for the rest, and `ReviewSummary` reports the marketplace's full
+ * distribution — critical reviews included — from `appStoreListing` below.
  * ──────────────────────────────────────────────────────────────────────────
  */
 
 /** What the marketplace reports about the listing as a whole. */
 export const appStoreListing: AppStoreListing = {
   url: "https://apps.shopify.com/cash-on-delivery-cod-order-confirmation/reviews?sort_by=relevance",
-  totalReviews: 958,
+  totalReviews: 962,
   averageRating: 4.9,
-  distribution: { 5: 943, 4: 3, 3: 1, 2: 1, 1: 10 },
-  capturedOn: "2026-08-24",
+  distribution: { 5: 947, 4: 3, 3: 1, 2: 1, 1: 10 },
+  capturedOn: "2026-08-30",
 };
 
 /**
  * The captured reviews, in the order the listing presents them.
  *
- * Order is the marketplace's relevance ranking, kept rather than re-sorted, so
- * the page's default view is the one a merchant would see on the source.
+ * Order is the marketplace's relevance ranking, kept rather than re-sorted.
+ * `selectPositiveReviews` in `utils/reviews` is what orders the customers
+ * page, and it uses this order as its tie-break.
  */
 export const appStoreReviews: readonly AppStoreReview[] = [
+  {
+    id: "2335217",
+    author: "EKAM",
+    rating: 5,
+    publishedAt: "2026-08-25",
+    country: "India",
+    body: "Outstanding experience with COD King! A special shout-out to Pankaj and Gaurav, who did a wonderful job assisting us throughout the entire process. From initial onboarding and custom rule setup to final integration and testing, their support was seamless, prompt, and highly professional.\nThey took the time to understand our store requirements, helped configurepayment features flawlessly, and ensured everything ran smoothly without any friction at checkout. It is rare to see such dedicated customer service. Highly recommended for any Shopify merchant looking to reduce RTO and optimize COD operations!",
+  },
   {
     id: "2319301",
     author: "Qshi Studio",
@@ -114,6 +124,22 @@ export const appStoreReviews: readonly AppStoreReview[] = [
     body: "Using COD King has really helped improve my Shopify COD order management. The OTP verification and COD control features are very useful for reducing fake and risky orders. Easy to set up, smooth integration, and good overall experience. Highly recommended for Indian dropshipping and COD stores.",
   },
   {
+    id: "2337934",
+    author: "RDK Enterprise",
+    rating: 5,
+    publishedAt: "2026-08-27",
+    country: "India",
+    body: "Good service, Very helpful Gaurav thank you",
+  },
+  {
+    id: "2337198",
+    author: "REBA AURA",
+    rating: 5,
+    publishedAt: "2026-08-26",
+    country: "India",
+    body: "Excellent support from Mr. Suraj Sir. He is very active and his knowledge is awesome. Very supportive person.",
+  },
+  {
     id: "2327980",
     author: "VELOX",
     rating: 5,
@@ -168,14 +194,6 @@ export const appStoreReviews: readonly AppStoreReview[] = [
     publishedAt: "2026-07-25",
     country: "India",
     body: "It is a good platform to use. Best part is 24x7 support.\nWhenever i have query someone from the team is always available and fix the issue in few hours or mins.\nGood one.",
-  },
-  {
-    id: "2180997",
-    author: "Lavanda Styles",
-    rating: 5,
-    publishedAt: "2026-04-28",
-    country: "India",
-    body: "The team at Cod King, and Keerthana in particular, provides incredibly fast responses. When we encountered a payment gateway error regarding partial payments, I raised a support ticket; Keerthana responded within seconds and resolved the issue in under two minutes. They have a fantastic support team and a great product!",
   },
   {
     id: "2296881",
@@ -249,6 +267,14 @@ export const appStoreReviews: readonly AppStoreReview[] = [
     publishedAt: "2026-07-03",
     country: "India",
     body: "for now im totally happpy by their service whenever i am getting any small problem their team is solving it very fastly the (especially suraj has been helping us with everything through meetings and im really happy the way he solves my problem) thank you Suraj",
+  },
+  {
+    id: "2180997",
+    author: "Lavanda Styles",
+    rating: 5,
+    publishedAt: "2026-04-28",
+    country: "India",
+    body: "The team at Cod King, and Keerthana in particular, provides incredibly fast responses. When we encountered a payment gateway error regarding partial payments, I raised a support ticket; Keerthana responded within seconds and resolved the issue in under two minutes. They have a fantastic support team and a great product!",
   },
   {
     id: "2267743",
@@ -347,20 +373,20 @@ export const appStoreReviews: readonly AppStoreReview[] = [
     body: "Partial Payment feature works great, and the customer support is very helpful. Special thanks to Pankaj for the support.",
   },
   {
-    id: "2156791",
-    author: "Eastman Cast & Forge Ltd",
-    rating: 5,
-    publishedAt: "2026-04-10",
-    country: "India",
-    body: "I recently started offering partial payment on my store, eastmanshop.com, and COD King has been a great solution for managing this feature smoothly. The setup process was simple, and it works reliably for handling partial COD orders.\nWhat I really appreciate is their customer support — the team is very responsive, helpful, and quick to resolve any issues. Overall, a great tool for anyone looking to enable partial payments and improve order conversions.",
-  },
-  {
     id: "2215621",
     author: "BLUMUN",
     rating: 5,
     publishedAt: "2026-05-23",
     country: "India",
     body: "App works great and the team is very responsive.",
+  },
+  {
+    id: "2156791",
+    author: "Eastman Cast & Forge Ltd",
+    rating: 5,
+    publishedAt: "2026-04-10",
+    country: "India",
+    body: "I recently started offering partial payment on my store, eastmanshop.com, and COD King has been a great solution for managing this feature smoothly. The setup process was simple, and it works reliably for handling partial COD orders.\nWhat I really appreciate is their customer support — the team is very responsive, helpful, and quick to resolve any issues. Overall, a great tool for anyone looking to enable partial payments and improve order conversions.",
   },
   {
     id: "2209612",
@@ -403,6 +429,22 @@ export const appStoreReviews: readonly AppStoreReview[] = [
     body: "i am using cod king, the support is really superb & fast",
   },
   {
+    id: "2337209",
+    author: "CHRONIC",
+    rating: 5,
+    publishedAt: "2026-08-26",
+    country: "Philippines",
+    body: "the best app to reduce RTO!!",
+  },
+  {
+    id: "2336817",
+    author: "MyMuse India - An Intimate Wellness Brand For All People",
+    rating: 5,
+    publishedAt: "2026-08-26",
+    country: "India",
+    body: "Quick support and great app to have.",
+  },
+  {
     id: "2326653",
     author: "ERD-INFOTECH",
     rating: 5,
@@ -417,14 +459,6 @@ export const appStoreReviews: readonly AppStoreReview[] = [
     publishedAt: "2026-08-14",
     country: "India",
     body: "Super all my things added here.",
-  },
-  {
-    id: "2320851",
-    author: "OXYJAIN",
-    rating: 5,
-    publishedAt: "2026-08-13",
-    country: "India",
-    body: "very helful team",
   },
   {
     id: "2319266",
@@ -547,14 +581,6 @@ export const appStoreReviews: readonly AppStoreReview[] = [
     body: "good support",
   },
   {
-    id: "2175495",
-    author: "Beejkart",
-    rating: 5,
-    publishedAt: "2026-04-23",
-    country: "India",
-    body: "Excellent support, they are available within a minute to resolve your issues. Awesome!!",
-  },
-  {
     id: "2258690",
     author: "Sanaar Gold",
     rating: 5,
@@ -587,14 +613,6 @@ export const appStoreReviews: readonly AppStoreReview[] = [
     body: "All good experience with this app and service is fantastic.",
   },
   {
-    id: "2171326",
-    author: "newkasa",
-    rating: 5,
-    publishedAt: "2026-04-21",
-    country: "India",
-    body: "I like their support and the way they have mentioned everything",
-  },
-  {
     id: "2252842",
     author: "Kamashh",
     rating: 5,
@@ -603,12 +621,12 @@ export const appStoreReviews: readonly AppStoreReview[] = [
     body: "fab support!",
   },
   {
-    id: "2170488",
-    author: "Parichay",
+    id: "2175495",
+    author: "Beejkart",
     rating: 5,
-    publishedAt: "2026-04-20",
+    publishedAt: "2026-04-23",
     country: "India",
-    body: "Great experience, especially with their prompt service. We were having trouble with the partial payment setup and they came in and saved the day! Thank you so much. Special shout out to Pankaj!",
+    body: "Excellent support, they are available within a minute to resolve your issues. Awesome!!",
   },
   {
     id: "2246962",
@@ -635,6 +653,14 @@ export const appStoreReviews: readonly AppStoreReview[] = [
     body: "very helpful and to the point",
   },
   {
+    id: "2171326",
+    author: "newkasa",
+    rating: 5,
+    publishedAt: "2026-04-21",
+    country: "India",
+    body: "I like their support and the way they have mentioned everything",
+  },
+  {
     id: "2239932",
     author: "Pro Plus | The Smarter Choice",
     rating: 5,
@@ -643,28 +669,12 @@ export const appStoreReviews: readonly AppStoreReview[] = [
     body: "good services",
   },
   {
-    id: "2167434",
-    author: "Fluffyties",
+    id: "2170488",
+    author: "Parichay",
     rating: 5,
-    publishedAt: "2026-04-17",
+    publishedAt: "2026-04-20",
     country: "India",
-    body: "I absolutely love COD King support. Really prompt and helping. Pankaj was really helping",
-  },
-  {
-    id: "2166427",
-    author: "1950 Origins",
-    rating: 5,
-    publishedAt: "2026-04-17",
-    country: "India",
-    body: "Spoke to Keerthana and she helped me out with my queries. It was a great experience, thanks a lot.",
-  },
-  {
-    id: "2166652",
-    author: "Sanct",
-    rating: 5,
-    publishedAt: "2026-04-17",
-    country: "India",
-    body: "Keerthana was extremely helpful in guiding me through both solving the issue and selecting the right COD King plan. She explained everything clearly, was patient with all queries, and ensured we picked the most suitable option for our needs. Her support made the entire process smooth and hassle-free. Really appreciate the prompt and effective assistance!",
+    body: "Great experience, especially with their prompt service. We were having trouble with the partial payment setup and they came in and saved the day! Thank you so much. Special shout out to Pankaj!",
   },
   {
     id: "2232314",
@@ -689,6 +699,30 @@ export const appStoreReviews: readonly AppStoreReview[] = [
     publishedAt: "2026-06-03",
     country: "India",
     body: "great service",
+  },
+  {
+    id: "2167434",
+    author: "Fluffyties",
+    rating: 5,
+    publishedAt: "2026-04-17",
+    country: "India",
+    body: "I absolutely love COD King support. Really prompt and helping. Pankaj was really helping",
+  },
+  {
+    id: "2166427",
+    author: "1950 Origins",
+    rating: 5,
+    publishedAt: "2026-04-17",
+    country: "India",
+    body: "Spoke to Keerthana and she helped me out with my queries. It was a great experience, thanks a lot.",
+  },
+  {
+    id: "2166652",
+    author: "Sanct",
+    rating: 5,
+    publishedAt: "2026-04-17",
+    country: "India",
+    body: "Keerthana was extremely helpful in guiding me through both solving the issue and selecting the right COD King plan. She explained everything clearly, was patient with all queries, and ensured we picked the most suitable option for our needs. Her support made the entire process smooth and hassle-free. Really appreciate the prompt and effective assistance!",
   },
   {
     id: "2227415",
@@ -716,30 +750,6 @@ export const appStoreReviews: readonly AppStoreReview[] = [
     body: "App is very useful",
   },
   {
-    id: "2156833",
-    author: "MOTO STORE INDIA",
-    rating: 5,
-    publishedAt: "2026-04-10",
-    country: "India",
-    body: "Thanks for the immedietly support and pankaj ji did it seamlessly for me",
-  },
-  {
-    id: "2155626",
-    author: "Pagal Awwrat",
-    rating: 5,
-    publishedAt: "2026-04-09",
-    country: "India",
-    body: "Very responsive and supportive. My queries were solved quickly.",
-  },
-  {
-    id: "2155792",
-    author: "Evan Mart",
-    rating: 5,
-    publishedAt: "2026-04-09",
-    country: "India",
-    body: "The customer support is very good. And the features of the app are also very helpful to increase the number of  prepaid orders and reduce RTO.",
-  },
-  {
     id: "2214218",
     author: "PranaviLuxe™",
     rating: 5,
@@ -756,12 +766,36 @@ export const appStoreReviews: readonly AppStoreReview[] = [
     body: "The App is better in terms of price and installation Unlike other apps like Gokwick, this one was easy to install. Cost effective because of its free plan and service is good because I immediately got a call from the company (Pankaj) who helped me understand the features and plan details which no other app has done till date. I have not got any order so far after the installation today but am sure it will make customer checkouts much faster and keep orders only from serious buyers. Thanks.",
   },
   {
+    id: "2156833",
+    author: "MOTO STORE INDIA",
+    rating: 5,
+    publishedAt: "2026-04-10",
+    country: "India",
+    body: "Thanks for the immedietly support and pankaj ji did it seamlessly for me",
+  },
+  {
     id: "2211261",
     author: "TEMPEHCHENNAI",
     rating: 5,
     publishedAt: "2026-05-20",
     country: "India",
     body: "amazing follow up and service",
+  },
+  {
+    id: "2155626",
+    author: "Pagal Awwrat",
+    rating: 5,
+    publishedAt: "2026-04-09",
+    country: "India",
+    body: "Very responsive and supportive. My queries were solved quickly.",
+  },
+  {
+    id: "2155792",
+    author: "Evan Mart",
+    rating: 5,
+    publishedAt: "2026-04-09",
+    country: "India",
+    body: "The customer support is very good. And the features of the app are also very helpful to increase the number of  prepaid orders and reduce RTO.",
   },
   {
     id: "2209534",
@@ -788,6 +822,14 @@ export const appStoreReviews: readonly AppStoreReview[] = [
     body: "Wonderful app helps me to increase Prepaid orders and partial payment for COD for safe COD orders. staffs are very helpful when ever we had issues to be fixed.",
   },
   {
+    id: "2199785",
+    author: "Perfume Shop Parfum.AE",
+    rating: 5,
+    publishedAt: "2026-05-12",
+    country: "United Arab Emirates",
+    body: "Great support and solves our issue",
+  },
+  {
     id: "2148921",
     author: "SheJewel",
     rating: 5,
@@ -812,20 +854,20 @@ export const appStoreReviews: readonly AppStoreReview[] = [
     body: "A wonderful experience with the support team, especially Gaurav. He went above and beyond to assist me. His communication was clear, and he demonstrated true expertise in his field.",
   },
   {
-    id: "2199785",
-    author: "Perfume Shop Parfum.AE",
-    rating: 5,
-    publishedAt: "2026-05-12",
-    country: "United Arab Emirates",
-    body: "Great support and solves our issue",
-  },
-  {
     id: "2198401",
     author: "Building Hardware Online",
     rating: 5,
     publishedAt: "2026-05-11",
     country: "Pakistan",
     body: "Amazing customer support, very helpful",
+  },
+  {
+    id: "2194992",
+    author: "Dreamyurban",
+    rating: 5,
+    publishedAt: "2026-05-08",
+    country: "India",
+    body: "nice",
   },
   {
     id: "2192179",
@@ -901,20 +943,20 @@ export const appStoreReviews: readonly AppStoreReview[] = [
     body: "I had a very positive experience with the customer support team. They were responsive, polite, and genuinely helpful throughout the entire process.",
   },
   {
-    id: "2131750",
-    author: "GRAVEYARD GOODS",
-    rating: 5,
-    publishedAt: "2026-03-23",
-    country: "India",
-    body: "Gaurav was excellent to work with great communication throughout and extremely helpful in setting up the app smoothly. Everything was handled professionally and efficiently. Highly recommend!",
-  },
-  {
     id: "2076904",
     author: "AIO SPORTS",
     rating: 5,
     publishedAt: "2026-02-11",
     country: "India",
     body: "“Spoke with Gaurav regarding COD King setup. Very helpful and clear guidance.\nCOD King app is working great for partial payments and reducing fake COD orders. Highly recommended.”",
+  },
+  {
+    id: "2131750",
+    author: "GRAVEYARD GOODS",
+    rating: 5,
+    publishedAt: "2026-03-23",
+    country: "India",
+    body: "Gaurav was excellent to work with great communication throughout and extremely helpful in setting up the app smoothly. Everything was handled professionally and efficiently. Highly recommend!",
   },
   {
     id: "2075170",
@@ -981,6 +1023,14 @@ export const appStoreReviews: readonly AppStoreReview[] = [
     body: "Team is really helpful, better than other market players. It was quick and easy to get support from them. Thank you !",
   },
   {
+    id: "2065368",
+    author: "FOGSTORES",
+    rating: 5,
+    publishedAt: "2026-02-03",
+    country: "India",
+    body: "Request for clarification was attended promptly and was very useful. COD hide option is listed by numbers, we need the product photos and name. We request the development team to add this feature to show only the product photos and name instead of product ids.",
+  },
+  {
     id: "2173051",
     author: "MahaVed Healthcare Pvt.Ltd",
     rating: 5,
@@ -1013,12 +1063,60 @@ export const appStoreReviews: readonly AppStoreReview[] = [
     body: "This is an good app, particularly for Partially COD payments; it helps attract high-quality customers.",
   },
   {
-    id: "2065368",
-    author: "FOGSTORES",
+    id: "2169773",
+    author: "Evopods",
     rating: 5,
-    publishedAt: "2026-02-03",
+    publishedAt: "2026-04-20",
     country: "India",
-    body: "Request for clarification was attended promptly and was very useful. COD hide option is listed by numbers, we need the product photos and name. We request the development team to add this feature to show only the product photos and name instead of product ids.",
+    body: "best service and support",
+  },
+  {
+    id: "2122452",
+    author: "EASYDEAL INDIA",
+    rating: 5,
+    publishedAt: "2026-03-16",
+    country: "India",
+    body: "KEETHANA HELP ME TO SETUP EVERYTHING I ASKED FOR...THANKS FOR THE SUPPORT",
+  },
+  {
+    id: "2053557",
+    author: "Tohfa Shofa",
+    rating: 5,
+    publishedAt: "2026-01-26",
+    country: "India",
+    body: "COD King support has been excellent. Pankaj and the team were constantly helpful throughout. The app didn’t perform as expected initially, but they patiently guided me and helped set everything up properly. Really appreciate the support. Highly recommend COD King to anyone who wants COD enabled on their store.",
+  },
+  {
+    id: "2120467",
+    author: "LARA CLOTHING",
+    rating: 5,
+    publishedAt: "2026-03-14",
+    country: "India",
+    body: "Instant support with my language. thank you cod king",
+  },
+  {
+    id: "2120577",
+    author: "Ivory Stitch",
+    rating: 5,
+    publishedAt: "2026-03-14",
+    country: "India",
+    body: "BEST CUSTOMER SERVICE , & THANK YOU SO MUCH GAURAV ..",
+  },
+  {
+    id: "2120258",
+    author: "Live Vaastu.in",
+    rating: 5,
+    publishedAt: "2026-03-14",
+    country: "India",
+    body: "CS is very good. I got a solution in quick real time. I am using the pro version.",
+  },
+  {
+    id: "2120309",
+    author: "Royal Pet Mart | Trusted Pet Shop in Gwalior",
+    rating: 5,
+    publishedAt: "2026-03-14",
+    country: "India",
+    body: "keerthi provides good support in our shopify website for integrations with COD King thanks",
   },
   {
     id: "2047911",
@@ -1027,6 +1125,214 @@ export const appStoreReviews: readonly AppStoreReview[] = [
     publishedAt: "2026-01-22",
     country: "India",
     body: "A basic software issue took 36 hours to respond; the response I got was it's not resolvable.\nAmandeep seemed not remorseful and extremely lackadaisical in his attitude.\nThe issue was as basic as OTP not being triggered.",
+  },
+  {
+    id: "2117712",
+    author: "Twinkklzz",
+    rating: 5,
+    publishedAt: "2026-03-12",
+    country: "India",
+    body: "I had a great support experience with Keerthana. She patiently addressed all my queries, clarified every doubt, and guided me step by step in configuring COD King. Her clear explanations and prompt assistance made the whole process very easy. I truly appreciate her dedication and excellent support.",
+  },
+  {
+    id: "2163160",
+    author: "Paws & Patterns",
+    rating: 5,
+    publishedAt: "2026-04-15",
+    country: "India",
+    body: "awesome integration experience and support team",
+  },
+  {
+    id: "2043424",
+    author: "Manikandansilks",
+    rating: 5,
+    publishedAt: "2026-01-19",
+    country: "India",
+    body: "Outstanding Support & Quick Service\nThe Cod King app support team is truly excellent. I contacted them and received a response within 15 minutes.\nThey clearly explained all the required features and set up everything perfectly without any delay.\nThe support team is very professional, friendly, and responsive.\nThis app is extremely useful for business owners who need reliable COD and courier solutions and partial payments etc.....\nHighly recommended! Great service and fast support.",
+  },
+  {
+    id: "2042929",
+    author: "Suratikart",
+    rating: 5,
+    publishedAt: "2026-01-19",
+    country: "India",
+    body: "COD King is an excellent solution for managing Cash-on-Delivery orders on Shopify. The interface is simple and easy to use, which makes setup quick even for beginners. One of the biggest advantages is that it does not require any business documents, so individual store owners can start using it immediately without extra verification steps.\nThe pricing is affordable compared to other COD-focused apps, and the value you get is impressive. Their support team is highly responsive; whenever an issue comes up, the staff provides instant solutions and clear guidance. Overall, COD King is a reliable, efficient, and hassle-free app for anyone running a COD-based Shopify store.",
+  },
+  {
+    id: "2114414",
+    author: "Riders India",
+    rating: 5,
+    publishedAt: "2026-03-10",
+    country: "India",
+    body: "Good support by Gaurav sir, thank you",
+  },
+  {
+    id: "2034359",
+    author: "Teeinfinity",
+    rating: 5,
+    publishedAt: "2026-01-12",
+    country: "India",
+    body: "The best app for partial COD orders. Had a small configuration issue with my theme, but the support team fixed it immediately. It saves me so much time and prevents fake orders. Must-have for dropshippers!",
+  },
+  {
+    id: "2158364",
+    author: "DRESOUL WHOLESALE",
+    rating: 5,
+    publishedAt: "2026-04-11",
+    country: "India",
+    body: "Very supportive team",
+  },
+  {
+    id: "2158134",
+    author: "Elyment Fashion",
+    rating: 5,
+    publishedAt: "2026-04-11",
+    country: "India",
+    body: "keerthana was the best support executive i have ever communicated regardless of any brand , she instantly conncected on a meet call and helped us setup .",
+  },
+  {
+    id: "2023673",
+    author: "SKEEZY Co",
+    rating: 5,
+    publishedAt: "2026-01-04",
+    country: "Philippines",
+    body: "I've been using COD King for a while now and been a great addition to my store. Not only have I seen our RTS (return to seller) rate drop considerably, but they also offer lots of different features and some of them I'm looking to implement too. Their support team is responsive and knowledgeable (thanks Pankaj). Definitely a must have app if you're based in countries where COD is the primary consumer payment option.",
+  },
+  {
+    id: "2155190",
+    author: "CHEXE LIFESTYLE PRIVATE LIMITED",
+    rating: 5,
+    publishedAt: "2026-04-09",
+    country: "India",
+    body: "excellent",
+  },
+  {
+    id: "2155300",
+    author: "HAIRNHOOK",
+    rating: 5,
+    publishedAt: "2026-04-09",
+    country: "India",
+    body: "good service",
+  },
+  {
+    id: "2107442",
+    author: "Balaji Home Essentials",
+    rating: 5,
+    publishedAt: "2026-03-05",
+    country: "India",
+    body: "Very good coordination, Gaurav sir is very helpful and fixed my proble. Thank You",
+  },
+  {
+    id: "2107184",
+    author: "SNEHA B",
+    rating: 5,
+    publishedAt: "2026-03-05",
+    country: "India",
+    body: "Great app. Great customer support. Pankaj was extremely helpful and guided me well. The app is amazing.",
+  },
+  {
+    id: "2107169",
+    author: "Magiclothing",
+    rating: 5,
+    publishedAt: "2026-03-05",
+    country: "India",
+    body: "Thank you so much for your support. Your explanation was very clear and really helpful. I truly appreciate the time you took to guide me through the setup.",
+  },
+  {
+    id: "2154181",
+    author: "Fusion Prime",
+    rating: 5,
+    publishedAt: "2026-04-08",
+    country: "India",
+    body: "awesome experience..",
+  },
+  {
+    id: "2104589",
+    author: "sljewels.in",
+    rating: 5,
+    publishedAt: "2026-03-03",
+    country: "India",
+    body: "Gaurav helped to setup partial payment and explained also nicely. Thank you!",
+  },
+  {
+    id: "2002437",
+    author: "missastute.com",
+    rating: 5,
+    publishedAt: "2025-12-15",
+    country: "India",
+    body: "This app covers almost everything related to COD orders. Verifying Orders, COD fee, Partial Payment, etc. The cherry on top is customer support. They try to resolve the issues, if any come, asap.",
+  },
+  {
+    id: "2150921",
+    author: "Khyati Rughani",
+    rating: 5,
+    publishedAt: "2026-04-06",
+    country: "India",
+    body: "Excellent solution . Excellent Service\nThank you Gaurav for excellent support",
+  },
+  {
+    id: "2148960",
+    author: "Trmcalidad India",
+    rating: 5,
+    publishedAt: "2026-04-04",
+    country: "India",
+    body: "i am very happy",
+  },
+  {
+    id: "2149004",
+    author: "Cartreno",
+    rating: 5,
+    publishedAt: "2026-04-04",
+    country: "India",
+    body: "Best Support and Best service  By Gaurav\nthank you gauravjiii.........",
+  },
+  {
+    id: "2097550",
+    author: "Atikollectionz",
+    rating: 5,
+    publishedAt: "2026-02-26",
+    country: "India",
+    body: "Very good support team, really happy with the support.",
+  },
+  {
+    id: "2147898",
+    author: "ToyGenie",
+    rating: 5,
+    publishedAt: "2026-04-03",
+    country: "India",
+    body: "nice",
+  },
+  {
+    id: "2146585",
+    author: "The Purple Tree",
+    rating: 5,
+    publishedAt: "2026-04-02",
+    country: "India",
+    body: "Very good",
+  },
+  {
+    id: "1911325",
+    author: "Driptionary By Retail Therapy",
+    rating: 5,
+    publishedAt: "2025-10-10",
+    country: "India",
+    body: "Excellent App & Support!\nThis app has made managing COD orders much easier. The OTP verification feature works perfectly and helps reduce fake orders. The option to charge COD fees is great for improving conversion and reducing unnecessary cancellations. The interface is clean, and the setup is very simple.\nCustomer support is fast, friendly, and very helpful. Highly recommended for every Shopify store handling COD orders!",
+  },
+  {
+    id: "2093753",
+    author: "KHAS STORES",
+    rating: 5,
+    publishedAt: "2026-02-24",
+    country: "Pakistan",
+    body: "Gaurav is extremally supportive POC",
+  },
+  {
+    id: "1890177",
+    author: "Nirvana Being",
+    rating: 5,
+    publishedAt: "2025-09-24",
+    country: "India",
+    body: "Pankaj is an excellent team member of Codking. He guided me very well according to my requirements and provided valuable suggestions. The Codking app is also amazing, with many great features that help improve the functionality of the checkout page. Highly recommended!",
   },
   {
     id: "1887224",
@@ -1071,6 +1377,22 @@ export const appStoreReviews: readonly AppStoreReview[] = [
     body: "THIS APP IS USELESS!!! It was never been used never been seen in checkout for 1 year!!! AND THEY REFUSED TO REFUND!!!!\nYOU ruined shopify's reputation that they built for years!!!",
   },
   {
+    id: "1438708",
+    author: "Chandamama Stores",
+    rating: 3,
+    publishedAt: "2024-06-17",
+    country: "India",
+    body: "Add the feature of phone number disable after otp is verified in my checkout page.",
+  },
+  {
+    id: "1338708",
+    author: "SPAARKINDIA",
+    rating: 2,
+    publishedAt: "2024-03-10",
+    country: "India",
+    body: "i need help bcoz i uninstalled and reinstalled, it is not wokring. also we need partial payment function",
+  },
+  {
     id: "2027611",
     author: "ROSE MARIA SPICES",
     rating: 1,
@@ -1087,22 +1409,6 @@ export const appStoreReviews: readonly AppStoreReview[] = [
     edited: true,
     country: "India",
     body: "Data theft through app will not recommend",
-  },
-  {
-    id: "1338708",
-    author: "SPAARKINDIA",
-    rating: 2,
-    publishedAt: "2024-03-10",
-    country: "India",
-    body: "i need help bcoz i uninstalled and reinstalled, it is not wokring. also we need partial payment function",
-  },
-  {
-    id: "1438708",
-    author: "Chandamama Stores",
-    rating: 3,
-    publishedAt: "2024-06-17",
-    country: "India",
-    body: "Add the feature of phone number disable after otp is verified in my checkout page.",
   },
   {
     id: "1417149",
