@@ -159,10 +159,24 @@ export async function Hero() {
 
               It is still not the install button and cannot be mistaken for it.
               Weight here is the same, but colour is doing the separating: the
-              install is near-black with Shopify's greens on it, this is brand
-              blue with a storefront on it. A merchant reads two different
-              errands off the pair before reading either label — one installs
-              the app, one opens a shop.
+              install is near-black with Shopify's greens on it, this is the
+              brand's violet with a storefront on it. A merchant reads two
+              different errands off the pair before reading either label — one
+              installs the app, one opens a shop.
+
+              Violet rather than blue, and it is the one non-blue this button
+              could have taken. `--brand-violet` is the colour the wordmark at
+              the top of the page is set in — the palette keeps it precisely so
+              there is an accent to reach for when blue is doing something else
+              — so the second action is tied to the brand rather than to a
+              colour picked to be different. Blue was also the wrong separator
+              here: it is the site's action colour, spent on links, the
+              checklist and the product's own interface behind the glass, so a
+              blue button beside a black one read as one action drawn twice.
+
+              The hover is mixed off the same token rather than typed as a
+              second hex, so there is exactly one violet in the file and the
+              pressed state cannot drift from the resting one.
 
               The label is the whole point of the change. "Book a Demo" asks
               for a meeting, which is the slowest thing a hero can ask for and
@@ -183,7 +197,7 @@ export async function Hero() {
               size="lg"
               location="homepage-hero"
               icon={<Store aria-hidden className="size-[18px]" />}
-              className="h-12 gap-2.5 border-transparent bg-brand px-6 text-[15px] font-semibold text-white shadow-[0_1px_2px_rgba(37,99,235,0.3),0_10px_28px_-12px_rgba(37,99,235,0.85)] hover:border-transparent hover:bg-brand-deep hover:text-white hover:shadow-[0_2px_4px_rgba(37,99,235,0.3),0_14px_32px_-12px_rgba(37,99,235,0.9)]"
+              className="h-12 gap-2.5 border-transparent bg-brand-violet px-6 text-[15px] font-semibold text-white shadow-[0_1px_2px_rgba(109,74,255,0.3),0_10px_28px_-12px_rgba(109,74,255,0.85)] hover:border-transparent hover:bg-[color-mix(in_oklab,var(--brand-violet)_86%,black)] hover:text-white hover:shadow-[0_2px_4px_rgba(109,74,255,0.3),0_14px_32px_-12px_rgba(109,74,255,0.9)]"
             />
           </div>
 

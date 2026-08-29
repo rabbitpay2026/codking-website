@@ -194,15 +194,15 @@ function ChipConnector({ side }: { readonly side: FloatingChip["side"] }) {
  * under it.
  *
  * The growth stays moderate because it is bounded, and the bound is worth
- * stating: the device is fixed, so two chips plus two connector gaps have to
- * fit the 56% of the stage either side of it. 26% of chip and 3% of clearance
- * is that budget spent — a wider box would be bought out of the arrows, and an
- * arrow that cannot be seen was the other half of the same review.
+ * stating: two chips plus two connector gaps have to fit whatever the device
+ * leaves either side of it. 26% of chip and 3% of clearance is that budget
+ * spent — a wider box would be bought out of the arrows, and an arrow that
+ * cannot be seen was the other half of the same review.
  *
- * A percent of the growth is taken outward rather than inward. Each column
- * hangs one percent past the edge of the stage, which is where these sat
- * originally, so the boxes gain width without any of it coming out of the
- * clearance the connectors run in.
+ * The growth is taken outward rather than inward. Each column hangs two
+ * percent past the edge of the stage — these sat outside it in the original
+ * composition too — so the boxes keep their width while the device takes back
+ * the middle, and none of it comes out of the clearance the connectors run in.
  *
  * The horizontal padding went the other way — 14px back to 12px — and that is
  * the same decision, not a contradiction. Every pixel spent on a gutter is a
@@ -252,7 +252,7 @@ function Chip({ icon: Icon, label, side, className, delay }: FloatingChip) {
       style={{ animationDelay: delay }}
       className={cn(
         "absolute z-30 w-[26%] animate-float",
-        side === "right" ? "-right-[1%]" : "-left-[1%]",
+        side === "right" ? "-right-[2%]" : "-left-[2%]",
         "flex items-center gap-2 rounded-[15px] border border-ink/[0.07] bg-white/95 px-3 py-3.5 backdrop-blur-xl min-[1152px]:gap-2.5",
         "shadow-[0_1px_2px_rgba(11,27,54,0.06),0_14px_30px_-14px_rgba(11,27,54,0.55)]",
         className,
@@ -317,17 +317,27 @@ export function HeroStage() {
           the clearest tell that a scene was assembled rather than lit.
         */}
         {/*
-          The device takes 44% of the stage, the two columns of annotation 26%
-          each — one percent of which hangs past the edge of the stage — and
+          The device takes 46% of the stage, the two columns of annotation 26%
+          each — two percent of which hangs past the edge of the stage — and
           what is left is the three percent of clearance on each side that the
           connectors run in. Those numbers are one decision and have to be read
-          together: the boxes could only grow, and the lines could only exist,
-          if the device gave up the width for both — so it did, once, from 48%
-          to 44%, and has not moved since.
+          together, because they have to sum to a hundred: the device, the two
+          boxes and the two arrows are competing for one row of width, and
+          nothing here can grow without something beside it being named as what
+          paid for it.
 
-          It is still unambiguously the subject. At `lg`, where the column is
-          narrowest, that is a 270px device beside a 160px box, and it is the
-          only object in the frame that runs the full height of the stage.
+          The device gave up four points of that width when the boxes grew and
+          the connectors first appeared, and has now taken two of them back —
+          48% to 44% to 46% — at the review's note that it had come out too
+          small. What paid for the two points is the outward hang on the boxes,
+          which went from one percent to two: the columns move further into the
+          margin instead of further into the middle, so the device gains its
+          width from outside the composition rather than out of the clearance
+          the arrows need. The gap is three percent before and after.
+
+          It is still unambiguously the subject, and more so than before: it is
+          the only object in the frame that runs the full height of the stage,
+          and it is comfortably wider than a box and a half beside it.
 
           Nothing below `lg` changes. The chips are not drawn there, so there
           is no clearance to find and no reason to make the device smaller on
@@ -337,7 +347,7 @@ export function HeroStage() {
           className={cn(
             "absolute bottom-[1%] left-1/2 w-[76%] -translate-x-1/2",
             "sm:bottom-[2%] sm:w-[52%]",
-            "lg:w-[44%]",
+            "lg:w-[46%]",
           )}
         >
           <div
