@@ -51,6 +51,24 @@ export const metadata: Metadata = createMetadata({
  * board, and the proof band itself, which now runs before coverage rather than
  * after it. See the comments beside each for what the moves buy and cost.
  */
+/**
+ * Whether the problem section renders.
+ *
+ * Off temporarily, at the reviewer's instruction, and deliberately off *here*
+ * rather than by deleting the line or commenting it out. `PainPoints` is a
+ * whole section — its copy lives in `data/homepage.ts`, its type in
+ * `types/homepage.ts`, and `llms.txt` has nothing to do with either — so
+ * nothing about it needed to change to take it off the page, and nothing needs
+ * to change to put it back. Flip this to `true`.
+ *
+ * A flag rather than a commented-out line because a comment would strand the
+ * import above as unused and fail lint, which turns a one-word restore into a
+ * two-place one; and rather than an early `return null` inside the component,
+ * which would hide the fact that the section is off from the file that decides
+ * what the page contains.
+ */
+const SHOW_PAIN_POINTS = false;
+
 export default function HomePage() {
   return (
     <>
@@ -78,7 +96,13 @@ export default function HomePage() {
       */}
       <Results />
       <FeatureShowcase />
-      <PainPoints />
+      {/*
+        Hidden for now — see `SHOW_PAIN_POINTS`. The section keeps its place in
+        the order rather than being lifted out of it, so restoring it puts it
+        back between the capability board and the integrations board, which is
+        where the argument expects it.
+      */}
+      {SHOW_PAIN_POINTS ? <PainPoints /> : null}
       <Integrations />
       {/*
         The proof band now precedes coverage rather than following it, at the

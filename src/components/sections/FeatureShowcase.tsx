@@ -84,106 +84,127 @@ const glyphSizeFor: Record<string, string> = {
  * called "dull" while every mark was a 7% tint of blue, and the correction the
  * reviewer supplied is a board of ten saturated, individually coloured tiles.
  *
- * What is drawn is a deliberate step short of that reference. Colour lives
- * entirely inside a 44px tile and a 28px arrow. The card under them is the same
- * white `surface-card` every other card on the site uses, and it keeps that
- * component's own hover — the brand hairline and the one-pixel lift — rather
- * than warming to its accent: ten cards each responding to the pointer in a
- * different colour is ten hover states, and the site has one. Ten tinted
- * surfaces would be a second palette; ten coloured objects on one surface is a
- * set of marks.
+ * What is drawn is a deliberate step short of that reference, and then a
+ * second step short again. The tiles were filled — a `-500`-to-`-600` gradient
+ * under a white glyph, each with a coloured shadow beneath it — and ten filled
+ * chips of ten different hues is a paint chart: the eye counts colours instead
+ * of reading capabilities, and the loudest thing on a white board ends up
+ * being its decoration.
  *
- * The hues are also a stop deeper than the reference's. `-500` to `-600` under
- * white glyphs holds AA contrast at this size and reads as ink with colour in
- * it, where `-400` reads as a sticker.
+ * They are now tinted rather than filled. Each tile is its own accent at
+ * twelve percent over the card, ringed at twenty, with the glyph itself
+ * carrying the colour at `-600`. That inverts the weight: the coloured thing
+ * is the mark a merchant is trying to recognise rather than the square behind
+ * it, and the board reads as white with ten accents on it instead of as ten
+ * colours on white. The coloured drop shadows are gone entirely — a tint that
+ * needs a glow to be seen is a tint that is doing too little work, and ten
+ * glows is a board that hums.
+ *
+ * Twelve rather than the nine it was first drawn at. At nine the tiles read as
+ * a smudge behind the glyph rather than as a container for it, and with the
+ * card beneath them equally quiet the whole board came out dull — the note on
+ * that pass was that it had gone from too loud to too plain. Three points is
+ * the difference between a tint you have to look for and one you can see, and
+ * it is spent here rather than on the card because this is where the section's
+ * colour is supposed to live.
+ *
+ * ── On the palette ────────────────────────────────────────────────────────
+ * One hue per card, and every one of them drawn from the cool half of the
+ * wheel: blue, sky, cyan and teal through indigo, violet and purple to
+ * fuchsia and pink. That is the range the brand already lives in — `--brand`
+ * is a blue and `--brand-violet` a violet, and the run from one to the other
+ * is exactly this spectrum — so the ten read as a family rather than as ten
+ * choices. The amber and the rose that used to sit in the set are gone for
+ * that reason: they were the two that made the board look like a chart.
+ *
+ * The values are a formula rather than ten separate decisions — `/[0.09]`
+ * tile, `/15` ring, `-600` glyph, and the same accent at `/[0.07]` behind the
+ * corner arrow — which is what keeps the treatment identical across ten hues
+ * whose Tailwind ramps do not have identical lightness. Tinting with the
+ * accent itself rather than with each hue's `-50` shade is the same decision:
+ * `blue-50` and `teal-50` are not equally light, and a set built from them
+ * would drift.
+ * ──────────────────────────────────────────────────────────────────────────
  *
  * Written as finished class strings rather than composed from a hue name,
- * because Tailwind generates what it can see in the source: `from-${hue}-500`
- * is a class that was never compiled. Each entry is one card's whole treatment,
- * which also makes the set legible as a palette rather than as a rule.
+ * because Tailwind generates what it can see in the source: `bg-${hue}-500/10`
+ * is a class that was never compiled. Each entry is one card's whole
+ * treatment, which also makes the set legible as a palette rather than as a
+ * rule.
  *
  * A slug with no entry falls back to the brand, so a control added to the
  * repository without art degrades to a blue tile rather than to a colourless
  * one.
  */
 interface CardAccent {
-  /** The filled tile behind the glyph. */
+  /** The tinted tile, its ring, and the colour the glyph inherits. */
   readonly tile: string;
-  /** The tile's own coloured shadow, so it sits above the card. */
-  readonly glow: string;
   /** The arrow in the corner, at rest and under the pointer. */
   readonly arrow: string;
 }
 
 const accents: Record<string, CardAccent> = {
   "otp-verification": {
-    tile: "bg-gradient-to-br from-blue-500 to-blue-600",
-    glow: "shadow-[0_8px_20px_-8px_var(--color-blue-500)]",
-    arrow: "text-blue-600 bg-blue-500/[0.08] group-hover:bg-blue-500/15",
+    tile: "bg-blue-500/[0.12] ring-blue-500/20 text-blue-600",
+    arrow: "text-blue-600 bg-blue-500/[0.07] group-hover:bg-blue-500/14",
   },
   "order-verification": {
-    tile: "bg-gradient-to-br from-violet-500 to-violet-600",
-    glow: "shadow-[0_8px_20px_-8px_var(--color-violet-500)]",
-    arrow: "text-violet-600 bg-violet-500/[0.08] group-hover:bg-violet-500/15",
+    tile: "bg-indigo-500/[0.12] ring-indigo-500/20 text-indigo-600",
+    arrow: "text-indigo-600 bg-indigo-500/[0.07] group-hover:bg-indigo-500/14",
   },
   "partial-cod-payment": {
-    tile: "bg-gradient-to-br from-sky-500 to-sky-600",
-    glow: "shadow-[0_8px_20px_-8px_var(--color-sky-500)]",
-    arrow: "text-sky-600 bg-sky-500/[0.08] group-hover:bg-sky-500/15",
+    tile: "bg-sky-500/[0.12] ring-sky-500/20 text-sky-600",
+    arrow: "text-sky-600 bg-sky-500/[0.07] group-hover:bg-sky-500/14",
   },
   "cod-fees": {
-    tile: "bg-gradient-to-br from-rose-500 to-rose-600",
-    glow: "shadow-[0_8px_20px_-8px_var(--color-rose-500)]",
-    arrow: "text-rose-600 bg-rose-500/[0.08] group-hover:bg-rose-500/15",
+    tile: "bg-violet-500/[0.12] ring-violet-500/20 text-violet-600",
+    arrow: "text-violet-600 bg-violet-500/[0.07] group-hover:bg-violet-500/14",
   },
   "cod-show-hide": {
-    tile: "bg-gradient-to-br from-teal-500 to-teal-600",
-    glow: "shadow-[0_8px_20px_-8px_var(--color-teal-500)]",
-    arrow: "text-teal-600 bg-teal-500/[0.08] group-hover:bg-teal-500/15",
+    tile: "bg-teal-500/[0.12] ring-teal-500/20 text-teal-600",
+    arrow: "text-teal-600 bg-teal-500/[0.07] group-hover:bg-teal-500/14",
   },
   "cod-to-prepaid": {
-    tile: "bg-gradient-to-br from-amber-500 to-orange-500",
-    glow: "shadow-[0_8px_20px_-8px_var(--color-amber-500)]",
-    arrow: "text-amber-600 bg-amber-500/[0.1] group-hover:bg-amber-500/18",
+    tile: "bg-cyan-500/[0.12] ring-cyan-500/20 text-cyan-600",
+    arrow: "text-cyan-600 bg-cyan-500/[0.07] group-hover:bg-cyan-500/14",
   },
   "address-validation": {
-    tile: "bg-gradient-to-br from-indigo-500 to-indigo-600",
-    glow: "shadow-[0_8px_20px_-8px_var(--color-indigo-500)]",
-    arrow: "text-indigo-600 bg-indigo-500/[0.08] group-hover:bg-indigo-500/15",
+    tile: "bg-purple-500/[0.12] ring-purple-500/20 text-purple-600",
+    arrow: "text-purple-600 bg-purple-500/[0.07] group-hover:bg-purple-500/14",
   },
   /*
     The one hue on the board that is not a free choice, and the only one taken
     from outside the Tailwind ramp. This tile carries WhatsApp's own mark, so
-    it carries WhatsApp's own greens: `#25D366` is the brand green and
-    `#128C7E` the darker one it pairs with, which together are the app icon
-    every buyer in these markets already has on their phone. A logo set on an
-    approximated green is the one thing worse than not using the logo.
+    it carries WhatsApp's own green: `#25D366`. A logo set on an approximated
+    green is the one thing worse than not using the logo.
 
-    Held as literals rather than as theme tokens for the same reason the
+    Held as a literal rather than as a theme token for the same reason the
     closing visual's WhatsApp colours are: a token is a decision this site is
-    free to change, and these are someone else's brand.
+    free to change, and this is someone else's brand.
+
+    The mark draws its own filled green disc with a white glyph inside it, so
+    unlike its nine neighbours it does not inherit the tile's text colour — it
+    was always going to be green, and on a tint it now reads as the app icon a
+    buyer has on their phone rather than as green on green.
   */
   "messaging-gateways": {
-    tile: "bg-[linear-gradient(to_bottom_right,#25D366,#128C7E)]",
-    glow: "shadow-[0_8px_20px_-8px_#25D366]",
-    arrow: "text-[#128C7E] bg-[#25D366]/12 group-hover:bg-[#25D366]/22",
+    tile: "bg-[#25D366]/13 ring-[#25D366]/25 text-[#128C7E]",
+    arrow: "text-[#128C7E] bg-[#25D366]/10 group-hover:bg-[#25D366]/18",
   },
   analytics: {
-    tile: "bg-gradient-to-br from-purple-500 to-purple-600",
-    glow: "shadow-[0_8px_20px_-8px_var(--color-purple-500)]",
-    arrow: "text-purple-600 bg-purple-500/[0.08] group-hover:bg-purple-500/15",
+    tile: "bg-fuchsia-500/[0.12] ring-fuchsia-500/20 text-fuchsia-600",
+    arrow:
+      "text-fuchsia-600 bg-fuchsia-500/[0.07] group-hover:bg-fuchsia-500/14",
   },
   "abandoned-cart-recovery": {
-    tile: "bg-gradient-to-br from-pink-500 to-pink-600",
-    glow: "shadow-[0_8px_20px_-8px_var(--color-pink-500)]",
-    arrow: "text-pink-600 bg-pink-500/[0.08] group-hover:bg-pink-500/15",
+    tile: "bg-pink-500/[0.12] ring-pink-500/20 text-pink-600",
+    arrow: "text-pink-600 bg-pink-500/[0.07] group-hover:bg-pink-500/14",
   },
 };
 
 const fallbackAccent: CardAccent = {
-  tile: "bg-gradient-to-br from-brand to-brand-deep",
-  glow: "shadow-[0_8px_20px_-8px_var(--brand)]",
-  arrow: "text-brand bg-brand/[0.08] group-hover:bg-brand/15",
+  tile: "bg-brand/[0.12] ring-brand/20 text-brand",
+  arrow: "text-brand bg-brand/[0.07] group-hover:bg-brand/14",
 };
 
 /**
@@ -271,6 +292,25 @@ const DESKTOP_COLUMNS = 4;
  * times and cannot disagree — the grid and the checklist are literally the same
  * declaration, `homepageFeatures`.
  */
+/**
+ * The section's lede, with the product's name in the brand accent.
+ *
+ * Written as a split rather than as markup around a literal so the sentence
+ * itself stays in `siteConfig`, where four other surfaces read it from.
+ */
+function renderDescription(description: string) {
+  const at = description.indexOf(siteConfig.name);
+  if (at < 0) return description;
+
+  return (
+    <>
+      {description.slice(0, at)}
+      <span className="font-semibold text-brand">{siteConfig.name}</span>
+      {description.slice(at + siteConfig.name.length)}
+    </>
+  );
+}
+
 export function FeatureShowcase() {
   const board = getHomepageFeatures();
   const title = getControlBoardTitle();
@@ -337,7 +377,22 @@ export function FeatureShowcase() {
             ) : null}
           </>
         }
-        description={siteConfig.description}
+        /*
+          The product's own one-line definition, with its name picked out.
+
+          Split on `siteConfig.name` rather than retyped with a span around it,
+          so the sentence stays the single definition the metadata, the
+          Organization schema and `llms.txt` all read — there is no second copy
+          of it here to drift. A rewording that drops the name simply renders
+          the line flat.
+
+          Flat `text-brand` rather than the heading's gradient. A gradient run
+          through two words of 18px muted text is muddy where the same gradient
+          through a 48px heading is not, and the site already has a flat
+          inline accent for exactly this — it is what the hero sets "Fake COD
+          Orders." in.
+        */
+        description={renderDescription(siteConfig.description)}
       />
 
       <ul className="mt-lede grid gap-4 sm:grid-cols-2 lg:grid-cols-8">
@@ -362,7 +417,28 @@ export function FeatureShowcase() {
                 <Link
                   href={routeFor.control(card.slug)}
                   className={cn(
-                    "group relative flex h-full surface-card flex-col rounded-[1.15rem]",
+                    "group relative isolate flex h-full surface-card flex-col rounded-[1.15rem]",
+                    /*
+                      A cool wash across the card, and it is deliberately at
+                      the very edge of visible: white at the top-left corner,
+                      arriving at about three percent of a blue-lavender at the
+                      bottom-right. That is enough to give the surface a
+                      direction — a lit corner and a shaded one — which is what
+                      separates a card that reads as an object from one that
+                      reads as a hole cut in the page. It is not enough to be
+                      called a colour, which is the point: the board is white
+                      first and the icons are what carry the hue.
+
+                      Painted on `::before` rather than as a background
+                      utility, because `surface-card` already sets `bg-card`
+                      and which of two same-specificity rules wins is a
+                      question about stylesheet order rather than about intent.
+                      `isolate` plus `-z-10` puts the wash above the card's own
+                      background and below everything in it, so it can never
+                      come out over the text.
+                    */
+                    "before:absolute before:inset-0 before:-z-10 before:rounded-[inherit]",
+                    "before:bg-[linear-gradient(155deg,rgba(255,255,255,0)_0%,rgba(99,102,241,0.02)_54%,rgba(79,110,247,0.05)_100%)]",
                     /* `pb-12` is the arrow's row. It is reserved on the card
                        rather than as padding on the paragraph, because a
                        right-inset paragraph shortens every line to make room
@@ -393,10 +469,19 @@ export function FeatureShowcase() {
                     <span
                       aria-hidden
                       className={cn(
-                        "grid size-11 shrink-0 place-items-center rounded-[13px] text-white",
+                        /*
+                          `ring-1` rather than a border, so the outline is
+                          drawn outside the box and the tile stays exactly 44px
+                          — a border would take its width out of the tint and
+                          the ten tiles would no longer match the arrows.
+
+                          No `text-white` any more: the glyph takes its colour
+                          from the accent, which is the whole of the change
+                          from filled tiles to tinted ones.
+                        */
+                        "grid size-11 shrink-0 place-items-center rounded-[13px] ring-1 ring-inset",
                         "transition-transform duration-300 ease-emphasized group-hover:-translate-y-0.5",
                         accent.tile,
-                        accent.glow,
                       )}
                     >
                       <Icon className={glyphSizeFor[card.slug] ?? GLYPH_SIZE} />
