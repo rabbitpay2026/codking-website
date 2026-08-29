@@ -1,4 +1,6 @@
-import { Check, Star } from "lucide-react";
+import Image from "next/image";
+
+import { Check, Star, Store } from "lucide-react";
 
 import { ShopifyMark } from "@/components/brand/ShopifyMarks";
 import { ActionLink } from "@/components/layout/ActionLink";
@@ -6,6 +8,7 @@ import { HeroEnvironment } from "@/components/sections/hero/HeroEnvironment";
 import { HeroStage } from "@/components/sections/hero/HeroStage";
 import { SectionShell } from "@/components/sections/SectionShell";
 import {
+  getDemoStoreAction,
   getHomepageFeatures,
   getProofMetrics,
   getUtilityActions,
@@ -32,9 +35,10 @@ const numberFormat = new Intl.NumberFormat("en");
  * what the product *is*; the screen shows what it *does*.
  *
  * The premium here is deliberately achromatic. There is no colour field, no
- * gradient headline and no filled brand button anywhere in this section: the
- * only saturated things on the screen are Shopify's greens on the install
- * button and the product's own interface behind the glass. That is the whole
+ * gradient and no filled brand button anywhere in this section: the accent on
+ * the headline is flat colour, and the only saturated things left are
+ * Shopify's greens on the install button, the brand edge on the storefront
+ * button, and the product's own interface behind the glass. That is the whole
  * trick — when the background stops competing, type, spacing and light are
  * what the eye reads as expensive, and the one coloured thing left is the one
  * thing worth looking at.
@@ -53,7 +57,19 @@ export async function Hero() {
   const rating = formatRating(proof.rating);
 
   const installAction = actions.find((action) => action.variant === "primary");
-  const demoAction = actions.find((action) => action.variant === "secondary");
+
+  /*
+    The secondary action is the storefront, not the booker.
+
+    It used to be Book a Demo, which is a request to speak to a person — the
+    slowest thing a hero can ask for, and the one a merchant evaluating a COD
+    app at eleven at night will not do. The store is already built and already
+    linked from the closing band, so the hero now offers the same action under
+    the same label: a real Shopify checkout they can take themselves, with
+    nothing to install and nobody to talk to. Read from the repository so the
+    two buttons cannot drift apart.
+  */
+  const demoStoreAction = getDemoStoreAction();
 
   return (
     <SectionShell
@@ -67,9 +83,16 @@ export async function Hero() {
             them. `text-balance` is deliberately not used here: it would
             re-wrap the pair wherever the measure happens to land and the
             headline would stop being the two statements the blueprint makes.
+
+            The accent is the site's one headline treatment, not a new one:
+            every other hero on the site — the feature pages, About, the OTP
+            page — sets its accent phrase in flat `text-brand` beside black,
+            and this does the same on the phrase the whole product is named
+            for. Flat colour rather than a gradient, because a gradient
+            headline is a different decision and this section does not make it.
           */}
           <h1 className="text-[2.55rem] leading-[1.06] font-semibold tracking-[-0.038em] text-ink sm:text-[3.1rem] lg:text-[3.45rem]">
-            Reduce Fake COD Orders.
+            Reduce <span className="text-brand">Fake COD Orders.</span>
             <span className="block">Increase Profits.</span>
           </h1>
 
@@ -124,15 +147,92 @@ export async function Hero() {
               />
             ) : null}
 
-            {demoAction ? (
-              <ActionLink
-                action={{ ...demoAction, label: "Book Demo" }}
-                size="lg"
-                location="homepage-hero"
-                className="h-12 border-ink/10 bg-white/80 px-6 text-[15px] font-semibold text-ink/80 shadow-[0_1px_2px_rgba(11,27,54,0.05)] backdrop-blur-md hover:border-ink/16 hover:bg-white hover:text-ink"
-              />
-            ) : null}
+            {/*
+              Filled, in brand, and named for what it does.
+
+              Two passes at this were rejected for the same reason. It began as
+              80% white on a near-white field with its label at 80% ink, which
+              read as a disabled control; the next pass gave it a white surface
+              and a brand edge, which read as an outline beside a solid. The
+              instruction both times was that the second action has to look
+              like an action, so it now carries a fill of its own.
+
+              It is still not the install button and cannot be mistaken for it.
+              Weight here is the same, but colour is doing the separating: the
+              install is near-black with Shopify's greens on it, this is brand
+              blue with a storefront on it. A merchant reads two different
+              errands off the pair before reading either label — one installs
+              the app, one opens a shop.
+
+              The label is the whole point of the change. "Book a Demo" asks
+              for a meeting, which is the slowest thing a hero can ask for and
+              the one a merchant evaluating a COD app at eleven at night will
+              not do. "Explore Live Demo Store" says exactly what the press
+              produces: a real storefront, open now, asking nothing.
+
+              Overridden here rather than in the repository, the way the
+              install action's label is: the closing band offers the same store
+              inside a block that has already introduced it by name, and needs
+              the shorter label it has.
+            */}
+            <ActionLink
+              action={{
+                ...demoStoreAction,
+                label: "Explore Live Demo Store",
+              }}
+              size="lg"
+              location="homepage-hero"
+              icon={<Store aria-hidden className="size-[18px]" />}
+              className="h-12 gap-2.5 border-transparent bg-brand px-6 text-[15px] font-semibold text-white shadow-[0_1px_2px_rgba(37,99,235,0.3),0_10px_28px_-12px_rgba(37,99,235,0.85)] hover:border-transparent hover:bg-brand-deep hover:text-white hover:shadow-[0_2px_4px_rgba(37,99,235,0.3),0_14px_32px_-12px_rgba(37,99,235,0.9)]"
+            />
           </div>
+
+          {/*
+            The Built for Shopify badge.
+
+            Directly under the two buttons, because that is what it qualifies:
+            the sentence a merchant is reading at that moment is "install
+            this", and "Built for Shopify" is the answer to the question that
+            follows it. Above the buttons it would be an eyebrow competing with
+            the headline; beside them it would push the pair onto two lines on
+            a narrow screen. It costs one line of height and no layout at any
+            width.
+
+            Drawn to the badge Shopify awards rather than to this site's
+            eyebrow pill, which is what it was first built as: a soft blue
+            tile, a squared radius rather than a capsule, the diamond, and the
+            programme's name set in sentence case in ink. That distinction
+            matters — an eyebrow is this site talking about itself, and this is
+            a mark the platform grants, so it should not look like the former.
+
+            The diamond is the supplied artwork in `public/logos`, placed
+            rather than drawn. An earlier pass substituted an icon-library gem
+            for it, and that is the one substitution this badge cannot take:
+            the diamond is the programme's mark, and a lookalike traced from a
+            different icon set is the same class of mistake as redrawing
+            Shopify's bag. This component therefore draws nothing — it places
+            the file at the size the badge wants.
+
+            `width`/`height` are the rendered box rather than the file's
+            intrinsic 512×512, and there is deliberately no `sizes`: this is a
+            fixed-size image, and omitting `sizes` is what makes Next emit a
+            small 1x/2x pair instead of the full responsive candidate list. The
+            ratio is square, matching the source, so the box is reserved
+            correctly and the row cannot shift as the file lands.
+
+            `alt` is empty because the badge's own text names it — labelling
+            both would have a screen reader announce Shopify twice.
+          */}
+          <p className="mt-5 inline-flex items-center gap-2 rounded-[10px] border border-brand/25 bg-brand/[0.09] px-3.5 py-2 text-[13px] leading-none font-semibold tracking-[-0.005em] text-ink">
+            <Image
+              src="/logos/diamond.png"
+              alt=""
+              width={18}
+              height={18}
+              className="size-[18px] shrink-0"
+            />
+            Built for Shopify
+          </p>
 
           {/*
             The credentials rail.
@@ -147,7 +247,7 @@ export async function Hero() {
             renders, and neither can drift from the App Store sync when it
             lands.
           */}
-          <div className="mt-8 flex flex-wrap items-center gap-x-4 gap-y-2.5 text-[13px]">
+          <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2.5 text-[13px]">
             <span
               className="flex items-center gap-2"
               aria-label={`Rated ${rating} out of 5`}
