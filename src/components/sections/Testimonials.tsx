@@ -88,9 +88,6 @@ export async function Testimonials() {
     <SectionShell
       tone="muted"
       size="compact"
-      /* Trimmed at the top specifically: this band arrives directly under the
-         results strip, and the two together read as one piece of evidence. */
-      containerClassName="pt-4 md:pt-5"
       ariaLabel="What merchants say about COD King"
     >
       {/*

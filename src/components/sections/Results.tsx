@@ -35,8 +35,22 @@ export function Results() {
   return (
     <SectionShell
       size="flush"
-      className="border-t border-[#ECEFF3]"
-      containerClassName="pt-4 pb-8 md:pt-5 md:pb-10"
+      /*
+        No top rule of its own any more.
+
+        This used to open on `border-t` because it arrived out of a muted band
+        with no edge of its own. It now arrives directly under the platform
+        band, which closes on a hairline at exactly this section's top edge —
+        so drawing a second one there would stack two near-identical greys into
+        one heavier line. The two share that edge instead, which is the same
+        arrangement the platform band already has with the trust strip above
+        it.
+
+        The top padding opens up to match: under a muted band a tight top read
+        as the two belonging together, and under a hairline the heading needs
+        the room to sit clear of the rule rather than against it.
+      */
+      containerClassName="pt-9 pb-8 md:pt-11 md:pb-10"
       backdrop={
         <div
           aria-hidden
@@ -48,7 +62,29 @@ export function Results() {
         />
       }
     >
-      <SectionHeading title="Results Our Merchants Achieve" />
+      {/*
+        The tail carries the accent, and it is the site's existing one rather
+        than a new one: the same left-to-right run from `brand-violet` to
+        `brand` that the capability board's heading uses, with `text-brand` set
+        underneath as the fallback for a browser without `background-clip`.
+        Reusing it rather than picking a colour is the whole point — two
+        headings a screen apart with two different accents would read as two
+        decisions, and this is one.
+
+        Split on the words rather than read from a data file, because this
+        section holds its own copy inline; there is no repository record for a
+        rewording to fall out of sync with.
+      */}
+      <SectionHeading
+        title={
+          <>
+            Results Our{" "}
+            <span className="bg-gradient-to-r from-brand-violet to-brand bg-clip-text text-brand text-transparent">
+              Merchants Achieve
+            </span>
+          </>
+        }
+      />
 
       <div className="mt-lede grid gap-4 md:auto-rows-fr md:grid-cols-2 lg:grid-cols-4">
         {RESULTS.map((result, index) => {

@@ -8,20 +8,28 @@ export type CountryId =
   | "egypt"
   | "italy"
   | "spain"
-  | "united-states";
+  | "united-states"
+  | "turkey"
+  | "vietnam"
+  | "thailand"
+  | "oman";
 
+/**
+ * One supported market.
+ *
+ * The single record the whole section is built from: the list on the right
+ * renders it, the globe marks it, and the label floating beside the marker is
+ * assembled from the same fields. There is deliberately no second dataset for
+ * the globe — a marker that disagreed with the row beside it would be worse
+ * than no marker at all. The artwork is not held here because it is a
+ * component rather than a file; `flags.tsx` maps it from `id`, and that map is
+ * total, so a country cannot be added without one.
+ */
 export interface Country {
   readonly id: CountryId;
   readonly name: string;
   readonly lat: number;
   readonly lng: number;
-}
-
-export interface WorldStat {
-  readonly value: number;
-  readonly label: string;
-  readonly decimalPlaces?: number;
-  readonly suffix?: string;
 }
 
 export const countries: readonly Country[] = [
@@ -50,11 +58,17 @@ export const countries: readonly Country[] = [
     lat: 37.0902,
     lng: -95.7129,
   },
-] as const;
-
-export const worldStats: readonly WorldStat[] = [
-  { value: 100, label: "Countries", suffix: "+" },
-  { value: 10000, label: "Merchants", suffix: "+" },
-  { value: 10, label: "Orders Processed", suffix: "M+" },
-  { value: 99.9, label: "Service Availability", decimalPlaces: 1, suffix: "%" },
+  /*
+    The four below are the operator repository's own coverage, not additions
+    made to fill a grid. `data/smsOperators.ts` is the "Local SMS Operators"
+    dropdown in the COD King dashboard, transcribed row for row, and each of
+    these is a country one of those operators is listed as covering — Turkey,
+    Vietnam, Thailand and Oman. A country the product ships a local operator
+    for is a country the product operates in, which is the only evidence this
+    list will accept.
+  */
+  { id: "turkey", name: "Turkey", lat: 38.9637, lng: 35.2433 },
+  { id: "vietnam", name: "Vietnam", lat: 14.0583, lng: 108.2772 },
+  { id: "thailand", name: "Thailand", lat: 15.87, lng: 100.9925 },
+  { id: "oman", name: "Oman", lat: 21.4735, lng: 55.9754 },
 ] as const;
