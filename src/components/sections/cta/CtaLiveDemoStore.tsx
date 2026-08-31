@@ -1,11 +1,12 @@
 import { Check, Lock, Store } from "lucide-react";
 
 import { ActionLink } from "@/components/layout/ActionLink";
-import { demoStoreDisplayHost, externalLinks } from "@/constants/external";
+import { demoStoreDisplayHost } from "@/constants/external";
 import { siteConfig } from "@/constants/site";
+import { getDemoStoreAction } from "@/lib/content";
 import { cn } from "@/lib/utils";
 
-import type { UtilityAction, WithClassName } from "@/types";
+import type { WithClassName } from "@/types";
 
 /**
  * The live demo storefront, offered at the foot of the closing panel.
@@ -34,19 +35,14 @@ import type { UtilityAction, WithClassName } from "@/types";
  */
 export function CtaLiveDemoStore({ className }: WithClassName) {
   /*
-    Built here rather than added to `utilityActions`, and that is deliberate.
-    That list is the site's navigation chrome — the header, the drawer and the
-    mobile bar all render it whole — so a fourth entry would put this button in
-    three places it does not belong. `ActionLink` still renders it, so the new
-    tab, the `rel` and the "(opens in a new tab)" announcement are the same
-    contract every other outbound action on the site honours.
+    Read from the repository rather than declared here, so this button and the
+    homepage hero's secondary action are literally the same action — one label,
+    one destination. It is deliberately not part of `utilityActions`; see
+    `demoStoreAction` for why. `ActionLink` still renders it, so the new tab,
+    the `rel` and the "(opens in a new tab)" announcement are the same contract
+    every other outbound action on the site honours.
   */
-  const action: UtilityAction = {
-    id: "demo-store",
-    label: "Try Live Demo Store",
-    href: externalLinks.demoStore,
-    variant: "secondary",
-  };
+  const action = getDemoStoreAction();
 
   return (
     <div

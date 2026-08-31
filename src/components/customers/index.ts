@@ -6,6 +6,5 @@
  * reads content of its own.
  */
 export { ReviewCard } from "./ReviewCard";
-export { ReviewControls, customersHref } from "./ReviewControls";
-export { ReviewPagination } from "./ReviewPagination";
+export { ReviewLoadMore, customersHref } from "./ReviewLoadMore";
 export { ReviewSummary } from "./ReviewSummary";

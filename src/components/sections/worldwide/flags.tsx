@@ -1,4 +1,7 @@
 import { cn } from "@/lib/utils";
+
+import type { CountryId } from "@/components/sections/worldwide/data";
+
 import type { ReactNode } from "react";
 
 interface FlagProps {
@@ -180,35 +183,145 @@ export function UnitedStatesFlag({ className }: FlagProps) {
   );
 }
 
+/**
+ * A five-pointed star, drawn from its own geometry.
+ *
+ * Three flags below carry one and none of them carries the same one, so the
+ * points, radius and rotation are arguments rather than three hand-plotted
+ * polygons that drift apart the first time one is nudged.
+ */
+function Star({
+  cx,
+  cy,
+  r,
+  rotate = -90,
+  fill,
+}: {
+  readonly cx: number;
+  readonly cy: number;
+  readonly r: number;
+  readonly rotate?: number;
+  readonly fill: string;
+}) {
+  const points = Array.from({ length: 10 }, (_, index) => {
+    const radius = index % 2 === 0 ? r : r * 0.382;
+    const angle = ((rotate + index * 36) * Math.PI) / 180;
+    return `${(cx + Math.cos(angle) * radius).toFixed(2)},${(cy + Math.sin(angle) * radius).toFixed(2)}`;
+  }).join(" ");
+
+  return <polygon points={points} fill={fill} />;
+}
+
+/**
+ * A crescent, drawn as a disc with a second disc cut out of it.
+ *
+ * `evenodd` rather than two shapes, so the bite is genuinely transparent and
+ * the crescent sits correctly on whatever colour the flag puts behind it.
+ */
+function Crescent({
+  cx,
+  cy,
+  r,
+  fill,
+}: {
+  readonly cx: number;
+  readonly cy: number;
+  readonly r: number;
+  readonly fill: string;
+}) {
+  const inner = r * 0.82;
+  const shift = r * 0.28;
+
+  return (
+    <path
+      fillRule="evenodd"
+      fill={fill}
+      d={`M ${cx - r} ${cy} a ${r} ${r} 0 1 0 ${r * 2} 0 a ${r} ${r} 0 1 0 ${-r * 2} 0 Z
+          M ${cx - inner + shift} ${cy} a ${inner} ${inner} 0 1 1 ${inner * 2} 0 a ${inner} ${inner} 0 1 1 ${-inner * 2} 0 Z`}
+    />
+  );
+}
+
+export function TurkeyFlag({ className }: FlagProps) {
+  return (
+    <FlagFrame className={className}>
+      <rect width="32" height="24" fill="#E30A17" />
+      <Crescent cx={13} cy={12} r={5} fill="#FFFFFF" />
+      <Star cx={19.5} cy={12} r={2.6} fill="#FFFFFF" />
+    </FlagFrame>
+  );
+}
+
+export function VietnamFlag({ className }: FlagProps) {
+  return (
+    <FlagFrame className={className}>
+      <rect width="32" height="24" fill="#DA251D" />
+      <Star cx={16} cy={12} r={6} fill="#FFFF00" />
+    </FlagFrame>
+  );
+}
+
+export function ThailandFlag({ className }: FlagProps) {
+  return (
+    <FlagFrame className={className}>
+      <rect width="32" height="24" fill="#A51931" />
+      <rect y="4" width="32" height="16" fill="#F4F5F8" />
+      <rect y="8" width="32" height="8" fill="#2D2A4A" />
+    </FlagFrame>
+  );
+}
+
+export function OmanFlag({ className }: FlagProps) {
+  return (
+    <FlagFrame className={className}>
+      <rect width="32" height="8" fill="#FFFFFF" />
+      <rect y="8" width="32" height="8" fill="#DB161B" />
+      <rect y="16" width="32" height="8" fill="#008000" />
+      <rect width="9" height="24" fill="#DB161B" />
+      {/* The khanjar, reduced to the crossed-blades silhouette it reads as at 24px. */}
+      <g stroke="#FFFFFF" strokeWidth="0.9" strokeLinecap="round">
+        <line x1="4.5" y1="4" x2="4.5" y2="9" />
+        <line x1="2.6" y1="5.4" x2="6.4" y2="7.8" />
+        <line x1="6.4" y1="5.4" x2="2.6" y2="7.8" />
+      </g>
+    </FlagFrame>
+  );
+}
+
+/**
+ * The artwork for a country, looked up by its id.
+ *
+ * Keyed on `CountryId` and typed as a total `Record`, which is the point: the
+ * map used to switch on the country's *name* and fall through to `null`, so a
+ * country added to the repository — or one whose name was edited — silently
+ * rendered a row with a hole where its flag should be. It is now a compile
+ * error to add a market without drawing its flag, which is the only way a list
+ * this long stays correct.
+ */
+const FLAGS: Record<CountryId, (props: FlagProps) => ReactNode> = {
+  india: IndiaFlag,
+  philippines: PhilippinesFlag,
+  "united-arab-emirates": UaeFlag,
+  "saudi-arabia": SaudiArabiaFlag,
+  pakistan: PakistanFlag,
+  bangladesh: BangladeshFlag,
+  egypt: EgyptFlag,
+  italy: ItalyFlag,
+  spain: SpainFlag,
+  "united-states": UnitedStatesFlag,
+  turkey: TurkeyFlag,
+  vietnam: VietnamFlag,
+  thailand: ThailandFlag,
+  oman: OmanFlag,
+};
+
 export function CountryFlag({
   country,
   className,
 }: {
-  readonly country: string;
+  readonly country: CountryId;
   readonly className?: string;
 }) {
-  switch (country) {
-    case "India":
-      return <IndiaFlag className={className} />;
-    case "Philippines":
-      return <PhilippinesFlag className={className} />;
-    case "United Arab Emirates":
-      return <UaeFlag className={className} />;
-    case "Saudi Arabia":
-      return <SaudiArabiaFlag className={className} />;
-    case "Pakistan":
-      return <PakistanFlag className={className} />;
-    case "Bangladesh":
-      return <BangladeshFlag className={className} />;
-    case "Egypt":
-      return <EgyptFlag className={className} />;
-    case "Italy":
-      return <ItalyFlag className={className} />;
-    case "Spain":
-      return <SpainFlag className={className} />;
-    case "United States":
-      return <UnitedStatesFlag className={className} />;
-    default:
-      return null;
-  }
+  const Flag = FLAGS[country];
+  return <Flag className={className} />;
 }

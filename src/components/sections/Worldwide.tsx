@@ -1,6 +1,7 @@
 import { SectionHeading } from "@/components/sections/SectionHeading";
 import { SectionShell } from "@/components/sections/SectionShell";
 import { WorldwideShowcase } from "@/components/sections/worldwide/WorldwideShowcase";
+import { getProofMetrics } from "@/lib/content";
 
 /**
  * Reach, now presented as operating scale rather than placeholder copy.
@@ -10,7 +11,9 @@ import { WorldwideShowcase } from "@/components/sections/worldwide/WorldwideShow
  * globe on the left, specific supported markets on the right, and compact
  * proof-style stats beneath the list.
  */
-export function Worldwide() {
+export async function Worldwide() {
+  const proof = await getProofMetrics();
+
   return (
     <SectionShell
       tone="muted"
@@ -24,7 +27,10 @@ export function Worldwide() {
         description="COD King is actively supporting merchants across South Asia, the Middle East, Europe and North America."
       />
 
-      <WorldwideShowcase className="mt-lede" />
+      <WorldwideShowcase
+        className="mt-lede"
+        countriesServed={proof.countriesServed}
+      />
     </SectionShell>
   );
 }

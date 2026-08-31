@@ -108,6 +108,31 @@ export const utilityActions: readonly UtilityAction[] = [
 ];
 
 /**
+ * The live demo storefront (§4.2).
+ *
+ * Deliberately outside `utilityActions`. That list is the site's navigation
+ * chrome — the header, the mobile drawer and the feature call-to-action bands
+ * all render it whole — so a third entry would put this button in half a dozen
+ * places it does not belong.
+ *
+ * It lives here rather than inside either component that renders it, because
+ * the homepage hero's secondary action and the storefront button at the foot
+ * of the closing band are the same action pointing at the same store, and two
+ * copies of it are two labels that eventually differ.
+ *
+ * It is never the Book a Demo action and must not be wired to one. That action
+ * is a request to speak to a person; this is a storefront that asks the
+ * visitor for nothing, and collapsing them would strand whichever merchant
+ * wanted the other one.
+ */
+export const demoStoreAction: UtilityAction = {
+  id: "demo-store",
+  label: "Try Live Demo Store",
+  href: externalLinks.demoStore,
+  variant: "secondary",
+};
+
+/**
  * The persistent mobile bottom bar (§4.4).
  *
  * Mobile is the primary experience in COD-heavy markets, so these two actions

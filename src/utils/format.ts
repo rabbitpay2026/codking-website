@@ -51,7 +51,7 @@ export function formatCount(value: number): string {
  * An App Store rating, always to one decimal place.
  *
  * A store rating is written with its tenth everywhere on the internet — 4.9,
- * 5.0 — and a bare "5" beside "958+ verified reviews" reads as a rounded
+ * 5.0 — and a bare "5" beside "962+ verified reviews" reads as a rounded
  * number somebody typed rather than as a score. The repository holds the
  * rating as a number, so this is the only place the trailing zero exists.
  */

@@ -9,7 +9,7 @@ import type { ProofMetrics } from "@/types";
  * ── On `rating` ───────────────────────────────────────────────────────────
  * 5.0 is the presentation the site owner has asked the site to carry. It is
  * NOT the marketplace's own overall score: the COD King listing in the Shopify
- * App Store reads 4.9 across all 958 reviews, and the individual reviews the
+ * App Store reads 4.9 across all 962 reviews, and the individual reviews the
  * band renders are genuinely five-star ones.
  *
  * The distinction matters for copy. Nothing on the site may describe this
@@ -24,7 +24,7 @@ import type { ProofMetrics } from "@/types";
  * ──────────────────────────────────────────────────────────────────────────
  *
  * ── On `reviewCount` ──────────────────────────────────────────────────────
- * 958, the count the listing reports. Unlike the rating it is the
+ * 962, the count the listing reports. Unlike the rating it is the
  * marketplace's own figure rather than a requested presentation, and it is a
  * floor in the sense every number in this record is: it only ever grows, which
  * is what earns the "+" the UI renders after it.
@@ -38,7 +38,7 @@ import type { ProofMetrics } from "@/types";
 export const proofMetrics: ProofMetrics = {
   merchantCount: 10_000,
   rating: 5.0,
-  reviewCount: 958,
+  reviewCount: 962,
   countriesServed: 100,
   ordersProcessed: 10_000_000,
   uptimePercent: 99.9,

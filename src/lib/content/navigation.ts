@@ -6,6 +6,7 @@ import {
   footerSolutionsColumn,
 } from "@/data/footer";
 import {
+  demoStoreAction,
   megaMenuFooterLinks,
   mobileActions,
   primaryNav,
@@ -47,6 +48,17 @@ export function getUtilityActions(): readonly UtilityAction[] {
 
 export function getMobileActions(): readonly UtilityAction[] {
   return mobileActions;
+}
+
+/**
+ * The live demo storefront action (§4.2).
+ *
+ * Read through the repository like every other piece of content, so the hero's
+ * secondary button and the storefront button in the closing band cannot drift
+ * apart — same label, same destination, one edit.
+ */
+export function getDemoStoreAction(): UtilityAction {
+  return demoStoreAction;
 }
 
 /**

@@ -5,6 +5,7 @@ import {
   FaqCategorySection,
   FaqContactPrompt,
   FaqQuickFacts,
+  FaqSearch,
   FaqTopicLinks,
 } from "@/components/faq";
 import { FeatureCtaBand } from "@/components/features/sections";
@@ -53,6 +54,12 @@ export default function FaqPage() {
     id: category.id,
     label: category.title,
   }));
+
+  /* What the search reports against — counted here, where the list is. */
+  const questionCount = categories.reduce(
+    (total, category) => total + category.items.length,
+    0,
+  );
 
   return (
     <>
@@ -109,15 +116,40 @@ export default function FaqPage() {
 
           <div className="min-w-0">
             {/*
+              Above the questions and below the topics, which is where a reader
+              who did not find their topic in the hero arrives looking for one.
+
+              It is an enhancement rather than the way in: the field renders
+              only once its script has run, and everything it can filter is
+              already on the page underneath it.
+            */}
+            <FaqSearch targetId="faq-list" total={questionCount} />
+
+            {/*
               `divide-y` rather than a margin between categories. Seven groups
               separated by whitespace alone read as seven pages of a scroll;
               the hairline is the same rule the legal document sets between its
               sections, and it is what gives the column a rhythm — heading,
               questions, rule, next heading — instead of a gap.
+
+              `[&>[data-faq-first]]` is how that rule survives a search. The
+              divide is a sibling selector, so a hidden group above still
+              counts as a sibling and the first surviving group would open on a
+              stray hairline with the padding of a group that has something
+              above it. The search marks whichever group is showing first, and
+              this pair of rules — child-of-container, so more specific than
+              `divide-y`'s own — takes the border and the padding back off it.
             */}
-            <div className="divide-y divide-ink/[0.07]">
+            <div
+              id="faq-list"
+              className="divide-y divide-ink/[0.07] [&>[data-faq-first]]:border-t-0 [&>[data-faq-first]]:pt-0"
+            >
               {categories.map((category) => (
-                <div key={category.id} className="py-8 first:pt-0 last:pb-0">
+                <div
+                  key={category.id}
+                  data-faq-category
+                  className="py-8 first:pt-0 last:pb-0"
+                >
                   <FaqCategorySection category={category} />
                 </div>
               ))}
