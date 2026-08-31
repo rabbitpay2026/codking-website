@@ -264,6 +264,81 @@ function buildHtml(submission: ContactSubmission): string {
 }
 
 /**
+ * `Display Name <someone@example.com>` reduced to the address alone.
+ *
+ * `CONTACT_EMAIL_FROM` may carry a display name, which is right for a header
+ * and wrong in running text — "Best regards, COD King <info@…>" reads like a
+ * mail client leaked into the copy. The header keeps the configured value
+ * verbatim; only the signature uses this.
+ */
+function bareAddress(value: string): string {
+  return value.match(/<([^>]+)>/)?.[1]?.trim() ?? value.trim();
+}
+
+/**
+ * The acknowledgement the customer receives.
+ *
+ * Deliberately not a copy of the internal mail. It quotes back only what the
+ * customer themselves wrote, so it carries nothing they did not already know:
+ * no internal recipient, no routing, no reference the support desk uses. The
+ * merchant's own note is echoed because seeing their words repeated is what
+ * makes an acknowledgement feel like a receipt rather than an autoresponder —
+ * and it is skipped entirely when they left the note empty, since a heading
+ * over a blank quote reads like something was lost.
+ */
+function buildConfirmationSubject(): string {
+  return `We've received your enquiry — ${siteConfig.name}`;
+}
+
+function buildConfirmationText(
+  submission: ContactSubmission,
+  from: string,
+): string {
+  const enquiry = submission.note
+    ? `\n\nYour enquiry:\n${submission.note}`
+    : "";
+
+  return (
+    `Hi ${submission.name},\n\n` +
+    `Thank you for reaching out to ${siteConfig.name}.\n\n` +
+    "We've successfully received your enquiry and our team will review it " +
+    "shortly. We'll get back to you as soon as possible." +
+    `${enquiry}\n\n` +
+    "If you have any additional information you'd like to share, simply " +
+    "reply to this email.\n\n" +
+    `Best regards,\n${siteConfig.name} Team\n${bareAddress(from)}\n`
+  );
+}
+
+/**
+ * The same palette and type stack the internal mail uses, so both messages
+ * look like they came from the same company. Inline styles because a mail
+ * client is not a browser and a `<style>` block is the first thing stripped.
+ */
+function buildConfirmationHtml(
+  submission: ContactSubmission,
+  from: string,
+): string {
+  const enquiry = submission.note
+    ? `<p style="margin:0 0 8px;color:#5b6472">Your enquiry:</p>` +
+      `<blockquote style="margin:0 0 24px;padding:12px 16px;border-left:3px solid #0b1b36;background:#f6f7f9;color:#0b1b36;white-space:pre-wrap">${escapeHtml(submission.note)}</blockquote>`
+    : "";
+
+  return (
+    `<div style="font:14px system-ui,sans-serif;color:#0b1b36;line-height:1.6;max-width:560px">` +
+    `<p style="margin:0 0 16px">Hi ${escapeHtml(submission.name)},</p>` +
+    `<p style="margin:0 0 16px">Thank you for reaching out to ${escapeHtml(siteConfig.name)}.</p>` +
+    `<p style="margin:0 0 24px">We've successfully received your enquiry and our team will review it shortly. We'll get back to you as soon as possible.</p>` +
+    enquiry +
+    `<p style="margin:0 0 24px">If you have any additional information you'd like to share, simply reply to this email.</p>` +
+    `<p style="margin:0;color:#5b6472">Best regards,<br />` +
+    `<strong style="color:#0b1b36">${escapeHtml(siteConfig.name)} Team</strong><br />` +
+    `${escapeHtml(bareAddress(from))}</p>` +
+    `</div>`
+  );
+}
+
+/**
  * What we are willing to write down about a failure.
  *
  * An AWS error carries a `$metadata` and, on some paths, the request that
@@ -284,6 +359,80 @@ function describeError(error: unknown): string {
   return [name ?? "Error", status ? `(${status})` : "", message ?? ""]
     .filter(Boolean)
     .join(" ");
+}
+
+/**
+ * One SES send, for either of the two messages.
+ *
+ * Extracted so the second message did not arrive as a second copy of the
+ * command, the timeout, the abort signal and the three log lines — two
+ * transcriptions of that block would drift the first time one of them was
+ * tuned, and the retry policy is exactly the thing that must not differ
+ * between them.
+ *
+ * `label` is what the log calls this message. It is a fixed word rather than
+ * the recipient, because the customer's address is theirs and does not belong
+ * in a log line — "confirmation" says everything an operator needs.
+ *
+ * Never throws, for the same reason `sendContactMessage` does not: the caller
+ * is orchestrating two sends and deciding what a failure of each one means,
+ * which is a decision about values, not about exceptions.
+ */
+interface OutboundMessage {
+  readonly config: MailConfig;
+  readonly to: string;
+  readonly subject: string;
+  readonly text: string;
+  readonly html: string;
+  readonly replyTo?: string;
+  readonly label: "internal" | "confirmation";
+}
+
+async function dispatch(message: OutboundMessage): Promise<{ ok: boolean }> {
+  const { config, label, replyTo } = message;
+
+  try {
+    console.warn(
+      `[contact] Calling SES SendEmail (${label}) — region ${config.region}, reply-to ${
+        replyTo ? "set" : "not set"
+      }.`,
+    );
+
+    const response = await getClient(config).send(
+      new SendEmailCommand({
+        FromEmailAddress: config.from,
+        Destination: { ToAddresses: [message.to] },
+        ...(replyTo ? { ReplyToAddresses: [replyTo] } : {}),
+        Content: {
+          Simple: {
+            Subject: { Data: message.subject, Charset: "UTF-8" },
+            Body: {
+              Text: { Data: message.text, Charset: "UTF-8" },
+              Html: { Data: message.html, Charset: "UTF-8" },
+            },
+          },
+        },
+      }),
+      // Bounds the whole call, retries included, rather than each attempt.
+      { abortSignal: AbortSignal.timeout(SEND_TIMEOUT_MS) },
+    );
+
+    console.warn(
+      `[contact] SES accepted the ${label} message. MessageId: ${
+        response.MessageId ?? "(none returned — anomalous)"
+      }`,
+    );
+
+    return { ok: true };
+  } catch (error) {
+    // SES's own message, in the server log only — it can name the sending
+    // identity and the account, neither of which belongs in a response body a
+    // browser receives.
+    console.error(
+      `[contact] SES rejected the ${label} message: ${describeError(error)}`,
+    );
+    return { ok: false };
+  }
 }
 
 /**
@@ -325,66 +474,56 @@ export async function sendContactMessage(
 
   const config = configResult.config;
 
-  try {
-    // Immediately before the call, so a send that never returns — a hang, a
-    // timeout, a runtime killed mid-flight — is still bracketed in the log by
-    // this line with no result line after it. Region is repeated here rather
-    // than left to the once-per-process client line above, because that one is
-    // absent on every request but the first.
-    console.warn(
-      `[contact] Calling SES SendEmail — region ${config.region}, reply-to ${
-        submission.email ? "set" : "not set"
-      }.`,
-    );
+  // The team's copy first, and everything after it is contingent on this one
+  // landing. The order is the requirement: an enquiry the team never receives
+  // is a lost customer, while a missing acknowledgement is an inconvenience —
+  // so the message that must not be lost goes first, and the merchant is only
+  // told "sent" once it has been.
+  const internal = await dispatch({
+    config,
+    to: config.to,
+    subject: buildSubject(submission),
+    text: buildText(submission),
+    html: buildHtml(submission),
+    // So hitting reply in the support mailbox answers the merchant rather
+    // than the sending address, whenever they gave us somewhere to reply.
+    replyTo: submission.email || undefined,
+    label: "internal",
+  });
 
-    const response = await getClient(config).send(
-      new SendEmailCommand({
-        FromEmailAddress: config.from,
-        Destination: { ToAddresses: [config.to] },
-        // So hitting reply in the support mailbox answers the merchant rather
-        // than the sending address, whenever they gave us somewhere to reply.
-        ...(submission.email ? { ReplyToAddresses: [submission.email] } : {}),
-        Content: {
-          Simple: {
-            Subject: { Data: buildSubject(submission), Charset: "UTF-8" },
-            Body: {
-              Text: { Data: buildText(submission), Charset: "UTF-8" },
-              Html: { Data: buildHtml(submission), Charset: "UTF-8" },
-            },
-          },
-        },
-      }),
-      // Bounds the whole call, retries included, rather than each attempt.
-      { abortSignal: AbortSignal.timeout(SEND_TIMEOUT_MS) },
-    );
+  if (!internal.ok) return { ok: false, reason: "provider" };
 
-    // The one piece of evidence the old code threw away.
-    //
-    // A resolved `send` means SES *accepted* the message and issued an id for
-    // it. That is not the same as delivering it, and the difference is exactly
-    // the failure being chased here: an accepted message that never arrives has
-    // bounced, been suppressed, or been filtered after the handoff, and none of
-    // that produces an exception on this side. The id is the only handle on
-    // what happened next — it is what SES event publishing, the suppression
-    // list and an AWS support case are all keyed on — so it goes in the log.
-    // Not sensitive: an opaque SES identifier, no address and no credential.
-    //
-    // A resolved send with no id at all would be genuinely anomalous, so that
-    // case says so rather than printing "undefined".
-    console.warn(
-      `[contact] SES accepted the message. MessageId: ${
-        response.MessageId ?? "(none returned — anomalous)"
-      }`,
-    );
+  // The acknowledgement, and only when there is somewhere to send it.
+  //
+  // `email` is the one optional contact field, normalised to the empty string
+  // when the merchant left it blank, so this guard is the whole of "validate
+  // before attempting": a non-empty value has already been shape-checked by
+  // `parseContactSubmission`, and re-checking it here would be a second copy of
+  // a rule that exists precisely once on purpose.
+  if (submission.email) {
+    const confirmation = await dispatch({
+      config,
+      to: submission.email,
+      subject: buildConfirmationSubject(),
+      text: buildConfirmationText(submission, config.from),
+      html: buildConfirmationHtml(submission, config.from),
+      // No reply-to: a reply to an acknowledgement should reach the support
+      // address it came from, which is what omitting this leaves it doing.
+      label: "confirmation",
+    });
 
-    return { ok: true };
-  } catch (error) {
-    // SES's own message, in the server log only — it can name the sending
-    // identity and the account, neither of which belongs in a response body a
-    // browser receives.
-    console.error(
-      `[contact] SES rejected the message: ${describeError(error)}`,
-    );
-    return { ok: false, reason: "provider" };
+    // Logged, and deliberately not returned. The enquiry is already with the
+    // team, so reporting the submission as failed would be false twice over: it
+    // would send the merchant to WhatsApp to repeat a message that arrived, and
+    // it would tell support to expect nothing while the enquiry sits in their
+    // mailbox. Only the acknowledgement was lost, and nobody is blocked on it.
+    if (!confirmation.ok) {
+      console.error(
+        "[contact] The enquiry reached the team; the customer acknowledgement did not. " +
+          "The enquiry itself needs no resend — only the acknowledgement was lost.",
+      );
+    }
   }
+
+  return { ok: true };
 }
