@@ -297,6 +297,11 @@ function describeError(error: unknown): string {
 export async function sendContactMessage(
   submission: ContactSubmission,
 ): Promise<SendResult> {
+  // Proves the route reached the mailer at all, before any branch below can
+  // return early. Without it, "no log line" is ambiguous between "the mailer
+  // never ran" and "the mailer ran and said nothing".
+  console.warn("[contact] sendContactMessage entered.");
+
   const configResult = readConfig();
   if ("missing" in configResult) {
     // Said out loud, because the alternative is a 503 with nothing behind it in
@@ -321,7 +326,18 @@ export async function sendContactMessage(
   const config = configResult.config;
 
   try {
-    await getClient(config).send(
+    // Immediately before the call, so a send that never returns — a hang, a
+    // timeout, a runtime killed mid-flight — is still bracketed in the log by
+    // this line with no result line after it. Region is repeated here rather
+    // than left to the once-per-process client line above, because that one is
+    // absent on every request but the first.
+    console.warn(
+      `[contact] Calling SES SendEmail — region ${config.region}, reply-to ${
+        submission.email ? "set" : "not set"
+      }.`,
+    );
+
+    const response = await getClient(config).send(
       new SendEmailCommand({
         FromEmailAddress: config.from,
         Destination: { ToAddresses: [config.to] },
@@ -340,6 +356,25 @@ export async function sendContactMessage(
       }),
       // Bounds the whole call, retries included, rather than each attempt.
       { abortSignal: AbortSignal.timeout(SEND_TIMEOUT_MS) },
+    );
+
+    // The one piece of evidence the old code threw away.
+    //
+    // A resolved `send` means SES *accepted* the message and issued an id for
+    // it. That is not the same as delivering it, and the difference is exactly
+    // the failure being chased here: an accepted message that never arrives has
+    // bounced, been suppressed, or been filtered after the handoff, and none of
+    // that produces an exception on this side. The id is the only handle on
+    // what happened next — it is what SES event publishing, the suppression
+    // list and an AWS support case are all keyed on — so it goes in the log.
+    // Not sensitive: an opaque SES identifier, no address and no credential.
+    //
+    // A resolved send with no id at all would be genuinely anomalous, so that
+    // case says so rather than printing "undefined".
+    console.warn(
+      `[contact] SES accepted the message. MessageId: ${
+        response.MessageId ?? "(none returned — anomalous)"
+      }`,
     );
 
     return { ok: true };
