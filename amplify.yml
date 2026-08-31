@@ -1,0 +1,58 @@
+# Build specification for AWS Amplify Hosting (app: codking-website, us-east-2).
+#
+# This file exists for one reason: the contact form.
+#
+# Environment variables set in the Amplify console are injected into the *build*
+# container. They are deliberately NOT injected into the Next.js SSR compute
+# runtime — AWS documents this as intentional, so that build-phase secrets do
+# not leak into a long-lived server function. The consequence is that a route
+# handler reading `process.env.CONTACT_EMAIL_FROM` at request time sees
+# `undefined` on the deploy while seeing the right value on a laptop, which is
+# exactly how `/api/contact` came to answer 503 with nothing wrong in its code.
+#
+#   https://docs.aws.amazon.com/amplify/latest/userguide/ssr-environment-variables.html
+#
+# The documented remedy is the build step below: copy the variables the server
+# needs out of the build environment into `.env.production`, which Next.js loads
+# into `process.env` when NODE_ENV is `production`. That is the whole fix.
+#
+# Committing this file means Amplify uses it instead of the auto-detected build
+# spec; the phases below are the detected Next.js spec plus that one line.
+#
+# ── What must NOT go through here ─────────────────────────────────────────
+# No AWS credential. `.env.production` is written into the deployment
+# artifacts, and anyone who can read a deployment can read it. SES is signed
+# with the SSR compute role (CodkingAmplifySSRComputeRole), whose temporary
+# credentials the AWS SDK resolves on its own at runtime — see the credentials
+# note in src/lib/contact/mailer.ts. Only non-secret configuration belongs in
+# the grep below.
+# ──────────────────────────────────────────────────────────────────────────
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - npm ci
+    build:
+      commands:
+        # The server-side contact configuration, plus the public variables Next
+        # inlines at build time. Anchored to `^NAME=` so a variable is matched
+        # by its whole name and not as a substring of another one.
+        #
+        # `|| true` because `grep` exits non-zero when it matches nothing, and a
+        # non-zero exit here would fail the build. A missing variable should
+        # surface as the explicit line below and as the named `[contact]` log in
+        # CloudWatch — not as a red build with an unrelated-looking error.
+        - env | grep -E '^(CODK_AWS_REGION|CONTACT_EMAIL_FROM|CONTACT_EMAIL_TO|NEXT_PUBLIC_)' >> .env.production || true
+        # Presence, never values. This is the line to read in the build log when
+        # the form is failing: a `0` here is the whole diagnosis.
+        - echo "contact config -> CODK_AWS_REGION=$(grep -c '^CODK_AWS_REGION=' .env.production) CONTACT_EMAIL_FROM=$(grep -c '^CONTACT_EMAIL_FROM=' .env.production) CONTACT_EMAIL_TO=$(grep -c '^CONTACT_EMAIL_TO=' .env.production)"
+        - npm run build
+  artifacts:
+    baseDirectory: .next
+    files:
+      - "**/*"
+  cache:
+    paths:
+      - node_modules/**/*
+      - .next/cache/**/*

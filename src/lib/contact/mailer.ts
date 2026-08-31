@@ -91,14 +91,44 @@ interface MailConfig {
  * (`CredentialsProviderError`) rather than swallowing it.
  * ──────────────────────────────────────────────────────────────────────────
  */
-function readConfig(): MailConfig | null {
+type ConfigResult =
+  { readonly config: MailConfig } | { readonly missing: readonly string[] };
+
+function readConfig(): ConfigResult {
   const region = process.env.CODK_AWS_REGION?.trim();
   const from = process.env.CONTACT_EMAIL_FROM?.trim();
-  const to = process.env.CONTACT_EMAIL_TO?.trim() || externalLinks.supportEmail;
+  const toVar = process.env.CONTACT_EMAIL_TO?.trim();
+  const to = toVar || externalLinks.supportEmail;
 
-  if (!region || !from || !to) return null;
+  // Which ones, not just how many. "Something is unset" costs an afternoon of
+  // reading a console that shows all three set — because the console shows the
+  // *build* environment, and this runs in the SSR one. Naming them turns that
+  // afternoon into a line in CloudWatch.
+  if (!region || !from || !to) {
+    return {
+      missing: [
+        ...(region ? [] : ["CODK_AWS_REGION"]),
+        ...(from ? [] : ["CONTACT_EMAIL_FROM"]),
+        ...(to ? [] : ["CONTACT_EMAIL_TO"]),
+      ],
+    };
+  }
 
-  return { region, from, to };
+  // Said out loud because the fallback is silent otherwise, and silent is the
+  // problem: with `CONTACT_EMAIL_TO` unset the send still succeeds and still
+  // reports `ok`, having delivered to the legal pages' support address rather
+  // than the mailbox someone is sitting watching. A message that arrived
+  // somewhere else looks exactly like a message that never arrived.
+  if (!toVar) {
+    console.warn(
+      "[contact] CONTACT_EMAIL_TO is unset at runtime — falling back to the " +
+        "published support address. Enquiries will NOT go to the configured " +
+        "recipient, and under the SES sandbox the fallback must itself be a " +
+        "verified identity or SES answers MessageRejected.",
+    );
+  }
+
+  return { config: { region, from, to } };
 }
 
 /**
@@ -123,10 +153,25 @@ function readConfig(): MailConfig | null {
 let client: SESv2Client | undefined;
 
 function getClient(config: MailConfig): SESv2Client {
-  client ??= new SESv2Client({
-    region: config.region,
-    maxAttempts: MAX_ATTEMPTS,
-  });
+  if (!client) {
+    // Once per process, and the region by name — never an address, never a
+    // credential. Region is the field worth printing: SES identities are
+    // per-region, so an identity verified in the wrong one fails exactly like
+    // an identity that was never verified, and this line is what tells the two
+    // apart without opening the SES console.
+    //
+    // `warn` rather than `info` because `warn` and `error` are the two the
+    // project's lint config lets through, and CloudWatch does not grade them
+    // differently anyway — this is a deploy-diagnostic line, not an alarm.
+    console.warn(
+      `[contact] SES region configured: ${config.region} — FROM configured: true, TO configured: true.`,
+    );
+
+    client = new SESv2Client({
+      region: config.region,
+      maxAttempts: MAX_ATTEMPTS,
+    });
+  }
 
   return client;
 }
@@ -252,16 +297,28 @@ function describeError(error: unknown): string {
 export async function sendContactMessage(
   submission: ContactSubmission,
 ): Promise<SendResult> {
-  const config = readConfig();
-  if (!config) {
+  const configResult = readConfig();
+  if ("missing" in configResult) {
     // Said out loud, because the alternative is a 503 with nothing behind it in
     // the log and an afternoon spent looking for a bug that is a missing
     // variable on the deploy.
+    //
+    // The pointer at Amplify is here rather than in a runbook because this is
+    // the one failure whose cause is invisible from the console: the variables
+    // *are* set there, on the app, and the console shows them set. They reach
+    // the build container and stop, and the SSR runtime this code executes in
+    // never sees them unless `amplify.yml` copies them into `.env.production`
+    // first. Anyone reading this line is looking at a console that disagrees
+    // with it, so the line has to say why.
     console.error(
-      "[contact] No mail configuration — set CODK_AWS_REGION and CONTACT_EMAIL_FROM. Nothing was sent.",
+      `[contact] No mail configuration — unset in the SSR runtime: ${configResult.missing.join(", ")}. ` +
+        "Amplify console variables reach the build only; amplify.yml must write them to " +
+        ".env.production for the server runtime to read them. Nothing was sent.",
     );
     return { ok: false, reason: "unconfigured" };
   }
+
+  const config = configResult.config;
 
   try {
     await getClient(config).send(
