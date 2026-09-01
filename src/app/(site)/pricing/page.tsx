@@ -5,6 +5,7 @@ import { PricingComparison } from "@/components/pricing/PricingComparison";
 import { PricingCta } from "@/components/pricing/PricingCta";
 import { PricingFaqSection } from "@/components/pricing/PricingFaqSection";
 import { PricingHero } from "@/components/pricing/PricingHero";
+import { PricingMarket } from "@/components/pricing/PricingMarket";
 import { PricingPlans } from "@/components/pricing/PricingPlans";
 import { routes } from "@/constants/routes";
 import { analyticsEnabled } from "@/lib/analytics";
@@ -15,7 +16,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = createMetadata({
   title: "Pricing",
   description:
-    "Three plans, billed on your Shopify invoice. Start free with unlimited orders, and pay only when COD fees, rules and message discounts are worth it.",
+    "Four plans, priced in rupees and billed on your Shopify invoice. Start free with unlimited orders, and pay only when COD fees, rules and cheaper messaging are worth it.",
   path: routes.pricing,
 });
 
@@ -46,6 +47,7 @@ export default function PricingPage() {
       {analyticsEnabled ? <ViewTracker event="pricing_view" /> : null}
 
       <PricingHero />
+      <PricingMarket />
       <PricingPlans />
       <PlanFitSection />
       <PricingComparison />

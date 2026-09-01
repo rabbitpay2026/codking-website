@@ -4,6 +4,7 @@ import {
   pricingAssurances,
   pricingBenefits,
   pricingFeatures,
+  pricingMarket,
   pricingPlans,
 } from "@/data/pricing";
 
@@ -16,6 +17,7 @@ import type {
   PricingBenefit,
   PricingFeature,
   PricingFeatureId,
+  PricingMarket,
   PricingPlan,
 } from "@/types";
 
@@ -49,6 +51,11 @@ export function getPlanFeatureValue(
       planId
     ] ?? false
   );
+}
+
+/** The market band above the cards — who the rupee prices are quoted for. */
+export function getPricingMarket(): PricingMarket {
+  return pricingMarket;
 }
 
 export function getPricingAssurances(): readonly string[] {
