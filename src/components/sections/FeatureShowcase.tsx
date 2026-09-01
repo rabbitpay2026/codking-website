@@ -364,16 +364,14 @@ export function FeatureShowcase() {
             {titleLead}
             {titleAccent ? (
               /*
-                The accent is the brand's own two colours, left to right, rather
-                than a third hue picked for the heading. `text-transparent` over
-                a clipped background is the only way to run a gradient through
-                type, and the fallback if `background-clip` is unsupported is
-                the token colour underneath — which is why `text-brand` is set
-                as well as the gradient.
+                The accent is the hero's, flat: one token colour on the phrase
+                the board is named for. It was a clipped gradient running from
+                `brand-violet` into `brand`, which put the page's only violet
+                type on the section heading a merchant reads directly after the
+                hero — where the same phrase-level accent is a flat `text-brand`.
+                One treatment, used twice, reads as a system; two read as two.
               */
-              <span className="bg-gradient-to-r from-brand-violet to-brand bg-clip-text text-brand text-transparent">
-                {titleAccent}
-              </span>
+              <span className="text-brand">{titleAccent}</span>
             ) : null}
           </>
         }

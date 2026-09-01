@@ -8,6 +8,9 @@ import {
 } from "lucide-react";
 
 import { CheckoutPreview } from "@/components/sections/hero/checkout/CheckoutPreview";
+import { DESIGN_WIDTH as CHECKOUT_WIDTH } from "@/components/sections/hero/checkout/checkoutDemo";
+import { StatusBar } from "@/components/sections/hero/PhoneChrome";
+import { Iphone } from "@/components/ui/iphone";
 import { cn } from "@/lib/utils";
 
 import type { LucideIcon } from "lucide-react";
@@ -350,20 +353,19 @@ function Chip({ icon: Icon, label, side, className, delay }: FloatingChip) {
 /**
  * The hero's product scene.
  *
- * One surface, centred, with the outcomes floating around it. Three earlier
- * passes got this wrong in different directions — one stood a second phone
- * behind the first, one parked the verification on a card outside the glass,
- * and the one this replaces wrapped a real product screen in a drawing of an
- * iPhone. All three made the same mistake: they spent the frame on furniture
- * and pushed the product's own screen out of the place the whole composition
- * points at.
+ * One device, centred, with the outcomes floating around it. The device is
+ * back, and what it holds is the difference: earlier passes stood a second
+ * phone behind the first, or parked the verification on a card outside the
+ * glass, and both spent the frame on furniture. This one puts the product's
+ * own checkout — the same `CheckoutPreview` that ran unframed here, the same
+ * states, the same sequence, the same pixel sizes — on the screen, and lets
+ * the phone do nothing but say where a buyer is standing.
  *
- * The frame is gone and the checkout is the whole object. Chamfered titanium,
- * a dynamic island and a bezel were arguing on behalf of a screen that can
- * argue for itself, and a merchant evaluating a COD app does not need to be
- * told what a phone looks like — they need to see what their buyers see, at
- * the size they will see it, doing what it does. What is left is `CheckoutPreview`,
- * which is not a picture of the product but the product's own flow, running.
+ * That is the whole division of labour. `Iphone` is the outer object and owns
+ * the rail, the island, the glass and the light; `CheckoutPreview` is the
+ * screen and owns everything a buyer reads. Neither knows anything about the
+ * other except the width they are both drawn against, which is
+ * `CHECKOUT_WIDTH` and is exported for exactly that reason.
  *
  * Depth is bought with light rather than with rotation. A rotated layer is
  * rasterised flat and resampled, which softens every glyph on the screen —
@@ -375,8 +377,8 @@ function Chip({ icon: Icon, label, side, className, delay }: FloatingChip) {
  * everything inside is positioned as a percentage of it, so the composition
  * survives every column width instead of being tuned for one. The chips are
  * the first thing to go as the column narrows: below `lg` there is no room for
- * two columns of annotation beside a checkout, and a chip crushed against it
- * argues against the craft it is meant to demonstrate.
+ * two columns of annotation beside a phone, and a chip crushed against the
+ * frame argues against the craft it is meant to demonstrate.
  *
  * Nothing here fades in — see `Hero` for why the first screen must never
  * depend on JavaScript to be visible. The only motion is the chips' slow float
@@ -385,11 +387,48 @@ function Chip({ icon: Icon, label, side, className, delay }: FloatingChip) {
 export function HeroStage() {
   return (
     <div className="relative w-full">
-      <div className="relative aspect-[1/1.58] w-full sm:aspect-[1/1.1] lg:aspect-[1/1.02]">
-        {/*
-          The checkout, and the shadows it casts.
+      {/*
+        The stage's own height, and the one thing on this page the device
+        genuinely cost.
 
-          The shadows are children of the surface's own box rather than of the
+        A frame is only about six percent of width, but the glass inside it is
+        taller than the 1:1.62 the unframed checkout was cut to — so a phone
+        showing the checkout at the width it was already shown at is taller than
+        the checkout was. That height had to come from somewhere, and there were
+        exactly two places: the stage, or the checkout's own scale.
+
+        It comes from the stage. A checkout shrunk to fit the old box would
+        render its 13px rows at about ten, and a demonstration a merchant has
+        to lean in to read is not a demonstration — the whole reason this scene
+        exists is that the product's real interface is legible at hero size.
+        The chips' own numbers are untouched: they are percentages of this box,
+        so the six of them spread with it and keep framing a taller subject
+        exactly as they framed a shorter one.
+
+        The numbers below are the device's own aspect times its width, plus
+        two or three points of margin for the shadows it casts. They dropped by
+        about a tenth when the frame was shortened from 433:882 to 433:789 —
+        see `Iphone` for why — which is the whole of the change a visitor sees
+        as "the phone fits on the screen now". Nothing about the checkout moved
+        with them.
+
+        Four disjoint ranges rather than three open-ended ones, for the reason
+        the widths below spell out: a named Tailwind variant outranks an
+        arbitrary `min-[...]` one whatever the two values are, so an unbounded
+        `sm:` would win at 1400 and hand the phone a box shorter than it is.
+      */}
+      <div
+        className={cn(
+          "relative aspect-[1/1.74] w-full",
+          "sm:max-[1023px]:aspect-[1/1.3]",
+          "lg:max-[1151px]:aspect-[1/1.05]",
+          "min-[1152px]:aspect-[1/1.14]",
+        )}
+      >
+        {/*
+          The device, and the shadows it casts.
+
+          The shadows are children of the device's own box rather than of the
           stage, so they are expressed relative to the thing casting them and
           stay correct at every width and position. Pinned to the stage they
           were right at exactly one breakpoint and sat well to the left of the
@@ -404,7 +443,7 @@ export function HeroStage() {
           arrows' clearance. Nothing here can grow without something beside it
           being named as what paid for it.
 
-              checkout + 2 x (chip - hang) + 2 x clearance = 100
+              device + 2 x (chip - hang) + 2 x clearance = 100
 
           Above 1152, where the container is at its full 72rem and the design
           is really tuned:  58 + 2 x (24 - 4.5) + 2 x 1.5 = 100.
@@ -447,20 +486,40 @@ export function HeroStage() {
           load-bearing rather than pedantic.
 
           Tailwind ranks a named breakpoint variant above an arbitrary
-          `min-[...]` one whatever the two values are, so `sm:w-[66%]` beats
-          `min-[1152px]:w-[58%]` at 1400 pixels and `lg:` beats it too. Both of
+          `min-[...]` one whatever the two values are, so `sm:w-[70%]` beats
+          `min-[1152px]:w-[61%]` at 1400 pixels and `lg:` beats it too. Both of
           those were live bugs in this line: the first pass rendered the
-          checkout at 51% above 1152 and the second at 66%, and neither is a
+          subject at 51% above 1152 and the second at 66%, and neither is a
           width anything here asked for. Closing each range with a `max-`
           bound leaves exactly one rule matching at any viewport, which takes
           the question away from the cascade altogether.
         */}
+        {/*
+          The widths, which are the old checkout widths divided by 0.942.
+
+          0.942 is the fraction of the device's width the glass actually gets:
+          the titanium rail takes 1.7% a side and the black inner wall 1.2%,
+          and both resolve against the device *width*. So a phone at 61% of the
+          stage shows a screen at 57.5% of it — which is the 58% the checkout
+          was rendered at standing on its own, to within half a percent.
+
+          That is the whole sizing rule, and it is what keeps the promise this
+          change was made under: the checkout is not scaled to fit the phone,
+          the phone is scaled so the checkout lands at the size it already was.
+
+          The ceiling on the widest band is the chips and not arithmetic. At
+          1152 a chip runs to 19% of the stage, and a device at 61% starts at
+          19.5%; 61.6% — the width that would match 58% exactly — starts at
+          19.2% and puts the frame under the left column. Half a percent of
+          checkout is the right thing to give up for that, and nothing else in
+          the scene moves to pay for it.
+        */}
         <div
           className={cn(
             "absolute top-1/2 left-1/2 w-[94%] -translate-x-1/2 -translate-y-1/2",
-            "sm:max-[1023px]:w-[66%]",
-            "lg:max-[1151px]:w-[53%]",
-            "min-[1152px]:w-[58%]",
+            "sm:max-[1023px]:w-[70%]",
+            "lg:max-[1151px]:w-[56%]",
+            "min-[1152px]:w-[61%]",
           )}
         >
           <div
@@ -472,7 +531,47 @@ export function HeroStage() {
             className="absolute inset-x-[12%] bottom-[-0.5%] h-[3%] rounded-[50%] bg-ink/22 blur-lg"
           />
 
-          <CheckoutPreview />
+          {/*
+            The screen: a status bar, the product, and the home indicator.
+
+            The bar is not decoration and it is not part of the checkout: it is
+            the clearance the Dynamic Island needs. The island is drawn over the
+            glass at the top, and the checkout's app bar centres the merchant's
+            lockup — without a strip above it, the island sits on the shop's own
+            name, which is the one collision a device mockup cannot ship with.
+            It is also simply what a phone looks like, which is the argument the
+            frame is here to make.
+
+            Sized to clear the island rather than to a guess: the island ends
+            just under 38 of the 819 pixels this screen is drawn at, and the bar
+            is 42 of them. Its clock and battery sit at the edges, where the
+            island is not.
+
+            `bg-white` rather than the checkout's field, because the strip meets
+            the checkout's app bar and that bar is white — a seam between two
+            near-whites is more visible than either.
+
+            The bar at the foot is the same argument at the other end. The trust
+            strip is pinned to the bottom of the checkout, and pinned to the
+            bottom of the *glass* it ran into the corner radius — the wordmark
+            and the policy line were being clipped by the phone's own rounded
+            corner. A home indicator is what stands there on the real device, so
+            the clearance is furniture rather than padding.
+          */}
+          <Iphone screenWidth={CHECKOUT_WIDTH}>
+            <div className="flex size-full flex-col bg-white">
+              <StatusBar className="h-[42px] shrink-0 items-end pt-0 pb-[11px] text-[#0b1b36]" />
+
+              <CheckoutPreview />
+
+              <div
+                aria-hidden
+                className="grid h-[30px] shrink-0 place-items-center bg-white"
+              >
+                <span className="h-[4px] w-[122px] rounded-full bg-[#0b1b36]/85" />
+              </div>
+            </div>
+          </Iphone>
         </div>
 
         {CHIPS.map((chip) => (

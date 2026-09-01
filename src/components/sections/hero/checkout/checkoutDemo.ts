@@ -3,6 +3,26 @@ import { CreditCard, HandCoins, Truck, Wallet } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 /**
+ * The width the checkout is drawn at.
+ *
+ * Real pixels, because a dense interface is controlled in real pixels — an
+ * 11px caption and a 46px field are decisions, not ratios. Every size in
+ * `CheckoutPreview` and `CheckoutChrome` is expressed against it, and the
+ * whole screen is then scaled to whatever width the device it sits in is
+ * given. See the `screen-fit` utility for the arithmetic.
+ *
+ * It lives here, in the data, rather than beside the markup that uses it, and
+ * that is a boundary rather than a preference: `HeroStage` renders on the
+ * server and has to declare this same number on the glass, and every export of
+ * a `"use client"` module reaches a server component as a reference to a
+ * client function rather than as its value. Imported from `CheckoutPreview`
+ * this arrived as `--screen-w: function() {…}` — the screen stopped being
+ * scaled at all, silently, because an invalid custom property simply drops the
+ * declaration that reads it.
+ */
+export const DESIGN_WIDTH = 390;
+
+/**
  * The cart the hero's checkout is standing on.
  *
  * One object, because every figure on the screen is derived from it. The

@@ -54,26 +54,6 @@ import type { PaymentOption } from "@/components/sections/hero/checkout/checkout
 import type { ChangeEvent, ClipboardEvent, KeyboardEvent } from "react";
 
 /**
- * The width the checkout is drawn at, and the height it is given.
- *
- * Real pixels, because a dense interface is controlled in real pixels — an
- * 11px caption and a 46px field are decisions, not ratios. The surface is then
- * scaled to whatever the hero column hands it, so the layout on a phone is the
- * same layout as on a desktop rather than a rearrangement of it, and no state
- * can outgrow the frame. See the `screen-fit` utility for the arithmetic and
- * for what a browser that cannot do it falls back to.
- *
- * 390×632 is within three percent of the reference screens' own aspect, which
- * is what keeps this reading as a phone standing in the hero rather than as a
- * panel. The height is not slack either: it is the tallest state — the payment
- * ladder, with the delivery card above it — plus the dozen pixels that keep
- * that state off its own scrollbar. Trim it and the ladder scrolls; grow it
- * and every shorter state opens a hole above the trust strip.
- */
-const DESIGN_WIDTH = 390;
-const DESIGN_HEIGHT = 632;
-
-/**
  * The tempo of the demonstration, in milliseconds.
  *
  * Every automatic beat in this component reads its delay from here, so the
@@ -88,8 +68,6 @@ const DESIGN_HEIGHT = 632;
  * mid-loop.
  */
 const BEAT = {
-  /** The wait before the checkout opens. */
-  redirect: 1800,
   /**
    * The number screen, held before a single digit is typed.
    *
@@ -153,7 +131,7 @@ const DEMO_CODE = "1234";
  */
 const AUTO_METHOD = "cod";
 
-type Stage = "redirect" | "phone" | "code" | "pay" | "processing" | "done";
+type Stage = "phone" | "code" | "pay" | "processing" | "done";
 
 /** The order the flow runs in, so the back arrow has somewhere to go. */
 const BACK_TO: Partial<Record<Stage, Stage>> = {
@@ -168,7 +146,6 @@ const BACK_TO: Partial<Record<Stage, Stage>> = {
  * should be told what it is before it is told what is in it.
  */
 const STAGE_LABEL: Record<Stage, string> = {
-  redirect: "opening the checkout",
   phone: "entering a mobile number",
   code: "verifying the one-time code",
   pay: "choosing how to pay",
@@ -194,10 +171,8 @@ const STAGE_LABEL: Record<Stage, string> = {
  * first appearance — the loader rendered as an empty ring on the opening
  * frame of the page, which is the one frame that has to be right.
  *
- * The redirect and the verification share it, so a visitor reads the second
- * wait as the same kind of event as the first. The arc is the only thing that
- * moves, and under reduced motion it is not drawn at all: a plain ring around
- * the mark says "waiting" just as well.
+ * The arc is the only thing that moves, and under reduced motion it is not
+ * drawn at all: a plain ring around the mark says "waiting" just as well.
  *
  * That withholding is done in CSS rather than from the `useReducedMotion`
  * value, and the difference is not cosmetic. The hook cannot know the
@@ -232,15 +207,15 @@ function BrandSpinner() {
 }
 
 /**
- * The full-bleed wait.
+ * The full-bleed wait, while the order is being verified.
  *
  * Deliberately without the app bar, the promotion or the trust strip — the
- * reference redirect has none of them either, and that is what makes it read
- * as the moment *between* two screens rather than as a screen with nothing on
- * it. Losing the chrome for a second and a half is also what gives the
- * checkout an entrance when the chrome comes back.
+ * reference draws this moment the same way, and that is what makes it read as
+ * the moment *between* two screens rather than as a screen with nothing on it.
+ * Losing the chrome for a second and a half is also what gives the
+ * confirmation an entrance when the chrome comes back.
  */
-function RedirectScreen({ label }: { readonly label: string }) {
+function WaitScreen({ label }: { readonly label: string }) {
   return (
     <div className="flex size-full flex-col items-center justify-center gap-[20px] px-[28px]">
       <p className="text-center text-[13.5px] leading-tight font-medium text-[#0b1b36]/75">
@@ -393,8 +368,8 @@ function PaymentRow({
  * what a blocked order looks like.
  *
  * Nothing automatic runs while the section is off screen, and under reduced
- * motion the redirect passes in a frame, the spinner's arc is not drawn and
- * the confirmation does not loop back to the beginning. The flow itself always
+ * motion the wait passes in a frame, the spinner's arc is not drawn and the
+ * confirmation does not loop back to the beginning. The flow itself always
  * remains available by hand, because it is made of real controls.
  */
 export function CheckoutPreview() {
@@ -402,7 +377,7 @@ export function CheckoutPreview() {
   const inView = useInView(rootRef, { amount: 0.25 });
   const prefersReduced = useReducedMotion() ?? false;
 
-  const [stage, setStage] = useState<Stage>("redirect");
+  const [stage, setStage] = useState<Stage>("phone");
   const [digits, setDigits] = useState("");
   const [code, setCode] = useState<readonly string[]>(() =>
     Array.from({ length: CODE_LENGTH }, () => ""),
@@ -483,7 +458,7 @@ export function CheckoutPreview() {
     setCode(Array.from({ length: CODE_LENGTH }, () => ""));
     setSeconds(RESEND_SECONDS);
     setMethod(null);
-    setStage("redirect");
+    setStage("phone");
   }, []);
 
   /**
@@ -544,22 +519,6 @@ export function CheckoutPreview() {
      a time and let the state change re-run the effect, which is what keeps a
      ten-digit animation to one live timer rather than ten.
      ------------------------------------------------------------------ */
-
-  /* The redirect resolves into the checkout. This beat runs whether or not the
-     demonstration is driving, because a checkout that never opens is not a
-     usable manual fallback either — under reduced motion it simply passes in a
-     frame. Scheduled rather than set outright because the reduced preference
-     is only known after hydration, and the first render has to agree with the
-     server's. */
-  useEffect(() => {
-    if (stage !== "redirect" || !inView) return;
-
-    const id = window.setTimeout(
-      () => setStage("phone"),
-      prefersReduced ? 0 : BEAT.redirect,
-    );
-    return () => window.clearTimeout(id);
-  }, [inView, prefersReduced, stage]);
 
   /* The number types itself, then presses Continue. */
   useEffect(() => {
@@ -741,7 +700,7 @@ export function CheckoutPreview() {
     [takeOver],
   );
 
-  const bare = stage === "redirect" || stage === "processing";
+  const bare = stage === "processing";
 
   /*
     What the wait and the confirmation are called depends on what was chosen,
@@ -766,34 +725,27 @@ export function CheckoutPreview() {
     driving && stage === "code" ? code.findIndex((digit) => digit === "") : -1;
 
   return (
-    <div ref={rootRef} className="relative w-full">
+    /*
+      The checkout fills whatever box it is given, and draws no box of its own.
+
+      It used to own its surface — a rounded card with a ring, three shadows
+      and its own `screen-fit` scaler — because it was standing in the hero
+      unframed. It is now the screen inside the device in `HeroStage`, so all
+      of that belongs to the glass: a card with its own radius and shadow
+      sitting inside a phone is a screenshot pasted onto a screen, which is the
+      one thing a device mockup must not look like.
+
+      What is left is the flow itself, unchanged. `flex-1` rather than a fixed
+      aspect, so the fixed chrome above and below keeps its exact pixel sizes
+      and the scrolling band between them takes the rest of the glass.
+    */
+    <div
+      ref={rootRef}
+      role="group"
+      aria-label={`Interactive COD King checkout — ${STAGE_LABEL[stage]}`}
+      className="flex min-h-0 w-full flex-1 flex-col overflow-hidden bg-[#f4f6fb] font-sans text-[#0b1b36] antialiased"
+    >
       {/*
-        The surface. A container query rather than a media query, because what
-        the screen has to fit itself to is the width of this box — which is a
-        fraction of a grid column, not of the viewport.
-      */}
-      <div
-        className={cn(
-          "@container relative aspect-[390/632] w-full overflow-hidden rounded-[20px] bg-[#f4f6fb]",
-          "ring-1 ring-black/[0.07]",
-          "shadow-[0_2px_6px_rgba(11,27,54,0.06),0_18px_40px_-18px_rgba(11,27,54,0.32),0_44px_80px_-40px_rgba(11,27,54,0.4)]",
-        )}
-      >
-        <div
-          className="screen-fit"
-          style={
-            {
-              "--screen-w": `${DESIGN_WIDTH}px`,
-              "--screen-h": `${DESIGN_HEIGHT}px`,
-            } as React.CSSProperties
-          }
-        >
-          <div
-            role="group"
-            aria-label={`Interactive COD King checkout — ${STAGE_LABEL[stage]}`}
-            className="flex size-full flex-col overflow-hidden bg-[#f4f6fb] font-sans text-[#0b1b36] antialiased"
-          >
-            {/*
               Two levels of presence rather than one, and the reason is a fault
               the first pass had: with the app bar, the promotion and the trust
               strip mounted outside the transition, they vanished the instant
@@ -806,85 +758,83 @@ export function CheckoutPreview() {
               code screen. The wait, which the reference draws without any
               chrome at all, is the other half of the outer swap.
             */}
+      <AnimatePresence initial={false} mode="wait">
+        {bare ? (
+          <motion.div
+            key="wait"
+            initial={prefersReduced ? false : { opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={prefersReduced ? undefined : { opacity: 0 }}
+            transition={{ duration: 0.42, ease: [0.2, 0, 0, 1] }}
+            className="flex min-h-0 flex-1 flex-col"
+          >
+            <WaitScreen
+              label={
+                paidNow
+                  ? "Processing your payment..."
+                  : "Verifying your order..."
+              }
+            />
+          </motion.div>
+        ) : (
+          <motion.div
+            key="checkout"
+            initial={prefersReduced ? false : { opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={prefersReduced ? undefined : { opacity: 0 }}
+            transition={{ duration: 0.42, ease: [0.2, 0, 0, 1] }}
+            className="flex min-h-0 flex-1 flex-col"
+          >
+            <CheckoutHeader onBack={goBack} />
+            <PromoBar />
+
             <AnimatePresence initial={false} mode="wait">
-              {bare ? (
-                <motion.div
-                  key="wait"
-                  initial={prefersReduced ? false : { opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={prefersReduced ? undefined : { opacity: 0 }}
-                  transition={{ duration: 0.42, ease: [0.2, 0, 0, 1] }}
-                  className="flex min-h-0 flex-1 flex-col"
-                >
-                  <RedirectScreen
-                    label={
-                      stage !== "processing"
-                        ? "Redirecting to checkout..."
-                        : paidNow
-                          ? "Processing your payment..."
-                          : "Verifying your order..."
-                    }
-                  />
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="checkout"
-                  initial={prefersReduced ? false : { opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={prefersReduced ? undefined : { opacity: 0 }}
-                  transition={{ duration: 0.42, ease: [0.2, 0, 0, 1] }}
-                  className="flex min-h-0 flex-1 flex-col"
-                >
-                  <CheckoutHeader onBack={goBack} />
-                  <PromoBar />
+              <motion.div
+                key={stage}
+                initial={prefersReduced ? false : { opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={prefersReduced ? undefined : { opacity: 0, y: -6 }}
+                transition={{ duration: 0.38, ease: [0.2, 0, 0, 1] }}
+                className="flex min-h-0 flex-1 flex-col"
+              >
+                {stage === "phone" ? (
+                  <CheckoutBody>
+                    <div className="space-y-[9px]">
+                      <OrderSummaryCard />
+                      <DiscountCard />
+                    </div>
 
-                  <AnimatePresence initial={false} mode="wait">
-                    <motion.div
-                      key={stage}
-                      initial={prefersReduced ? false : { opacity: 0, y: 8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={prefersReduced ? undefined : { opacity: 0, y: -6 }}
-                      transition={{ duration: 0.38, ease: [0.2, 0, 0, 1] }}
-                      className="flex min-h-0 flex-1 flex-col"
+                    <StageHead title="Enter mobile number">
+                      <p className="mt-[3px] text-[11.5px] leading-tight text-[#0b1b36]/45">
+                        Provide your mobile number to continue
+                      </p>
+                    </StageHead>
+
+                    {/* The field. One box, one divider, one caret. */}
+                    <div
+                      className={cn(
+                        CARD,
+                        "mt-[11px] flex h-[46px] items-center px-[11px]",
+                      )}
                     >
-                      {stage === "phone" ? (
-                        <CheckoutBody>
-                          <div className="space-y-[9px]">
-                            <OrderSummaryCard />
-                            <DiscountCard />
-                          </div>
+                      <span className="flex shrink-0 items-center gap-[5px]">
+                        <IndiaFlag />
+                        <span className="text-[13px] leading-none font-medium text-[#0b1b36]">
+                          +91
+                        </span>
+                        <ChevronDown
+                          aria-hidden
+                          className="size-[13px] text-[#0b1b36]/40"
+                          strokeWidth={2.2}
+                        />
+                      </span>
 
-                          <StageHead title="Enter mobile number">
-                            <p className="mt-[3px] text-[11.5px] leading-tight text-[#0b1b36]/45">
-                              Provide your mobile number to continue
-                            </p>
-                          </StageHead>
+                      <span
+                        aria-hidden
+                        className="mx-[10px] h-[22px] w-px shrink-0 bg-black/[0.09]"
+                      />
 
-                          {/* The field. One box, one divider, one caret. */}
-                          <div
-                            className={cn(
-                              CARD,
-                              "mt-[11px] flex h-[46px] items-center px-[11px]",
-                            )}
-                          >
-                            <span className="flex shrink-0 items-center gap-[5px]">
-                              <IndiaFlag />
-                              <span className="text-[13px] leading-none font-medium text-[#0b1b36]">
-                                +91
-                              </span>
-                              <ChevronDown
-                                aria-hidden
-                                className="size-[13px] text-[#0b1b36]/40"
-                                strokeWidth={2.2}
-                              />
-                            </span>
-
-                            <span
-                              aria-hidden
-                              className="mx-[10px] h-[22px] w-px shrink-0 bg-black/[0.09]"
-                            />
-
-                            {/*
+                      {/*
                         16px, and that number is load-bearing rather than
                         aesthetic: Safari on iOS zooms the page when a field
                         below 16px takes focus, and it reads the computed size
@@ -892,31 +842,31 @@ export function CheckoutPreview() {
                         hero sideways on the first tap is not a good
                         demonstration of a checkout.
                       */}
-                            <span className="relative min-w-0 flex-1 text-[16px] tabular-nums">
-                              <input
-                                value={phoneShown}
-                                onFocus={takeOver}
-                                onChange={(event) => {
-                                  takeOver();
-                                  setDigits(
-                                    event.target.value
-                                      .replace(/\D/g, "")
-                                      .slice(0, 10),
-                                  );
-                                }}
-                                onKeyDown={(event) => {
-                                  takeOver();
-                                  if (event.key === "Enter") advance(true);
-                                }}
-                                type="tel"
-                                inputMode="numeric"
-                                autoComplete="off"
-                                aria-label="Mobile number"
-                                placeholder="Phone"
-                                className="w-full bg-transparent text-[16px] leading-none tracking-[0.01em] text-[#0b1b36] tabular-nums outline-none placeholder:font-normal placeholder:text-[#0b1b36]/35"
-                              />
+                      <span className="relative min-w-0 flex-1 text-[16px] tabular-nums">
+                        <input
+                          value={phoneShown}
+                          onFocus={takeOver}
+                          onChange={(event) => {
+                            takeOver();
+                            setDigits(
+                              event.target.value
+                                .replace(/\D/g, "")
+                                .slice(0, 10),
+                            );
+                          }}
+                          onKeyDown={(event) => {
+                            takeOver();
+                            if (event.key === "Enter") advance(true);
+                          }}
+                          type="tel"
+                          inputMode="numeric"
+                          autoComplete="off"
+                          aria-label="Mobile number"
+                          placeholder="Phone"
+                          className="w-full bg-transparent text-[16px] leading-none tracking-[0.01em] text-[#0b1b36] tabular-nums outline-none placeholder:font-normal placeholder:text-[#0b1b36]/35"
+                        />
 
-                              {/*
+                        {/*
                           The caret the demonstration types behind.
 
                           Without it the digits simply appear, which reads as a
@@ -934,132 +884,125 @@ export function CheckoutPreview() {
                           only while the demonstration is typing — a real caret
                           takes over the moment a visitor does.
                         */}
-                              {driving && digits.length < 10 ? (
-                                <span
-                                  aria-hidden
-                                  style={{ left: `${digits.length}ch` }}
-                                  className="pointer-events-none absolute top-1/2 h-[17px] w-[1.5px] -translate-y-1/2 animate-caret bg-[#0b1b36]/70"
-                                />
-                              ) : null}
-                            </span>
-                          </div>
+                        {driving && digits.length < 10 ? (
+                          <span
+                            aria-hidden
+                            style={{ left: `${digits.length}ch` }}
+                            className="pointer-events-none absolute top-1/2 h-[17px] w-[1.5px] -translate-y-1/2 animate-caret bg-[#0b1b36]/70"
+                          />
+                        ) : null}
+                      </span>
+                    </div>
 
-                          {/* The number this checkout has seen before. */}
-                          <div
-                            className={cn(
-                              CARD,
-                              "relative mt-[10px] px-[13px] py-[10px]",
-                            )}
-                          >
-                            <span
-                              aria-hidden
-                              className="absolute -top-[4px] right-[26px] size-[9px] rotate-45 rounded-[2px] bg-white"
-                            />
-                            <p className="relative text-[12px] leading-none text-[#0b1b36]/45">
-                              Continue with
-                            </p>
-                            <button
-                              type="button"
-                              onClick={() => {
-                                takeOver();
-                                setDigits(SAVED_PHONE);
-                              }}
-                              className="relative mt-[8px] flex items-center gap-[7px] rounded-[4px] focus-visible:ring-2 focus-visible:ring-[#2563eb]/45 focus-visible:outline-none"
-                            >
-                              <Phone
-                                aria-hidden
-                                className="size-[13px] shrink-0 text-[#0b1b36]/45"
-                                strokeWidth={1.8}
-                              />
-                              <span className="text-[12.5px] leading-none font-medium text-[#0b1b36] tabular-nums underline underline-offset-[3px]">
-                                {SAVED_PHONE_PRETTY}
-                              </span>
-                            </button>
-                          </div>
+                    {/* The number this checkout has seen before. */}
+                    <div
+                      className={cn(
+                        CARD,
+                        "relative mt-[10px] px-[13px] py-[10px]",
+                      )}
+                    >
+                      <span
+                        aria-hidden
+                        className="absolute -top-[4px] right-[26px] size-[9px] rotate-45 rounded-[2px] bg-white"
+                      />
+                      <p className="relative text-[12px] leading-none text-[#0b1b36]/45">
+                        Continue with
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          takeOver();
+                          setDigits(SAVED_PHONE);
+                        }}
+                        className="relative mt-[8px] flex items-center gap-[7px] rounded-[4px] focus-visible:ring-2 focus-visible:ring-[#2563eb]/45 focus-visible:outline-none"
+                      >
+                        <Phone
+                          aria-hidden
+                          className="size-[13px] shrink-0 text-[#0b1b36]/45"
+                          strokeWidth={1.8}
+                        />
+                        <span className="text-[12.5px] leading-none font-medium text-[#0b1b36] tabular-nums underline underline-offset-[3px]">
+                          {SAVED_PHONE_PRETTY}
+                        </span>
+                      </button>
+                    </div>
 
-                          <button
-                            type="button"
-                            onClick={() => advance(true)}
-                            className="mt-[12px] flex h-[46px] w-full items-center justify-center gap-[8px] rounded-[9px] bg-black text-[14.5px] font-semibold tracking-[-0.01em] text-white transition-colors hover:bg-[#161620] focus-visible:ring-2 focus-visible:ring-[#2563eb]/60 focus-visible:ring-offset-2 focus-visible:outline-none"
-                          >
-                            <MessageSquare
-                              aria-hidden
-                              className="size-[15px]"
-                              strokeWidth={1.9}
-                            />
-                            Continue
-                          </button>
+                    <button
+                      type="button"
+                      onClick={() => advance(true)}
+                      className="mt-[12px] flex h-[46px] w-full items-center justify-center gap-[8px] rounded-[9px] bg-black text-[14.5px] font-semibold tracking-[-0.01em] text-white transition-colors hover:bg-[#161620] focus-visible:ring-2 focus-visible:ring-[#2563eb]/60 focus-visible:ring-offset-2 focus-visible:outline-none"
+                    >
+                      <MessageSquare
+                        aria-hidden
+                        className="size-[15px]"
+                        strokeWidth={1.9}
+                      />
+                      Continue
+                    </button>
 
-                          <p className="mt-[11px] flex items-center justify-center gap-[7px] text-[11.5px] leading-none text-[#0b1b36]/50">
-                            Send OTP via
-                            <span className="grid size-[19px] place-items-center rounded-[5px] bg-[#e8f9ee]">
-                              <WhatsappMark className="size-[13px]" />
-                            </span>
-                          </p>
-                        </CheckoutBody>
-                      ) : null}
+                    <p className="mt-[11px] flex items-center justify-center gap-[7px] text-[11.5px] leading-none text-[#0b1b36]/50">
+                      Send OTP via
+                      <span className="grid size-[19px] place-items-center rounded-[5px] bg-[#e8f9ee]">
+                        <WhatsappMark className="size-[13px]" />
+                      </span>
+                    </p>
+                  </CheckoutBody>
+                ) : null}
 
-                      {stage === "code" ? (
-                        <CheckoutBody>
-                          <div className="space-y-[9px]">
-                            <OrderSummaryCard />
-                            <DiscountCard />
-                          </div>
+                {stage === "code" ? (
+                  <CheckoutBody>
+                    <div className="space-y-[9px]">
+                      <OrderSummaryCard />
+                      <DiscountCard />
+                    </div>
 
-                          <StageHead title="Verify Mobile Number">
-                            <p className="mt-[5px] flex items-center justify-center gap-[5px] text-[11.5px] leading-none text-[#0b1b36]/60">
-                              Enter the code sent to{" "}
-                              <span className="font-semibold text-[#0b1b36] tabular-nums">
-                                {prettyVerified}
-                              </span>
-                              <button
-                                type="button"
-                                onClick={goBack}
-                                aria-label="Change the mobile number"
-                                className={cn(
-                                  "grid size-[15px] shrink-0 place-items-center rounded-[3px] ring-1 ring-[#2563eb]/30",
-                                  LINK,
-                                  "focus-visible:ring-2 focus-visible:ring-[#2563eb]/60 focus-visible:outline-none",
-                                )}
-                              >
-                                <Pencil
-                                  className="size-[9px]"
-                                  strokeWidth={2.2}
-                                />
-                              </button>
-                            </p>
-                          </StageHead>
+                    <StageHead title="Verify Mobile Number">
+                      <p className="mt-[5px] flex items-center justify-center gap-[5px] text-[11.5px] leading-none text-[#0b1b36]/60">
+                        Enter the code sent to{" "}
+                        <span className="font-semibold text-[#0b1b36] tabular-nums">
+                          {prettyVerified}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={goBack}
+                          aria-label="Change the mobile number"
+                          className={cn(
+                            "grid size-[15px] shrink-0 place-items-center rounded-[3px] ring-1 ring-[#2563eb]/30",
+                            LINK,
+                            "focus-visible:ring-2 focus-visible:ring-[#2563eb]/60 focus-visible:outline-none",
+                          )}
+                        >
+                          <Pencil className="size-[9px]" strokeWidth={2.2} />
+                        </button>
+                      </p>
+                    </StageHead>
 
-                          <div className="mt-[14px] flex items-center justify-center gap-[11px]">
-                            {code.map((digit, index) => (
-                              <input
-                                key={index}
-                                ref={(node) => {
-                                  codeRefs.current[index] = node;
-                                  if (
-                                    index === 0 &&
-                                    node &&
-                                    wantsCaret.current
-                                  ) {
-                                    wantsCaret.current = false;
-                                    node.focus();
-                                  }
-                                }}
-                                value={digit}
-                                onChange={onCodeChange(index)}
-                                onKeyDown={onCodeKeyDown(index)}
-                                onPaste={onCodePaste(index)}
-                                onFocus={(event) => event.target.select()}
-                                type="text"
-                                inputMode="numeric"
-                                autoComplete="one-time-code"
-                                maxLength={1}
-                                aria-label={`Digit ${index + 1} of ${CODE_LENGTH}`}
-                                className={cn(
-                                  "h-[48px] w-[52px] rounded-[7px] border bg-white text-center text-[17px] font-semibold text-[#0b1b36] tabular-nums transition-colors outline-none",
-                                  "border-black/[0.12] focus:border-[#2563eb] focus:ring-2 focus:ring-[#2563eb]/20",
-                                  digit ? "border-[#2563eb]/60" : "",
-                                  /*
+                    <div className="mt-[14px] flex items-center justify-center gap-[11px]">
+                      {code.map((digit, index) => (
+                        <input
+                          key={index}
+                          ref={(node) => {
+                            codeRefs.current[index] = node;
+                            if (index === 0 && node && wantsCaret.current) {
+                              wantsCaret.current = false;
+                              node.focus();
+                            }
+                          }}
+                          value={digit}
+                          onChange={onCodeChange(index)}
+                          onKeyDown={onCodeKeyDown(index)}
+                          onPaste={onCodePaste(index)}
+                          onFocus={(event) => event.target.select()}
+                          type="text"
+                          inputMode="numeric"
+                          autoComplete="one-time-code"
+                          maxLength={1}
+                          aria-label={`Digit ${index + 1} of ${CODE_LENGTH}`}
+                          className={cn(
+                            "h-[48px] w-[52px] rounded-[7px] border bg-white text-center text-[17px] font-semibold text-[#0b1b36] tabular-nums transition-colors outline-none",
+                            "border-black/[0.12] focus:border-[#2563eb] focus:ring-2 focus:ring-[#2563eb]/20",
+                            digit ? "border-[#2563eb]/60" : "",
+                            /*
                                     The box the demonstration is about to type
                                     into, lit exactly as focus lights it.
 
@@ -1071,290 +1014,273 @@ export function CheckoutPreview() {
                                     and the sequence reads as four fields being
                                     populated rather than as one being filled.
                                   */
-                                  index === typingBox &&
-                                    "border-[#2563eb] ring-2 ring-[#2563eb]/20",
-                                )}
-                              />
-                            ))}
-                          </div>
+                            index === typingBox &&
+                              "border-[#2563eb] ring-2 ring-[#2563eb]/20",
+                          )}
+                        />
+                      ))}
+                    </div>
 
-                          <p className="mt-[12px] flex items-center justify-center gap-[5px] text-center text-[11px] leading-none text-[#0b1b36]/50">
-                            {seconds > 0 ? (
-                              <>
-                                Didn&apos;t receive the Code? Retry in
-                                <Timer
-                                  aria-hidden
-                                  className={cn("size-[11px] shrink-0", LINK)}
-                                  strokeWidth={2}
-                                />
-                                <span
-                                  className={cn(
-                                    "font-semibold tabular-nums",
-                                    LINK,
-                                  )}
-                                >
-                                  {seconds}s
-                                </span>
-                              </>
-                            ) : (
-                              <>
-                                Didn&apos;t receive the Code?
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    takeOver();
-                                    setSeconds(RESEND_SECONDS);
-                                  }}
-                                  className={cn(
-                                    "font-semibold underline underline-offset-[3px]",
-                                    LINK,
-                                    "rounded-[3px] focus-visible:ring-2 focus-visible:ring-[#2563eb]/45 focus-visible:outline-none",
-                                  )}
-                                >
-                                  Resend OTP
-                                </button>
-                              </>
+                    <p className="mt-[12px] flex items-center justify-center gap-[5px] text-center text-[11px] leading-none text-[#0b1b36]/50">
+                      {seconds > 0 ? (
+                        <>
+                          Didn&apos;t receive the Code? Retry in
+                          <Timer
+                            aria-hidden
+                            className={cn("size-[11px] shrink-0", LINK)}
+                            strokeWidth={2}
+                          />
+                          <span
+                            className={cn("font-semibold tabular-nums", LINK)}
+                          >
+                            {seconds}s
+                          </span>
+                        </>
+                      ) : (
+                        <>
+                          Didn&apos;t receive the Code?
+                          <button
+                            type="button"
+                            onClick={() => {
+                              takeOver();
+                              setSeconds(RESEND_SECONDS);
+                            }}
+                            className={cn(
+                              "font-semibold underline underline-offset-[3px]",
+                              LINK,
+                              "rounded-[3px] focus-visible:ring-2 focus-visible:ring-[#2563eb]/45 focus-visible:outline-none",
                             )}
+                          >
+                            Resend OTP
+                          </button>
+                        </>
+                      )}
+                    </p>
+                  </CheckoutBody>
+                ) : null}
+
+                {stage === "pay" ? (
+                  <>
+                    <SavedBanner className="shrink-0" />
+                    <CheckoutBody className="pt-[8px] pb-[8px]">
+                      {/* Where it is going — already written, from the number. */}
+                      <div className={cn(CARD, "px-[13px] py-[11px]")}>
+                        <div className="flex items-center justify-between gap-[8px]">
+                          <p className="text-[14px] leading-none font-semibold text-[#0b1b36]">
+                            Delivery details
                           </p>
-                        </CheckoutBody>
-                      ) : null}
+                          <span
+                            className={cn(
+                              "text-[12px] leading-none font-semibold",
+                              LINK,
+                            )}
+                          >
+                            Change
+                          </span>
+                        </div>
 
-                      {stage === "pay" ? (
-                        <>
-                          <SavedBanner className="shrink-0" />
-                          <CheckoutBody className="pt-[8px] pb-[8px]">
-                            {/* Where it is going — already written, from the number. */}
-                            <div className={cn(CARD, "px-[13px] py-[11px]")}>
-                              <div className="flex items-center justify-between gap-[8px]">
-                                <p className="text-[14px] leading-none font-semibold text-[#0b1b36]">
-                                  Delivery details
-                                </p>
-                                <span
-                                  className={cn(
-                                    "text-[12px] leading-none font-semibold",
-                                    LINK,
-                                  )}
-                                >
-                                  Change
-                                </span>
-                              </div>
+                        <div className="mt-[9px] flex items-center gap-[7px]">
+                          <p className="text-[12.5px] leading-none font-semibold text-[#0b1b36]">
+                            {DELIVERY.name}
+                          </p>
+                          <span className="rounded-[5px] bg-black/[0.05] px-[6px] py-[3px] text-[9.5px] leading-none font-medium text-[#0b1b36]/55">
+                            {DELIVERY.tag}
+                          </span>
+                        </div>
 
-                              <div className="mt-[9px] flex items-center gap-[7px]">
-                                <p className="text-[12.5px] leading-none font-semibold text-[#0b1b36]">
-                                  {DELIVERY.name}
-                                </p>
-                                <span className="rounded-[5px] bg-black/[0.05] px-[6px] py-[3px] text-[9.5px] leading-none font-medium text-[#0b1b36]/55">
-                                  {DELIVERY.tag}
-                                </span>
-                              </div>
+                        <p className="mt-[4px] text-[10.5px] leading-[1.45] text-[#0b1b36]/50">
+                          {DELIVERY.line}, {DELIVERY.area}
+                        </p>
 
-                              <p className="mt-[4px] text-[10.5px] leading-[1.45] text-[#0b1b36]/50">
-                                {DELIVERY.line}, {DELIVERY.area}
-                              </p>
-
-                              <div className="mt-[6px] flex flex-wrap items-center gap-x-[12px] gap-y-[4px] text-[10px] leading-none text-[#0b1b36]/50">
-                                <span className="flex items-center gap-[5px]">
-                                  <Phone
-                                    aria-hidden
-                                    className="size-[11px] shrink-0"
-                                    strokeWidth={1.8}
-                                  />
-                                  <span className="tabular-nums">
-                                    {DELIVERY.phone}
-                                  </span>
-                                </span>
-                                <span className="flex min-w-0 items-center gap-[5px]">
-                                  <Mail
-                                    aria-hidden
-                                    className="size-[11px] shrink-0"
-                                    strokeWidth={1.8}
-                                  />
-                                  <span className="truncate">
-                                    {DELIVERY.email}
-                                  </span>
-                                </span>
-                              </div>
-                            </div>
-
-                            {/* The ladder. Cheapest first, so it reads downward. */}
-                            <div
-                              className={cn(
-                                CARD,
-                                "mt-[9px] px-[9px] pt-[10px] pb-[8px]",
-                              )}
-                            >
-                              <p className="px-[4px] text-[14px] leading-none font-semibold text-[#0b1b36]">
-                                Pay via
-                              </p>
-                              <p className="mt-[5px] flex items-center gap-[5px] px-[4px] text-[10px] leading-none text-[#0b1b36]/45">
-                                <Zap
-                                  aria-hidden
-                                  className="size-[11px] shrink-0 fill-[#2563eb] text-[#2563eb]"
-                                  strokeWidth={1.5}
-                                />
-                                Enjoy fast delivery on all prepaid orders
-                              </p>
-
-                              <div className="mt-[6px]">
-                                {PAYMENT_OPTIONS.map((option, index) => (
-                                  <PaymentRow
-                                    key={option.id}
-                                    option={option}
-                                    first={index === 0}
-                                    selected={method?.id === option.id}
-                                    onSelect={() => choose(option)}
-                                  />
-                                ))}
-                              </div>
-
-                              <p className="mt-[6px] px-[4px] text-right text-[9px] leading-none text-[#0b1b36]/35">
-                                * Price inclusive of all taxes
-                              </p>
-                            </div>
-
-                            <div className="mt-[10px] flex items-center justify-center gap-[8px]">
-                              <span className="text-[11px] leading-none text-[#0b1b36]/50 tabular-nums">
-                                {prettyVerified}
-                              </span>
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  takeOver();
-                                  restart();
-                                }}
-                                className="rounded-[6px] border border-black/[0.13] bg-white px-[8px] py-[4px] text-[10.5px] leading-none font-medium text-[#0b1b36]/65 transition-colors hover:bg-black/[0.03] focus-visible:ring-2 focus-visible:ring-[#2563eb]/45 focus-visible:outline-none"
-                              >
-                                Not you?
-                              </button>
-                            </div>
-                          </CheckoutBody>
-                        </>
-                      ) : null}
-
-                      {stage === "done" ? (
-                        <>
-                          <SavedBanner className="shrink-0" />
-                          <CheckoutBody className="flex flex-col items-center pt-[26px] text-center">
-                            <motion.span
+                        <div className="mt-[6px] flex flex-wrap items-center gap-x-[12px] gap-y-[4px] text-[10px] leading-none text-[#0b1b36]/50">
+                          <span className="flex items-center gap-[5px]">
+                            <Phone
                               aria-hidden
-                              initial={
-                                prefersReduced
-                                  ? false
-                                  : { scale: 0.7, opacity: 0 }
-                              }
-                              animate={{ scale: 1, opacity: 1 }}
-                              transition={{
-                                duration: 0.4,
-                                ease: [0.2, 0, 0, 1],
-                                delay: 0.05,
-                              }}
-                              className="grid size-[58px] shrink-0 place-items-center rounded-full bg-[#22c55e] shadow-[0_4px_14px_-4px_rgba(34,197,94,0.7)]"
-                            >
-                              <Check
-                                className="size-[30px] text-white"
-                                strokeWidth={3}
-                              />
-                            </motion.span>
+                              className="size-[11px] shrink-0"
+                              strokeWidth={1.8}
+                            />
+                            <span className="tabular-nums">
+                              {DELIVERY.phone}
+                            </span>
+                          </span>
+                          <span className="flex min-w-0 items-center gap-[5px]">
+                            <Mail
+                              aria-hidden
+                              className="size-[11px] shrink-0"
+                              strokeWidth={1.8}
+                            />
+                            <span className="truncate">{DELIVERY.email}</span>
+                          </span>
+                        </div>
+                      </div>
 
-                            <p className="mt-[16px] text-[19px] leading-tight font-semibold tracking-[-0.02em] text-[#0b1b36]">
-                              {paidNow
-                                ? "Payment successful!"
-                                : "Order confirmed!"}
-                            </p>
-                            <p className="mt-[6px] max-w-[250px] text-[11.5px] leading-[1.5] text-[#0b1b36]/50">
-                              Your order has been placed successfully.
-                            </p>
+                      {/* The ladder. Cheapest first, so it reads downward. */}
+                      <div
+                        className={cn(
+                          CARD,
+                          "mt-[9px] px-[9px] pt-[10px] pb-[8px]",
+                        )}
+                      >
+                        <p className="px-[4px] text-[14px] leading-none font-semibold text-[#0b1b36]">
+                          Pay via
+                        </p>
+                        <p className="mt-[5px] flex items-center gap-[5px] px-[4px] text-[10px] leading-none text-[#0b1b36]/45">
+                          <Zap
+                            aria-hidden
+                            className="size-[11px] shrink-0 fill-[#2563eb] text-[#2563eb]"
+                            strokeWidth={1.5}
+                          />
+                          Enjoy fast delivery on all prepaid orders
+                        </p>
 
-                            <div
-                              className={cn(
-                                CARD,
-                                "mt-[18px] w-full space-y-[9px] px-[13px] py-[12px] text-left",
-                              )}
-                            >
-                              <div className="flex items-baseline justify-between gap-[8px]">
-                                <span className="text-[10.5px] leading-none text-[#0b1b36]/50">
-                                  Order
-                                </span>
-                                <span className="text-[10.5px] leading-none font-semibold text-[#0b1b36]/80 tabular-nums">
-                                  {ORDER_ID}
-                                </span>
-                              </div>
-                              <div className="flex items-baseline justify-between gap-[8px]">
-                                <span className="text-[10.5px] leading-none text-[#0b1b36]/50">
-                                  {paidNow ? "Paid via" : "Paying via"}
-                                </span>
-                                <span className="text-[10.5px] leading-none font-semibold text-[#0b1b36]/80">
-                                  {settled.title}
-                                </span>
-                              </div>
-                              <div className="flex items-baseline justify-between gap-[8px]">
-                                <span className="text-[10.5px] leading-none text-[#0b1b36]/50">
-                                  Delivering to
-                                </span>
-                                <span className="text-[10.5px] leading-none font-semibold text-[#0b1b36]/80">
-                                  {DELIVERY.area}
-                                </span>
-                              </div>
+                        <div className="mt-[6px]">
+                          {PAYMENT_OPTIONS.map((option, index) => (
+                            <PaymentRow
+                              key={option.id}
+                              option={option}
+                              first={index === 0}
+                              selected={method?.id === option.id}
+                              onSelect={() => choose(option)}
+                            />
+                          ))}
+                        </div>
 
-                              <span
-                                aria-hidden
-                                className="block h-px bg-black/[0.07]"
-                              />
+                        <p className="mt-[6px] px-[4px] text-right text-[9px] leading-none text-[#0b1b36]/35">
+                          * Price inclusive of all taxes
+                        </p>
+                      </div>
 
-                              <div className="flex items-baseline justify-between gap-[8px]">
-                                <span className="text-[11px] leading-none font-medium text-[#0b1b36]/60">
-                                  {paidNow
-                                    ? "Paid online"
-                                    : "Payable on delivery"}
-                                </span>
-                                <span className="text-[13.5px] leading-none font-semibold text-[#0b1b36] tabular-nums">
-                                  {inrShort(
-                                    paidNow
-                                      ? settled.paidNow
-                                      : settled.dueOnDelivery,
-                                  )}
-                                </span>
-                              </div>
-                              {paidNow && settled.dueOnDelivery > 0 ? (
-                                <div className="flex items-baseline justify-between gap-[8px]">
-                                  <span className="text-[10.5px] leading-none text-[#0b1b36]/50">
-                                    Due on delivery
-                                  </span>
-                                  <span className="text-[10.5px] leading-none font-semibold text-[#0b1b36]/80 tabular-nums">
-                                    {inrShort(settled.dueOnDelivery)}
-                                  </span>
-                                </div>
-                              ) : null}
-                            </div>
+                      <div className="mt-[10px] flex items-center justify-center gap-[8px]">
+                        <span className="text-[11px] leading-none text-[#0b1b36]/50 tabular-nums">
+                          {prettyVerified}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            takeOver();
+                            restart();
+                          }}
+                          className="rounded-[6px] border border-black/[0.13] bg-white px-[8px] py-[4px] text-[10.5px] leading-none font-medium text-[#0b1b36]/65 transition-colors hover:bg-black/[0.03] focus-visible:ring-2 focus-visible:ring-[#2563eb]/45 focus-visible:outline-none"
+                        >
+                          Not you?
+                        </button>
+                      </div>
+                    </CheckoutBody>
+                  </>
+                ) : null}
 
-                            <p className="mt-[12px] text-[10px] leading-none text-[#16a34a]">
-                              You saved {inr(CART.mrp - CART_TOTAL)} on this
-                              order
-                            </p>
+                {stage === "done" ? (
+                  <>
+                    <SavedBanner className="shrink-0" />
+                    <CheckoutBody className="flex flex-col items-center pt-[26px] text-center">
+                      <motion.span
+                        aria-hidden
+                        initial={
+                          prefersReduced ? false : { scale: 0.7, opacity: 0 }
+                        }
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{
+                          duration: 0.4,
+                          ease: [0.2, 0, 0, 1],
+                          delay: 0.05,
+                        }}
+                        className="grid size-[58px] shrink-0 place-items-center rounded-full bg-[#22c55e] shadow-[0_4px_14px_-4px_rgba(34,197,94,0.7)]"
+                      >
+                        <Check
+                          className="size-[30px] text-white"
+                          strokeWidth={3}
+                        />
+                      </motion.span>
 
-                            <button
-                              type="button"
-                              onClick={() => {
-                                restart();
-                                setAuto(true);
-                              }}
-                              className="mt-[14px] rounded-[7px] border border-black/[0.12] bg-white px-[12px] py-[6px] text-[11px] leading-none font-semibold text-[#0b1b36]/70 transition-colors hover:bg-black/[0.03] focus-visible:ring-2 focus-visible:ring-[#2563eb]/45 focus-visible:outline-none"
-                            >
-                              Replay the demo
-                            </button>
-                          </CheckoutBody>
-                        </>
-                      ) : null}
-                    </motion.div>
-                  </AnimatePresence>
+                      <p className="mt-[16px] text-[19px] leading-tight font-semibold tracking-[-0.02em] text-[#0b1b36]">
+                        {paidNow ? "Payment successful!" : "Order confirmed!"}
+                      </p>
+                      <p className="mt-[6px] max-w-[250px] text-[11.5px] leading-[1.5] text-[#0b1b36]/50">
+                        Your order has been placed successfully.
+                      </p>
 
-                  <TrustFooter />
-                </motion.div>
-              )}
+                      <div
+                        className={cn(
+                          CARD,
+                          "mt-[18px] w-full space-y-[9px] px-[13px] py-[12px] text-left",
+                        )}
+                      >
+                        <div className="flex items-baseline justify-between gap-[8px]">
+                          <span className="text-[10.5px] leading-none text-[#0b1b36]/50">
+                            Order
+                          </span>
+                          <span className="text-[10.5px] leading-none font-semibold text-[#0b1b36]/80 tabular-nums">
+                            {ORDER_ID}
+                          </span>
+                        </div>
+                        <div className="flex items-baseline justify-between gap-[8px]">
+                          <span className="text-[10.5px] leading-none text-[#0b1b36]/50">
+                            {paidNow ? "Paid via" : "Paying via"}
+                          </span>
+                          <span className="text-[10.5px] leading-none font-semibold text-[#0b1b36]/80">
+                            {settled.title}
+                          </span>
+                        </div>
+                        <div className="flex items-baseline justify-between gap-[8px]">
+                          <span className="text-[10.5px] leading-none text-[#0b1b36]/50">
+                            Delivering to
+                          </span>
+                          <span className="text-[10.5px] leading-none font-semibold text-[#0b1b36]/80">
+                            {DELIVERY.area}
+                          </span>
+                        </div>
+
+                        <span
+                          aria-hidden
+                          className="block h-px bg-black/[0.07]"
+                        />
+
+                        <div className="flex items-baseline justify-between gap-[8px]">
+                          <span className="text-[11px] leading-none font-medium text-[#0b1b36]/60">
+                            {paidNow ? "Paid online" : "Payable on delivery"}
+                          </span>
+                          <span className="text-[13.5px] leading-none font-semibold text-[#0b1b36] tabular-nums">
+                            {inrShort(
+                              paidNow ? settled.paidNow : settled.dueOnDelivery,
+                            )}
+                          </span>
+                        </div>
+                        {paidNow && settled.dueOnDelivery > 0 ? (
+                          <div className="flex items-baseline justify-between gap-[8px]">
+                            <span className="text-[10.5px] leading-none text-[#0b1b36]/50">
+                              Due on delivery
+                            </span>
+                            <span className="text-[10.5px] leading-none font-semibold text-[#0b1b36]/80 tabular-nums">
+                              {inrShort(settled.dueOnDelivery)}
+                            </span>
+                          </div>
+                        ) : null}
+                      </div>
+
+                      <p className="mt-[12px] text-[10px] leading-none text-[#16a34a]">
+                        You saved {inr(CART.mrp - CART_TOTAL)} on this order
+                      </p>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          restart();
+                          setAuto(true);
+                        }}
+                        className="mt-[14px] rounded-[7px] border border-black/[0.12] bg-white px-[12px] py-[6px] text-[11px] leading-none font-semibold text-[#0b1b36]/70 transition-colors hover:bg-black/[0.03] focus-visible:ring-2 focus-visible:ring-[#2563eb]/45 focus-visible:outline-none"
+                      >
+                        Replay the demo
+                      </button>
+                    </CheckoutBody>
+                  </>
+                ) : null}
+              </motion.div>
             </AnimatePresence>
-          </div>
-        </div>
-      </div>
+
+            <TrustFooter />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
