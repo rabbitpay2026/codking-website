@@ -22,15 +22,16 @@ interface PricingPlanCardProps {
  * design. A card that is also larger, rounder and shadowed reads as a
  * different product rather than as the one we suggest.
  *
- * `flex-1` on the feature list is what puts the three buttons on one line: the
- * list absorbs whatever height difference the plans have, so the row below it
- * starts at the same offset in all three cards even when one plan says more.
+ * `flex-1` on the feature list is what puts the buttons on one line: the list
+ * absorbs whatever height difference the plans have, so the row below it
+ * starts at the same offset in every card even when one plan says more.
  *
  * Value pills are read from the comparison matrix rather than typed here, so
  * the 0.8% on this card and the 0.8% in the table are one declaration.
  */
 export function PricingPlanCard({ plan, action }: PricingPlanCardProps) {
-  const { amount, period } = formatPlanPrice(plan.price);
+  const { amount, periodLabel, previousAmount, savings, secondary } =
+    formatPlanPrice(plan.price);
 
   return (
     <article
@@ -39,9 +40,9 @@ export function PricingPlanCard({ plan, action }: PricingPlanCardProps) {
         /*
           Flat at rest, and barely less flat on hover. Two pixels of lift and
           the site's own card shadow is enough to say the card is a surface
-          you can act on; anything more and three price cards start bouncing
+          you can act on; anything more and four price cards start bouncing
           under a cursor that is only travelling across them to reach the
-          third one. The transition is the shared emphasised curve, so this
+          last one. The transition is the shared emphasised curve, so this
           card responds exactly like every other card on the site.
         */
         // `translate` as well as `transform`: Tailwind's translate utilities
@@ -56,8 +57,8 @@ export function PricingPlanCard({ plan, action }: PricingPlanCardProps) {
     >
       {plan.recommended ? (
         // Straddles the top edge rather than taking a row inside the card, so
-        // the three cards keep identical internal spacing and the badge does
-        // not push this plan's price a line below its neighbours'.
+        // the cards keep identical internal spacing and the badge does not
+        // push this plan's price a line below its neighbours'.
         <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-ink px-3 py-1 text-[10px] font-semibold tracking-[0.12em] text-white uppercase">
           Most popular
         </span>
@@ -71,43 +72,106 @@ export function PricingPlanCard({ plan, action }: PricingPlanCardProps) {
           {plan.tagline}
         </p>
 
-        <p className="mt-5 flex items-baseline justify-center gap-1">
+        {/*
+          The old price and the saving sit *above* the figure rather than
+          beside it. On a four-up row there is no width to put a strike-through
+          and a badge next to a 2.5rem number without one of them wrapping
+          mid-line, and a discount read after the price it discounts is a
+          correction rather than an offer. Reserved as a fixed row so the four
+          prices stay on one baseline whether or not a plan is promoted.
+        */}
+        <p className="mt-5 flex min-h-5 flex-wrap items-center justify-center gap-x-2 gap-y-1 text-[12px]">
+          {previousAmount ? (
+            <span className="text-muted-foreground tabular-nums line-through">
+              {previousAmount}
+            </span>
+          ) : null}
+          {savings ? (
+            <span className="rounded-full border border-border bg-sky-100 px-2 py-px font-semibold text-ink/70 tabular-nums">
+              {savings}
+            </span>
+          ) : null}
+        </p>
+
+        <p className="mt-1 flex items-baseline justify-center gap-1.5">
           <span className="text-[2.5rem] leading-none font-semibold tracking-[-0.03em] text-ink tabular-nums">
             {amount}
           </span>
-          {period ? (
-            <span className="text-[13px] text-muted-foreground">{period}</span>
+          {periodLabel ? (
+            <span className="text-[13px] text-muted-foreground">
+              {periodLabel}
+            </span>
           ) : null}
+        </p>
+
+        {/* Also a reserved row, for the same reason as the discount line. */}
+        <p className="mt-1.5 min-h-4 text-[12px] text-muted-foreground tabular-nums">
+          {secondary}
         </p>
       </header>
 
-      <ul className="mt-6 flex-1 space-y-3 border-t border-border pt-6">
-        {plan.highlights.map((highlight) => {
-          const value = highlight.feature
-            ? getPlanFeatureValue(highlight.feature, plan.id)
-            : false;
+      <div className="mt-6 flex-1 border-t border-border pt-6">
+        <h4 className="text-[12px] font-semibold text-ink">
+          What&rsquo;s included
+        </h4>
 
-          return (
-            <li key={highlight.label} className="flex items-start gap-2.5">
-              <FeatureCheck className="mt-px" />
-              <span className="flex flex-wrap items-center gap-2 text-[13.5px] leading-relaxed text-ink/80">
-                {highlight.label}
-                {highlight.showValue && typeof value === "string" ? (
-                  <span className="rounded-full border border-border bg-sky-100 px-2 py-px text-[11px] font-semibold text-ink/70 tabular-nums">
-                    {value}
+        <ul className="mt-3.5 space-y-3">
+          {plan.highlights.map((highlight) => {
+            const value = highlight.feature
+              ? getPlanFeatureValue(highlight.feature, plan.id)
+              : false;
+            const showsValue = highlight.showValue && typeof value === "string";
+
+            return (
+              <li key={highlight.label} className="flex items-start gap-2.5">
+                <FeatureCheck className="mt-px" />
+                <span className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[13.5px] leading-relaxed text-ink/80">
+                  {highlight.label}
+                  {showsValue ? (
+                    <span className="rounded-full border border-border bg-sky-100 px-2 py-px text-[11px] font-semibold text-ink/70 tabular-nums">
+                      {value}
+                    </span>
+                  ) : null}
+                  {showsValue && highlight.valueSuffix
+                    ? highlight.valueSuffix
+                    : null}
+                </span>
+              </li>
+            );
+          })}
+        </ul>
+
+        {plan.marketBenefits && plan.marketBenefits.length > 0 ? (
+          /*
+            Under its own rule, not mixed into the list above. These answer
+            "is this built for my market" rather than "what do I get", and a
+            merchant scanning for the second question should not have to read
+            past the first to finish it.
+          */
+          <div className="mt-6 border-t border-border pt-5">
+            <h4 className="text-[12px] font-semibold text-ink">
+              Indian market benefits
+            </h4>
+
+            <ul className="mt-3.5 space-y-3">
+              {plan.marketBenefits.map((benefit) => (
+                <li key={benefit} className="flex items-start gap-2.5">
+                  <FeatureCheck className="mt-px" />
+                  <span className="text-[13.5px] leading-relaxed text-ink/80">
+                    {benefit}
                   </span>
-                ) : null}
-              </span>
-            </li>
-          );
-        })}
-      </ul>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : null}
+      </div>
 
       {action ? (
         <ActionLink
           action={{
             ...action,
-            label: "Get Started",
+            label: plan.ctaLabel,
             variant: plan.recommended ? "primary" : "secondary",
           }}
           size="md"
@@ -118,6 +182,12 @@ export function PricingPlanCard({ plan, action }: PricingPlanCardProps) {
             plan.recommended && "bg-ink hover:bg-ink/90",
           )}
         />
+      ) : null}
+
+      {plan.footnote ? (
+        <p className="mt-4 text-center text-[12px] text-muted-foreground">
+          {plan.footnote}
+        </p>
       ) : null}
     </article>
   );

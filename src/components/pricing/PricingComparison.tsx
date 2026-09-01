@@ -54,7 +54,7 @@ function FeatureCell({ value }: { readonly value: PlanFeatureValue }) {
  * cannot quote a percentage the cards do not.
  *
  * On a narrow screen the table scrolls sideways inside its own box rather than
- * reflowing. Twelve rows across four columns cannot be made to fit 360px
+ * reflowing. Twenty-one rows across five columns cannot be made to fit 360px
  * without either shrinking the type past reading size or splitting one table
  * into three — and a merchant comparing plans needs the columns adjacent, which
  * is the one thing both of those destroy.
@@ -74,10 +74,10 @@ export function PricingComparison() {
       </h2>
 
       <div className="mt-8 overflow-x-auto rounded-2xl border border-border">
-        <table className="w-full min-w-[46rem] border-collapse text-left">
+        <table className="w-full min-w-[58rem] border-collapse text-left">
           <caption className="sr-only">
-            Feature comparison across the Standard, Professional and Enterprise
-            plans
+            Feature comparison across the Free, Pro, Enterprise and Enterprise
+            Plus plans
           </caption>
 
           <thead>
