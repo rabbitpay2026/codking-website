@@ -7,8 +7,7 @@ import {
   Undo2,
 } from "lucide-react";
 
-import { VerifyScreen } from "@/components/sections/hero/VerifyScreen";
-import { Iphone } from "@/components/ui/iphone";
+import { CheckoutPreview } from "@/components/sections/hero/checkout/CheckoutPreview";
 import { cn } from "@/lib/utils";
 
 import type { LucideIcon } from "lucide-react";
@@ -71,7 +70,25 @@ const CHIPS: readonly FloatingChip[] = [
     icon: IndianRupee,
     label: "Charge COD fees",
     side: "left",
-    className: "top-[70%]",
+    /*
+      62%, not the 70% this sat at, and the eight points are the whole reason
+      the left column could be given any breathing room at all.
+
+      At 70% this chip's band lands on the CTA row, and the second button
+      reaches the full width of the text column — so measured against real ink
+      there were seven pixels between the card and the button, and every pixel
+      the chip moved outward came straight out of them. Nothing else on this
+      side was close: the two chips above it had over a hundred pixels of
+      clearance and were being held at eight by this one, because six boxes in
+      two columns have to move as a set or they stop reading as a set.
+
+      Eight points up is out of the button's band and into the checklist's,
+      where the longest line stops 113 pixels short of the stage. It is the
+      smallest move that clears the obstacle — 64% still grazes it once the
+      float cycle is counted — and it is still the lowest of the three, which
+      is the only thing about its position that carries meaning.
+    */
+    className: "top-[62%]",
     delay: "-4.8s",
   },
   {
@@ -131,11 +148,17 @@ const CHIPS: readonly FloatingChip[] = [
  * rotated or resampled.
  *
  * The box is sized as a fraction of the chip rather than in pixels, so it
- * fills the clearance between the card and the device at every width the scene
- * is drawn at and can never reach across the glass — the head stops two pixels
- * short of the frame. It is also a child of the chip, so it floats with it: a
- * connector that stayed still while the box it points from drifted would
+ * fills the clearance between the card and the checkout at every width the
+ * scene is drawn at and can never reach across the surface — the head stops
+ * two pixels short of it. It is also a child of the chip, so it floats with
+ * it: a connector that stayed still while the box it points from drifted would
  * detach on every cycle.
+ *
+ * The fraction shrank when the checkout grew, and it had to: the clearance the
+ * arrow runs in is now eight pixels rather than eleven, and a connector that
+ * kept its old length would have driven its head onto the card face. Eight
+ * percent of the chip below 1152 and seven above it is that eight pixels,
+ * expressed in the only unit that survives every column width.
  *
  * The head carries full brand and the shaft carries it at 45%, which is what
  * makes this read as pointing rather than as a divider — the eye is given one
@@ -148,7 +171,19 @@ function ChipConnector({ side }: { readonly side: FloatingChip["side"] }) {
     <span
       aria-hidden
       className={cn(
-        "pointer-events-none absolute top-1/2 h-[7px] w-[11.5%] -translate-y-1/2",
+        /*
+          The shaft lengthens with the gap rather than staying a fixed
+          fraction, because it has one job and it is proportional: to reach.
+          A connector tuned for an eight-pixel gap leaves a thirty-pixel one
+          with an arrowhead floating in the middle of nothing, which is worse
+          than the crowding it was widened to fix.
+
+          The bands match the ones the chips are positioned in, for the obvious
+          reason that a shaft and the space it crosses have to be described by
+          the same breakpoints or they disagree at the edges.
+        */
+        "pointer-events-none absolute top-1/2 h-[7px] -translate-y-1/2",
+        "max-[1200px]:w-[9%] min-[1200px]:max-[1440px]:w-[20%] min-[1440px]:w-[32%]",
         toLeft ? "right-full" : "left-full",
       )}
     >
@@ -186,18 +221,23 @@ function ChipConnector({ side }: { readonly side: FloatingChip["side"] }) {
  * the eye spends on it on its way to the product.
  *
  * Sized to be read rather than merely noticed. The note on this scene, twice
- * over, was that the blocks around the device were too small to register, and
- * every value here answers it: 26% of the stage instead of 24%, a 32-pixel
- * mark instead of a 28-pixel one, a 13px label instead of an 11.5px one,
- * taller padding, near-solid white instead of 80% glass, and a drop shadow
- * deep enough to lift the chip off the field rather than tint the pixels
- * under it.
+ * over, was that the blocks around the subject were too small to register, and
+ * every value here answers it: a 13px label above 1152 rather than an 11.5px
+ * one, taller padding, near-solid white instead of 80% glass, and a drop
+ * shadow deep enough to lift the chip off the field rather than tint the
+ * pixels under it.
  *
- * The growth stays moderate because it is bounded, and the bound is worth
- * stating: two chips plus two connector gaps have to fit whatever the device
- * leaves either side of it. 26% of chip and 3% of clearance is that budget
- * spent — a wider box would be bought out of the arrows, and an arrow that
- * cannot be seen was the other half of the same review.
+ * What it gave back, when the checkout was enlarged, was width — 26% of the
+ * stage down to 21.5% above 1152 — and the giving back is why the mark and the
+ * gutters shrank with it. A chip cannot lose a fifth of its box and keep the
+ * same 32-pixel tile and 12-pixel gutters without the *label* paying for all
+ * of it, and the label is the only part carrying information. Four pixels off
+ * the tile and two off each gutter are invisible; a third line of wrap in
+ * "Convert to prepaid" would not have been.
+ *
+ * The bound is worth stating: two chips plus two connector gaps have to fit
+ * whatever the checkout leaves either side of it, and those five numbers have
+ * to sum to a hundred. See the geometry note in `HeroStage` for the sum.
  *
  * The growth is taken outward rather than inward. Each column hangs two
  * percent past the edge of the stage — these sat outside it in the original
@@ -251,18 +291,52 @@ function Chip({ icon: Icon, label, side, className, delay }: FloatingChip) {
       aria-hidden
       style={{ animationDelay: delay }}
       className={cn(
-        "absolute z-30 w-[26%] animate-float",
-        side === "right" ? "-right-[2%]" : "-left-[2%]",
-        "flex items-center gap-2 rounded-[15px] border border-ink/[0.07] bg-white/95 px-3 py-3.5 backdrop-blur-xl min-[1152px]:gap-2.5",
+        "absolute z-30 w-[26%] animate-float min-[1152px]:w-[24%]",
+        /*
+          How far the column stands off the stage, and the one number this
+          change is about.
+
+          Three bands, and they are disjoint on purpose — see the note beside
+          the checkout's own widths for what happens when two Tailwind width
+          variants both match and the cascade, rather than this file, picks the
+          winner.
+
+          The ceiling is different on each side and neither is negotiable. On
+          the left it is the text column's own ink, which sits inside a
+          container that has stopped growing, so that ceiling is the same at
+          every desktop width. On the right it is the edge of the window, and
+          that one moves: at 1152 the container has just hit its maximum and
+          the page margin is nothing, by 1200 there are twenty-four pixels a
+          side and by 1440 a hundred and forty-four. The right is therefore
+          what makes this responsive at all, and the left is what stops the
+          widest band going further still.
+
+          1200 rather than a rounder breakpoint because that is where the
+          arithmetic turns: below it, a gap in the range being asked for puts a
+          chip within a few pixels of the window edge, and a few pixels is not
+          a margin, it is a coin toss about a horizontal scrollbar.
+
+          The bounds are written as `max-[1200px]` against `min-[1200px]` and
+          not as `max-[1199px]`, because Tailwind's `max-` is exclusive: the
+          off-by-one pair left a one-pixel hole at exactly 1199 and again at
+          1439 where no rule matched at all, the hang fell to zero and six
+          chips landed on top of the checkout. A window is exactly 1199 pixels
+          wide more often than that sounds.
+
+          The gap this buys, card edge to card edge: about 10px below 1200 —
+          where the window simply has nothing to give — about 27px to 1440, and
+          about 43px above it.
+        */
+        side === "right"
+          ? "max-[1200px]:-right-[5%] min-[1200px]:max-[1440px]:-right-[8%] min-[1440px]:-right-[11%]"
+          : "max-[1200px]:-left-[5%] min-[1200px]:max-[1440px]:-left-[8%] min-[1440px]:-left-[11%]",
+        "flex items-center gap-1.5 rounded-[15px] border border-ink/[0.07] bg-white/95 px-2.5 py-3.5 backdrop-blur-xl",
         "shadow-[0_1px_2px_rgba(11,27,54,0.06),0_14px_30px_-14px_rgba(11,27,54,0.55)]",
         className,
       )}
     >
-      <span className="grid size-7 shrink-0 place-items-center rounded-[10px] bg-brand/[0.08] ring-1 ring-brand/12 min-[1152px]:size-8">
-        <Icon
-          className="size-3.5 text-brand min-[1152px]:size-4"
-          strokeWidth={1.9}
-        />
+      <span className="grid size-7 shrink-0 place-items-center rounded-[10px] bg-brand/[0.08] ring-1 ring-brand/12">
+        <Icon className="size-3.5 text-brand" strokeWidth={1.9} />
       </span>
       <span className="min-w-0 text-[11.5px] leading-[1.3] font-semibold text-balance text-ink/85 min-[1152px]:text-[13px]">
         {label}
@@ -276,78 +350,117 @@ function Chip({ icon: Icon, label, side, className, delay }: FloatingChip) {
 /**
  * The hero's product scene.
  *
- * One device, centred, showing one screen, with the outcomes floating around
- * it. Two earlier passes got this wrong in opposite directions — one stood a
- * second phone behind the first, the other parked the verification on a card
- * outside the glass — and both made the same mistake: they spent the frame on
- * furniture and pushed the product's own screen out of the place the whole
- * composition points at. The device now shows the verification, which is the
- * one surface COD King actually renders, and everything else in the scene is
- * an annotation on it.
+ * One surface, centred, with the outcomes floating around it. Three earlier
+ * passes got this wrong in different directions — one stood a second phone
+ * behind the first, one parked the verification on a card outside the glass,
+ * and the one this replaces wrapped a real product screen in a drawing of an
+ * iPhone. All three made the same mistake: they spent the frame on furniture
+ * and pushed the product's own screen out of the place the whole composition
+ * points at.
+ *
+ * The frame is gone and the checkout is the whole object. Chamfered titanium,
+ * a dynamic island and a bezel were arguing on behalf of a screen that can
+ * argue for itself, and a merchant evaluating a COD app does not need to be
+ * told what a phone looks like — they need to see what their buyers see, at
+ * the size they will see it, doing what it does. What is left is `CheckoutPreview`,
+ * which is not a picture of the product but the product's own flow, running.
  *
  * Depth is bought with light rather than with rotation. A rotated layer is
  * rasterised flat and resampled, which softens every glyph on the screen —
  * and the screen is the entire argument. Layered contact shadows, the key
- * light behind the device and the drop shadows on the chips do the same job
+ * light behind the surface and the drop shadows on the chips do the same job
  * and cost nothing in sharpness.
  *
- * The stage box is sized from the device it has to hold at each breakpoint,
- * and everything inside is positioned as a percentage of it, so the
- * composition survives every column width instead of being tuned for one. The
- * chips are the first thing to go as the column narrows: below `lg` there is
- * no room for two columns of annotation beside a phone, and a chip crushed
- * against the frame argues against the craft it is meant to demonstrate.
+ * The stage box is sized from what it has to hold at each breakpoint, and
+ * everything inside is positioned as a percentage of it, so the composition
+ * survives every column width instead of being tuned for one. The chips are
+ * the first thing to go as the column narrows: below `lg` there is no room for
+ * two columns of annotation beside a checkout, and a chip crushed against it
+ * argues against the craft it is meant to demonstrate.
  *
  * Nothing here fades in — see `Hero` for why the first screen must never
- * depend on JavaScript to be visible. The only motion is the chips' slow
- * float and the verification sequence, both removed under reduced motion.
+ * depend on JavaScript to be visible. The only motion is the chips' slow float
+ * and the checkout's own sequence, both removed under reduced motion.
  */
 export function HeroStage() {
   return (
     <div className="relative w-full">
       <div className="relative aspect-[1/1.58] w-full sm:aspect-[1/1.1] lg:aspect-[1/1.02]">
         {/*
-          The device, and the shadows it casts.
+          The checkout, and the shadows it casts.
 
-          The shadows are children of the device's own box rather than of the
+          The shadows are children of the surface's own box rather than of the
           stage, so they are expressed relative to the thing casting them and
           stay correct at every width and position. Pinned to the stage they
           were right at exactly one breakpoint and sat well to the left of the
-          phone at the others — a device casting a shadow next to itself is
+          subject at the others — an object casting a shadow next to itself is
           the clearest tell that a scene was assembled rather than lit.
         */}
         {/*
-          The device takes 46% of the stage, the two columns of annotation 26%
-          each — two percent of which hangs past the edge of the stage — and
-          what is left is the three percent of clearance on each side that the
-          connectors run in. Those numbers are one decision and have to be read
-          together, because they have to sum to a hundred: the device, the two
-          boxes and the two arrows are competing for one row of width, and
-          nothing here can grow without something beside it being named as what
-          paid for it.
+          The geometry, which is one decision and has to be read as one.
 
-          The device gave up four points of that width when the boxes grew and
-          the connectors first appeared, and has now taken two of them back —
-          48% to 44% to 46% — at the review's note that it had come out too
-          small. What paid for the two points is the outward hang on the boxes,
-          which went from one percent to two: the columns move further into the
-          margin instead of further into the middle, so the device gains its
-          width from outside the composition rather than out of the clearance
-          the arrows need. The gap is three percent before and after.
+          Five things compete for a single row of width and they have to sum to
+          a hundred: the checkout, two columns of annotation, and the two
+          arrows' clearance. Nothing here can grow without something beside it
+          being named as what paid for it.
 
-          It is still unambiguously the subject, and more so than before: it is
-          the only object in the frame that runs the full height of the stage,
-          and it is comfortably wider than a box and a half beside it.
+              checkout + 2 x (chip - hang) + 2 x clearance = 100
 
-          Nothing below `lg` changes. The chips are not drawn there, so there
-          is no clearance to find and no reason to make the device smaller on
-          the viewport where it is the only thing in the scene.
+          Above 1152, where the container is at its full 72rem and the design
+          is really tuned:  58 + 2 x (24 - 4.5) + 2 x 1.5 = 100.
+          Between 1024 and 1151, where the stage is a quarter narrower and a
+          chip cannot afford to give up the same width: 53 + 2 x (26 - 4.5) + 2 x 2.
+
+          The checkout went from 48% to 58% — a fifth larger on the surface a
+          visitor is meant to watch — and it was paid for from two places, both
+          of which had a ceiling that was measured rather than guessed.
+
+          Most of it came from the outward hang, 2% to 4.5%. The ceiling there
+          is not the left column, which has room: it is the *right* edge of the
+          window at exactly 1152, where the container has stopped growing and
+          the right-hand chips have twenty-one pixels of margin left. 4.5% of
+          the stage is most of them, and the margin that survives is checked
+          rather than assumed — a wider hang would put a chip past the viewport
+          and open a horizontal scrollbar on the one width where this layout
+          has none to spare.
+
+          The rest came from the chips' own width, and only the rest, because
+          that is the expensive place to take it from: a chip is mostly label.
+          Two passes at this proved it — 21.5% turned every two-line label into
+          a three-line one, and 23% still cost "Convert to prepaid" its second
+          line. 24%, with two pixels off the gap and two off each gutter, is
+          the narrowest box all six labels survive. See `Chip`.
+
+          Centred rather than sitting on the floor of the stage, which the
+          device did. A phone at 1:2 filled the stage from top to bottom and
+          had to be stood on something; a checkout at 1:1.62 does not reach
+          either edge, and centring it is what puts the six chips around it
+          instead of above it.
+
+          It grows below `lg`, where the chips are not drawn: with no
+          clearance to find, the only thing competing for the width is the
+          gutter, and a checkout a visitor is expected to *use* on a phone
+          should be as close to full width as the gutter allows.
+        */}
+        {/*
+          Four widths, four *disjoint* ranges, and the disjointness is
+          load-bearing rather than pedantic.
+
+          Tailwind ranks a named breakpoint variant above an arbitrary
+          `min-[...]` one whatever the two values are, so `sm:w-[66%]` beats
+          `min-[1152px]:w-[58%]` at 1400 pixels and `lg:` beats it too. Both of
+          those were live bugs in this line: the first pass rendered the
+          checkout at 51% above 1152 and the second at 66%, and neither is a
+          width anything here asked for. Closing each range with a `max-`
+          bound leaves exactly one rule matching at any viewport, which takes
+          the question away from the cascade altogether.
         */}
         <div
           className={cn(
-            "absolute bottom-[1%] left-1/2 w-[76%] -translate-x-1/2",
-            "sm:bottom-[2%] sm:w-[52%]",
-            "lg:w-[46%]",
+            "absolute top-1/2 left-1/2 w-[94%] -translate-x-1/2 -translate-y-1/2",
+            "sm:max-[1023px]:w-[66%]",
+            "lg:max-[1151px]:w-[53%]",
+            "min-[1152px]:w-[58%]",
           )}
         >
           <div
@@ -359,9 +472,7 @@ export function HeroStage() {
             className="absolute inset-x-[12%] bottom-[-0.5%] h-[3%] rounded-[50%] bg-ink/22 blur-lg"
           />
 
-          <Iphone screenWidth={320}>
-            <VerifyScreen />
-          </Iphone>
+          <CheckoutPreview />
         </div>
 
         {CHIPS.map((chip) => (
