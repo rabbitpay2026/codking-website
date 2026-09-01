@@ -28,33 +28,47 @@ export type CountryId =
 export interface Country {
   readonly id: CountryId;
   readonly name: string;
+  /**
+   * ISO 3166-1 alpha-2, and the join between three things.
+   *
+   * The map places this market's marker on the country's own polygon through
+   * amCharts' `polygonIdField`, which keys on exactly this code; the flag in
+   * the tooltip is `/flags/<lowercased>.svg`; and the geodata's own feature
+   * ids are the same list. One code, so a marker cannot end up on a different
+   * country from the flag beside it.
+   */
+  readonly iso: string;
+  /** Fallback position, for a market the geodata has no polygon for. */
   readonly lat: number;
   readonly lng: number;
 }
 
 export const countries: readonly Country[] = [
-  { id: "india", name: "India", lat: 22.9734, lng: 78.6569 },
-  { id: "philippines", name: "Philippines", lat: 12.8797, lng: 121.774 },
+  { id: "india", name: "India", iso: "IN", lat: 22.9734, lng: 78.6569 },
+  { id: "philippines", name: "Philippines", iso: "PH", lat: 12.8797, lng: 121.774 },
   {
     id: "united-arab-emirates",
     name: "United Arab Emirates",
+    iso: "AE",
     lat: 23.4241,
     lng: 53.8478,
   },
   {
     id: "saudi-arabia",
     name: "Saudi Arabia",
+    iso: "SA",
     lat: 23.8859,
     lng: 45.0792,
   },
-  { id: "pakistan", name: "Pakistan", lat: 30.3753, lng: 69.3451 },
-  { id: "bangladesh", name: "Bangladesh", lat: 23.685, lng: 90.3563 },
-  { id: "egypt", name: "Egypt", lat: 26.8206, lng: 30.8025 },
-  { id: "italy", name: "Italy", lat: 41.8719, lng: 12.5674 },
-  { id: "spain", name: "Spain", lat: 40.4637, lng: -3.7492 },
+  { id: "pakistan", name: "Pakistan", iso: "PK", lat: 30.3753, lng: 69.3451 },
+  { id: "bangladesh", name: "Bangladesh", iso: "BD", lat: 23.685, lng: 90.3563 },
+  { id: "egypt", name: "Egypt", iso: "EG", lat: 26.8206, lng: 30.8025 },
+  { id: "italy", name: "Italy", iso: "IT", lat: 41.8719, lng: 12.5674 },
+  { id: "spain", name: "Spain", iso: "ES", lat: 40.4637, lng: -3.7492 },
   {
     id: "united-states",
     name: "United States",
+    iso: "US",
     lat: 37.0902,
     lng: -95.7129,
   },
@@ -67,8 +81,8 @@ export const countries: readonly Country[] = [
     for is a country the product operates in, which is the only evidence this
     list will accept.
   */
-  { id: "turkey", name: "Turkey", lat: 38.9637, lng: 35.2433 },
-  { id: "vietnam", name: "Vietnam", lat: 14.0583, lng: 108.2772 },
-  { id: "thailand", name: "Thailand", lat: 15.87, lng: 100.9925 },
-  { id: "oman", name: "Oman", lat: 21.4735, lng: 55.9754 },
+  { id: "turkey", name: "Turkey", iso: "TR", lat: 38.9637, lng: 35.2433 },
+  { id: "vietnam", name: "Vietnam", iso: "VN", lat: 14.0583, lng: 108.2772 },
+  { id: "thailand", name: "Thailand", iso: "TH", lat: 15.87, lng: 100.9925 },
+  { id: "oman", name: "Oman", iso: "OM", lat: 21.4735, lng: 55.9754 },
 ] as const;
