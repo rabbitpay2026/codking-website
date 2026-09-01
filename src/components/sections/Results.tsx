@@ -63,13 +63,13 @@ export function Results() {
       }
     >
       {/*
-        The tail carries the accent, and it is the site's existing one rather
-        than a new one: the same left-to-right run from `brand-violet` to
-        `brand` that the capability board's heading uses, with `text-brand` set
-        underneath as the fallback for a browser without `background-clip`.
-        Reusing it rather than picking a colour is the whole point — two
-        headings a screen apart with two different accents would read as two
-        decisions, and this is one.
+        The tail carries the accent, and it is the hero's own: flat `text-brand`
+        on the phrase that matters, dark ink on the rest. It used to be a
+        left-to-right run from `brand-violet` to `brand`, clipped to the text.
+        Reusing the hero's treatment rather than a second one is the whole
+        point — two headings a screen apart with two different accents read as
+        two decisions, and the page makes one. It also drops a violet that was
+        the only violet in a heading anywhere on the page.
 
         Split on the words rather than read from a data file, because this
         section holds its own copy inline; there is no repository record for a
@@ -78,10 +78,7 @@ export function Results() {
       <SectionHeading
         title={
           <>
-            Results Our{" "}
-            <span className="bg-gradient-to-r from-brand-violet to-brand bg-clip-text text-brand text-transparent">
-              Merchants Achieve
-            </span>
+            Results Our <span className="text-brand">Merchants Achieve</span>
           </>
         }
       />

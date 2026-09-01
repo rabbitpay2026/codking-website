@@ -86,12 +86,37 @@ export function Integrations() {
   const featured = getFeaturedIntegrations();
   const copy = getPlatformsCopy();
 
+  const accentAt = copy.title.indexOf(copy.titleAccent);
+  const lead = accentAt >= 0 ? copy.title.slice(0, accentAt) : copy.title;
+  const accent = accentAt >= 0 ? copy.titleAccent : null;
+  const tail =
+    accentAt >= 0 ? copy.title.slice(accentAt + copy.titleAccent.length) : "";
+
   return (
     <SectionShell
       backdrop={<PageEnvironment />}
       containerClassName="pt-7 md:pt-8 lg:pt-9"
     >
-      <SectionHeading title={copy.title} description={copy.description} />
+      {/*
+        The heading, split on the phrase the repository names, so the accent
+        cannot end up on the wrong words after a rewording. Three parts rather
+        than two — the accent sits inside this line rather than closing it —
+        and an accent that does not occur leaves `lead` holding the whole
+        heading, which renders exactly as it did before the colour existed.
+
+        Flat `text-brand`, which is the hero's treatment and now the page's
+        only one: the phrase in the brand's blue, the rest in ink.
+      */}
+      <SectionHeading
+        title={
+          <>
+            {lead}
+            {accent ? <span className="text-brand">{accent}</span> : null}
+            {tail}
+          </>
+        }
+        description={copy.description}
+      />
 
       <ul className="mt-lede grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
         {featured.map((integration, index) => (

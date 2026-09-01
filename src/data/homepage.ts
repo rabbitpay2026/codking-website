@@ -328,6 +328,19 @@ export const howItWorksTitle = "How COD King works";
 /** The integrations board's own heading (§3.1). */
 export const platformsCopy = {
   title: "Connect your marketing & communication platforms",
+  /**
+   * The words the heading's accent lands on.
+   *
+   * Held here rather than spanned in the markup for the reason
+   * `controlBoardCopy.titleAccent` is: the heading is data, so a rewording that
+   * no longer contains this phrase simply fails to match and the line renders
+   * in one colour — rather than leaving the accent on words that have moved.
+   *
+   * The qualifier rather than the noun. "Platforms" is the generic half of the
+   * phrase and every board on this page is a board of something; what a
+   * merchant is scanning for is which *kind*.
+   */
+  titleAccent: "marketing & communication",
   description: "COD King works seamlessly with your favorite tools.",
 } as const;
 

@@ -63,8 +63,15 @@ export function PaymentGateways() {
           <span aria-hidden className="h-px w-6 bg-brand/40" />
         </p>
 
+        {/*
+          The accent is the page's one heading treatment, at this heading's
+          smaller scale: the phrase in `text-brand`, the rest in ink. Set inline
+          rather than read from a repository because this subsection holds its
+          own copy — there is no stored record for a rewording to drift from.
+        */}
         <h3 className="mt-4 text-[1.5rem] leading-[1.1] font-semibold tracking-[-0.028em] text-balance text-ink sm:text-[1.75rem] lg:text-[2rem]">
-          Works with your preferred payment gateway
+          Works with your{" "}
+          <span className="text-brand">preferred payment gateway</span>
         </h3>
 
         <p className="mt-4 text-[14px] leading-relaxed text-pretty text-muted-foreground sm:text-[15px]">

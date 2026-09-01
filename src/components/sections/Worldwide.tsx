@@ -67,14 +67,28 @@ export async function Worldwide() {
         The line then drops out rather than printing a placeholder — this
         section must not be the one place on the page claiming a figure nobody
         has confirmed.
+
+        Set a step larger than it was — 1.7rem to 2.1rem, and the word beside it
+        from `text-base` to `text-lg` — because at the smaller size the one
+        countable fact in the section was quieter than the heading above it and
+        the map below it, and a reader scanning past caught neither the number
+        nor the word.
+
+        The whole figure grows, not the number alone. "100+" without "Countries"
+        is not a claim, and letting the numeral run away from its own noun is
+        how a statistic turns into decoration.
+
+        Both stay in ink and foreground. This section already spends its one
+        accent on the heading, and a second blue thirty pixels under it would
+        make the two compete rather than read in order.
       */}
       {proof.countriesServed ? (
         <div className="mt-7 text-center">
           <p className="flex flex-wrap items-baseline justify-center gap-x-2 gap-y-0.5">
-            <span className="text-[1.7rem] font-semibold tracking-[-0.03em] text-ink tabular-nums sm:text-[1.9rem]">
+            <span className="text-[2.1rem] font-semibold tracking-[-0.03em] text-ink tabular-nums sm:text-[2.35rem]">
               {proof.countriesServed}+
             </span>
-            <span className="text-base font-semibold text-foreground sm:text-lg">
+            <span className="text-lg font-semibold text-foreground sm:text-xl">
               Countries
             </span>
           </p>
