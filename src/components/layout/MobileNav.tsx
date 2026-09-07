@@ -176,7 +176,18 @@ export function MobileNav({
                       key={resource.href}
                       item={resource}
                       onClick={close}
-                      className={cn(rowClass, "text-sm font-normal")}
+                      className={cn(
+                        rowClass,
+                        "text-sm font-normal",
+                        /*
+                          Announced, not offered — see `comingSoon` in
+                          `data/navigation.ts`. Dimmed and inert, so the row
+                          neither highlights under a thumb nor closes the
+                          drawer on a tap that goes nowhere.
+                        */
+                        resource.comingSoon &&
+                          "pointer-events-none opacity-55 hover:bg-transparent",
+                      )}
                     >
                       <span className="flex items-center gap-2.5">
                         <Icon
@@ -185,8 +196,17 @@ export function MobileNav({
                         />
                         {resource.label}
                       </span>
-                      {/* Off-site only. The FAQ is a page of this site. */}
-                      {resource.external ? (
+                      {/*
+                        The drawer has no room for a description line, so the
+                        slot the outbound glyph would occupy carries the words
+                        instead — and the glyph is withheld for the same reason
+                        it is on desktop: nothing opens.
+                      */}
+                      {resource.comingSoon ? (
+                        <span className="shrink-0 text-xs text-muted-foreground">
+                          Coming soon
+                        </span>
+                      ) : resource.external ? (
                         <ArrowUpRight
                           aria-hidden
                           className="size-4 shrink-0 text-muted-foreground"

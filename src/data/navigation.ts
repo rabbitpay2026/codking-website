@@ -64,12 +64,25 @@ export const resourcesNav: readonly ResourceNavItem[] = [
     icon: "docs",
     external: true,
   },
+  /*
+    The blog is announced rather than offered, until it publishes.
+
+    `comingSoon` here rather than deleting the entry or commenting it out: the
+    header dropdown, the mobile drawer and the footer's Resources column are
+    all assembled from this one list, so the flag takes the link off all three
+    at once — dimmed, with "Coming soon" where its description was, and no
+    href for a merchant or a crawler to follow into an empty subdomain. The
+    destination is already decided and stays declared beside the others in
+    `constants/external.ts`; the day it goes live, deleting this one line
+    turns it back into a link on every surface.
+  */
   {
     label: "Blog",
     href: externalLinks.blog,
     description: "Product updates, newest first.",
     icon: "blog",
     external: true,
+    comingSoon: true,
   },
 ];
 

@@ -15,6 +15,17 @@ export interface NavItem {
   readonly description?: string;
   /** Present so the two kinds of destination discriminate on one field. */
   readonly external?: false;
+  /**
+   * Announce the destination without offering it yet.
+   *
+   * The item keeps its place, its icon and its `href`; what it loses is the
+   * link. `NavLink` renders it as a non-interactive span, and every surface
+   * that draws navigation dims it and says "Coming soon" in place of its
+   * description — so a merchant learns the page is planned instead of being
+   * sent to one that is not written, and the day it publishes the only edit
+   * is deleting this line.
+   */
+  readonly comingSoon?: boolean;
 }
 
 /**
@@ -31,6 +42,8 @@ export interface ExternalNavItem {
   readonly href: string;
   readonly description?: string;
   readonly external: true;
+  /** See `NavItem.comingSoon` — an off-site property can be unbuilt too. */
+  readonly comingSoon?: boolean;
 }
 
 /** Either kind of destination. Anything that renders links accepts this. */
