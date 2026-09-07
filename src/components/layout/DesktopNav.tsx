@@ -196,46 +196,86 @@ export function DesktopNav({ items, megaMenu, resources }: DesktopNavProps) {
                     {resources.map((resource) => {
                       const Icon = resourceNavIcons[resource.icon];
 
+                      const row = (
+                        <NavLink
+                          item={resource}
+                          className={cn(
+                            itemLinkClass,
+                            "flex gap-3 p-2.5",
+                            /*
+                              An announced destination reads as one: dimmed,
+                              and inert to the pointer so the row does not
+                              light up under a cursor that cannot open it.
+                              Opacity rather than a blur filter — blurred type
+                              at 12px stops being readable, and the point is
+                              that a merchant can still see what is coming.
+                            */
+                            resource.comingSoon &&
+                              "pointer-events-none opacity-55",
+                          )}
+                        >
+                          <span
+                            aria-hidden
+                            className="grid size-9 shrink-0 place-items-center rounded-lg border border-ink/[0.08] bg-brand-soft text-brand transition-colors group-hover:border-brand/25"
+                          >
+                            <Icon className="size-4.5" />
+                          </span>
+
+                          <span className="min-w-0">
+                            <span className="flex items-center gap-1 text-sm font-medium text-foreground transition-colors group-hover:text-brand">
+                              {resource.label}
+                              {/*
+                                Marks the destination as off-site, and only
+                                when it is one — the FAQ is a page of this site,
+                                and an outbound glyph beside it would promise a
+                                new tab that never opens. It moves a pixel on
+                                hover in the direction it points, which is the
+                                whole animation. A row that is only announced
+                                gets no glyph either: nothing opens.
+                              */}
+                              {resource.external && !resource.comingSoon ? (
+                                <ArrowUpRight
+                                  aria-hidden
+                                  className="size-3.5 text-muted-foreground transition-[transform,color] duration-200 ease-[var(--ease-emphasized)] group-hover:translate-x-px group-hover:-translate-y-px group-hover:text-brand"
+                                />
+                              ) : null}
+                            </span>
+                            {/*
+                              "Coming soon" takes the description's place rather
+                              than sitting beside it: the line under the label is
+                              where a merchant looks to find out what this row
+                              is, and the answer today is that it is not open
+                              yet.
+                            */}
+                            {resource.comingSoon ? (
+                              <span className="mt-0.5 block text-xs leading-snug text-muted-foreground">
+                                Coming soon
+                              </span>
+                            ) : resource.description ? (
+                              <span className="mt-0.5 block text-xs leading-snug text-muted-foreground">
+                                {resource.description}
+                              </span>
+                            ) : null}
+                          </span>
+                        </NavLink>
+                      );
+
+                      /*
+                        A row that is not a link is not wrapped in
+                        `NavigationMenu.Link` either. That part registers its
+                        child as a menu item Radix moves focus between, and a
+                        keyboard user arrowing onto a row that goes nowhere is
+                        the one way this state could still waste someone's time.
+                      */
                       return (
                         <li key={resource.href}>
-                          <NavigationMenu.Link asChild>
-                            <NavLink
-                              item={resource}
-                              className={cn(itemLinkClass, "flex gap-3 p-2.5")}
-                            >
-                              <span
-                                aria-hidden
-                                className="grid size-9 shrink-0 place-items-center rounded-lg border border-ink/[0.08] bg-brand-soft text-brand transition-colors group-hover:border-brand/25"
-                              >
-                                <Icon className="size-4.5" />
-                              </span>
-
-                              <span className="min-w-0">
-                                <span className="flex items-center gap-1 text-sm font-medium text-foreground transition-colors group-hover:text-brand">
-                                  {resource.label}
-                                  {/*
-                                    Marks the destination as off-site, and only
-                                    when it is one — the FAQ is a page of this
-                                    site, and an outbound glyph beside it would
-                                    promise a new tab that never opens. It moves
-                                    a pixel on hover in the direction it points,
-                                    which is the whole animation.
-                                  */}
-                                  {resource.external ? (
-                                    <ArrowUpRight
-                                      aria-hidden
-                                      className="size-3.5 text-muted-foreground transition-[transform,color] duration-200 ease-[var(--ease-emphasized)] group-hover:translate-x-px group-hover:-translate-y-px group-hover:text-brand"
-                                    />
-                                  ) : null}
-                                </span>
-                                {resource.description ? (
-                                  <span className="mt-0.5 block text-xs leading-snug text-muted-foreground">
-                                    {resource.description}
-                                  </span>
-                                ) : null}
-                              </span>
-                            </NavLink>
-                          </NavigationMenu.Link>
+                          {resource.comingSoon ? (
+                            row
+                          ) : (
+                            <NavigationMenu.Link asChild>
+                              {row}
+                            </NavigationMenu.Link>
+                          )}
                         </li>
                       );
                     })}

@@ -308,6 +308,11 @@ function FooterLinkList({
  * Off-site links carry the outbound glyph, which travels a pixel toward where
  * it points on hover. That is the entire animation — a footer of forty links
  * that all move is a footer that never sits still.
+ *
+ * A destination still to be built keeps its row and loses its link, dimmed and
+ * labelled "Coming soon" — the footer is the site's index, and an index reads
+ * better admitting a page is on the way than pointing at one that is not there.
+ * The state is declared once in the navigation config; this only draws it.
  */
 function FooterLink({ item }: { readonly item: NavDestination }) {
   return (
@@ -316,11 +321,15 @@ function FooterLink({ item }: { readonly item: NavDestination }) {
       className={cn(
         "group inline-flex items-center gap-1 rounded-sm py-1 text-sm text-muted-foreground",
         "transition-colors duration-200 ease-[var(--ease-emphasized)] outline-none",
-        "hover:text-brand focus-visible:text-brand focus-visible:ring-2 focus-visible:ring-ring/60",
+        item.comingSoon
+          ? "pointer-events-none opacity-55"
+          : "hover:text-brand focus-visible:text-brand focus-visible:ring-2 focus-visible:ring-ring/60",
       )}
     >
       {item.label}
-      {item.external ? (
+      {item.comingSoon ? (
+        <span className="text-xs">(Coming soon)</span>
+      ) : item.external ? (
         <ArrowUpRight
           aria-hidden
           className="size-3.5 shrink-0 opacity-60 transition-[transform,opacity] duration-200 ease-[var(--ease-emphasized)] group-hover:translate-x-px group-hover:-translate-y-px group-hover:opacity-100"

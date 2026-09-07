@@ -26,10 +26,38 @@ interface NavLinkProps extends Omit<ComponentProps<"a">, "href"> {
  * All other props pass through untouched, so Radix's `asChild` can hand this
  * its ref and event handlers exactly as it would a bare anchor.
  */
-export function NavLink({ item, children, ...props }: NavLinkProps) {
+export function NavLink({ item, children, className, ...props }: NavLinkProps) {
+  /*
+    A destination that is announced but not yet built (`comingSoon`) is not a
+    link, and is not drawn as one: a span carries the label, so there is
+    nothing to click, nothing to tab to, and no href for a crawler to follow
+    into a page that does not exist. `aria-disabled` states why rather than
+    leaving a screen reader to infer it from the styling, and the sr-only note
+    carries the same word the sighted label shows.
+
+    The remaining props are deliberately dropped here. Every one of them —
+    `onClick`, the handlers Radix hands down — exists to serve a navigation
+    that is not going to happen; the drawer, for instance, should stay open
+    when a merchant taps a row that goes nowhere.
+  */
+  if (item.comingSoon) {
+    return (
+      <span className={className} aria-disabled="true">
+        {children}
+        <span className="sr-only"> (coming soon)</span>
+      </span>
+    );
+  }
+
   if (item.external) {
     return (
-      <a {...props} href={item.href} target="_blank" rel="noopener noreferrer">
+      <a
+        {...props}
+        className={className}
+        href={item.href}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
         {children}
         <span className="sr-only"> (opens in a new tab)</span>
       </a>
@@ -37,7 +65,7 @@ export function NavLink({ item, children, ...props }: NavLinkProps) {
   }
 
   return (
-    <Link {...props} href={item.href}>
+    <Link {...props} className={className} href={item.href}>
       {children}
     </Link>
   );
