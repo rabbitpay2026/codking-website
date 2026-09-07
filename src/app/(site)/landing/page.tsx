@@ -20,7 +20,14 @@ export const metadata: Metadata = createMetadata({
 });
 
 /**
- * The homepage.
+ * The homepage, served at `/landing`.
+ *
+ * The page is unchanged by that address: it sits in the same `(site)` route
+ * group it always did, so it renders inside the same marketing shell, in the
+ * same order, from the same sections. The site root forwards here with a
+ * permanent redirect declared in `next.config.ts`, and `routes.home` — which
+ * the metadata below reads for its canonical URL — names this path, so the
+ * move needed no edit anywhere that links to the homepage.
  *
  * A composition file and nothing more: every section is a component that
  * reads its own content from the repository, so this page states the order of
