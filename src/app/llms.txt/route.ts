@@ -771,7 +771,7 @@ function pricing(): readonly string[] {
     "",
     `Canonical URL: ${url(routes.pricing)}`,
     "",
-    "Three plans. Each tier includes everything in the one below it, every plan handles unlimited orders, and every plan comes with a 7-day free trial that requires no credit card. Messaging is charged per message on all plans.",
+    "Four plans, priced in rupees for the Indian market. Each tier includes everything in the one below it, every plan handles unlimited orders, and every plan comes with a 7-day free trial that requires no credit card. Messaging is charged per message on all plans.",
     "",
     ...planBlocks,
     ...block("Feature Availability By Plan", 3, bullets(matrix)),

@@ -9,7 +9,11 @@ import { BorderBeam } from "@/components/ui/border-beam";
 import { Button } from "@/components/ui/button";
 import { routes } from "@/constants/routes";
 import { cn } from "@/lib/utils";
-import { getPricingPlans, getUtilityActions } from "@/lib/content";
+import {
+  getPlanFeatureValue,
+  getPricingPlans,
+  getUtilityActions,
+} from "@/lib/content";
 import { formatPlanPrice } from "@/utils/price";
 
 /**
@@ -20,10 +24,13 @@ import { formatPlanPrice } from "@/utils/price";
  * repository — the same declaration the pricing page renders — so the teaser
  * can never quote a price the page it links to contradicts.
  *
- * The recommended plan is raised, beamed and given a solid surface; the other
- * two stay quiet. One emphasised card in three is a recommendation — three
+ * The recommended plan is raised, beamed and given a solid surface; the rest
+ * stay quiet. One emphasised card in four is a recommendation — four
  * emphasised cards are noise.
  */
+/** How many of a plan's highlights the teaser prints before it stops. */
+const PREVIEW_HIGHLIGHTS = 6;
+
 export function PricingPreview() {
   const plans = getPricingPlans();
   const installAction = getUtilityActions().find(
@@ -50,12 +57,12 @@ export function PricingPreview() {
       />
 
       {/*
-        Stretched rather than start-aligned, so the three cards share a
+        Stretched rather than start-aligned, so the cards share a
         baseline at the bottom and only the recommended one breaks the line —
         at the top, where the lift is the point. Ragged card bottoms are the
         difference between a price list and a price *table*.
       */}
-      <div className="mt-lede grid items-stretch gap-5 lg:grid-cols-3">
+      <div className="mt-lede grid items-stretch gap-5 sm:grid-cols-2 xl:grid-cols-4">
         {plans.map((plan, index) => {
           const { amount, period } = formatPlanPrice(plan.price);
 
@@ -69,7 +76,7 @@ export function PricingPreview() {
               key={plan.id}
               delay={0.07 * index}
               inView
-              className={cn("h-full", plan.recommended && "lg:-mt-5")}
+              className={cn("h-full", plan.recommended && "xl:-mt-5")}
             >
               <article
                 className={cn(
@@ -118,20 +125,43 @@ export function PricingPreview() {
                   {plan.tagline}
                 </p>
 
+                {/*
+                  The first few lines only. This is a teaser on a page about
+                  something else — a merchant who wants the fourteenth thing
+                  the Enterprise plan includes is going to the pricing page,
+                  and printing all of it here turns a homepage band into a
+                  second pricing page. The rates carry their value inline
+                  rather than in a pill, because "Premium SMS rates" without
+                  the number is not a reason to click.
+                */}
                 <ul className="relative mt-7 flex-1 space-y-3 border-t border-border pt-7">
-                  {plan.highlights.map((highlight) => (
-                    <li
-                      key={highlight.label}
-                      className="flex items-start gap-3"
-                    >
-                      <span className="mt-0.5 grid size-4 shrink-0 place-items-center rounded-full bg-brand-check/20">
-                        <Check aria-hidden className="size-2.5 text-ink/70" />
-                      </span>
-                      <span className="text-sm leading-relaxed text-foreground/85">
-                        {highlight.label}
-                      </span>
-                    </li>
-                  ))}
+                  {plan.highlights
+                    .slice(0, PREVIEW_HIGHLIGHTS)
+                    .map((highlight) => {
+                      const value =
+                        highlight.showValue && highlight.feature
+                          ? getPlanFeatureValue(highlight.feature, plan.id)
+                          : false;
+
+                      return (
+                        <li
+                          key={highlight.label}
+                          className="flex items-start gap-3"
+                        >
+                          <span className="mt-0.5 grid size-4 shrink-0 place-items-center rounded-full bg-brand-check/20">
+                            <Check
+                              aria-hidden
+                              className="size-2.5 text-ink/70"
+                            />
+                          </span>
+                          <span className="text-sm leading-relaxed text-foreground/85">
+                            {typeof value === "string"
+                              ? `${highlight.label}: ${value}`
+                              : highlight.label}
+                          </span>
+                        </li>
+                      );
+                    })}
                 </ul>
 
                 {installAction ? (

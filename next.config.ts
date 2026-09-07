@@ -26,6 +26,28 @@ const nextConfig: NextConfig = {
    */
   async redirects() {
     return [
+      /**
+       * The homepage lives at `/landing` (`app/(site)/landing/page.tsx`), and
+       * the site root forwards to it.
+       *
+       * Done here rather than at the host, because a redirect declared in the
+       * application travels with the application: it is the same rule in
+       * `next dev`, in a preview deployment and in production, and it cannot
+       * be lost by a hosting change. Redirects are evaluated before the
+       * filesystem, so no page needs to exist at `/` for this to answer — and
+       * the root layout still applies to `/landing`, which is why the page
+       * renders exactly as it did at the root.
+       *
+       * `permanent: true` — a 308, which preserves the request method and
+       * tells crawlers the homepage's address has moved for good, so the
+       * ranking signals that accumulated on `/` follow it to `/landing`. The
+       * page's own canonical tag points at `/landing` for the same reason.
+       */
+      {
+        source: "/",
+        destination: "/landing",
+        permanent: true,
+      },
       {
         source: "/features/prepaid-nudge",
         destination: "/features/cod-to-prepaid",

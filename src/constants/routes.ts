@@ -12,7 +12,20 @@ import type { Route } from "next";
  * literal types intact while asserting each value is a real, routable page.
  */
 export const routes = {
-  home: "/",
+  /**
+   * The homepage, which is served at `/landing` rather than at the site root.
+   *
+   * The root itself is not a page: `next.config.ts` answers `/` with a
+   * permanent redirect here, so `/landing` is the homepage's only address and
+   * therefore the only one this registry should hand out. Every consumer —
+   * the logo, the "Home" breadcrumbs, the canonical URL the page declares,
+   * the sitemap entry, the entry points in `llms.txt` — points at the
+   * destination rather than at the address that forwards to it, which is what
+   * keeps a click, a crawl and a canonical from taking a needless hop.
+   *
+   * The key stays `home` because that is what the page is. Only its URL moved.
+   */
+  home: "/landing",
 
   /** Controls overview, grouped by order stage (§3, §6.1). */
   features: "/features",

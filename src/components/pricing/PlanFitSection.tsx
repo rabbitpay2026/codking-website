@@ -1,4 +1,4 @@
-import { Building2, TrendingUp, UserRound } from "lucide-react";
+import { Building2, Crown, TrendingUp, UserRound } from "lucide-react";
 
 import { SectionShell } from "@/components/sections/SectionShell";
 import { getPlanFits } from "@/lib/content";
@@ -16,21 +16,22 @@ import type { LucideIcon } from "lucide-react";
  * cannot be drawn with the wrong mark.
  */
 const fitIcon: Record<PlanId, LucideIcon> = {
-  standard: UserRound,
-  professional: TrendingUp,
+  free: UserRound,
+  pro: TrendingUp,
   enterprise: Building2,
+  "enterprise-plus": Crown,
 };
 
 /**
  * Which plan is right for you (§3.1).
  *
  * Directly under the cards, because the question a merchant asks the moment
- * they finish reading three prices is which of the three is theirs. Three
+ * they finish reading four prices is which of the four is theirs. Four
  * sentences answer it, and the section ends.
  *
  * Columns are divided by a hairline rather than boxed into cards. These are
- * three readings of one question, not three offers, and three more bordered
- * boxes immediately under three bordered cards would say the opposite.
+ * four readings of one question, not four offers, and four more bordered
+ * boxes immediately under four bordered cards would say the opposite.
  */
 export function PlanFitSection() {
   const fits = getPlanFits();
@@ -52,7 +53,7 @@ export function PlanFitSection() {
         Which plan is right for you?
       </h2>
 
-      <ul className="mt-7 grid gap-8 sm:grid-cols-3 sm:gap-0">
+      <ul className="mt-7 grid gap-8 sm:grid-cols-2 sm:gap-y-8 lg:grid-cols-4 lg:gap-0">
         {fits.map((fit, index) => {
           const Icon = fitIcon[fit.planId];
 
@@ -74,7 +75,7 @@ export function PlanFitSection() {
               {index > 0 ? (
                 <span
                   aria-hidden
-                  className="absolute inset-y-2 left-0 hidden w-px bg-gradient-to-b from-transparent via-ink/10 to-transparent sm:block"
+                  className="absolute inset-y-2 left-0 hidden w-px bg-gradient-to-b from-transparent via-ink/10 to-transparent lg:block"
                 />
               ) : null}
 

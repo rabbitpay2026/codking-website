@@ -329,14 +329,14 @@ export const faqs: readonly FaqItem[] = [
     id: "order-limit",
     question: "Is there an order limit?",
     answer:
-      "No. Every plan handles unlimited orders, including the free Standard plan. You are never charged more for a busy month.",
+      "No. Every plan handles unlimited orders, including the Free plan. You are never charged more for a busy month.",
     tags: ["pricing"],
   },
   {
     id: "free-plan-charges",
     question: "Are there any charges in the free plan?",
     answer:
-      "The Standard plan is $0 per month. You only pay the 1% partial payment rate on orders that use it, and for the messages you send.",
+      "The Free plan is ₹0 per month, forever, with no setup fees. You only pay the 1.5% partial payment rate on orders that use it, and for the messages you send.",
     tags: ["pricing"],
   },
   {

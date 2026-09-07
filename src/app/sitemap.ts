@@ -34,9 +34,11 @@ interface SitemapEntry {
  *   status, so the only edit is adding the routes below.
  * - The four controls still served by `features/[control]` are excluded by
  *   `getPublishedControls()` for the same reason.
- * - `/features/prepaid-nudge` and `/features/cod-rules` resolve, but as
- *   permanent redirects (see `next.config.ts`). A sitemap lists destinations,
- *   not the addresses that point at them.
+ * - `/features/prepaid-nudge`, `/features/cod-rules` and the site root `/`
+ *   resolve, but as permanent redirects (see `next.config.ts`). A sitemap
+ *   lists destinations, not the addresses that point at them — which is why
+ *   the entry below is `routes.home`, the homepage's own `/landing` address,
+ *   and never the root that forwards to it.
  * - `not-found` and `error` are boundaries, not routes.
  *
  * There is no `lastModified`. The honest value would be the date the page's

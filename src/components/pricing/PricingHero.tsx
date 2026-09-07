@@ -13,8 +13,8 @@ import { getPricingAssurances, getUtilityActions } from "@/lib/content";
  * whether the number is safe to trust — nothing else.
  *
  * The reassurances sit under the call to action rather than inside the cards
- * because they are true of all three plans. Repeated on every card they would
- * read as three separate promises; stated once here they read as the terms of
+ * because they are true of all four plans. Repeated on every card they would
+ * read as four separate promises; stated once here they read as the terms of
  * the page.
  */
 export function PricingHero() {
@@ -34,11 +34,11 @@ export function PricingHero() {
         </p>
 
         <h1 className="mt-5 text-[2rem] leading-[1.06] font-semibold tracking-[-0.025em] text-balance text-ink sm:text-[2.5rem] lg:text-[2.75rem]">
-          Choose the plan that fits your business
+          Choose your plan
         </h1>
 
         <p className="mt-4 text-base leading-relaxed text-pretty text-muted-foreground">
-          Flexible pricing designed for every stage of your COD journey.
+          Select the plan that best fits your business needs in India.
         </p>
 
         {installAction ? (
