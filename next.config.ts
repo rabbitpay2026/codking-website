@@ -94,40 +94,33 @@ const nextConfig: NextConfig = {
   },
 
   /**
-   * The documentation, served from this origin at `/documentation` (§7).
+   * The two documentation namespaces that answer at the site root (§7).
    *
-   * Every entry here proxies to `DOCS_UPSTREAM`. Three of them are not optional
-   * extras — they are what makes the fourth work:
+   * The documentation pages themselves are not here. They are served by
+   * `app/documentation/[[...slug]]/route.ts`, which proxies them *and*
+   * translates their addresses — a rewrite cannot, because it returns the
+   * upstream body verbatim and that body is full of root-relative links.
    *
-   * - `/documentation` and `/documentation/:path*` are the pages themselves.
-   *   The first is the docs home; the second carries every article path.
-   * - `/mintlify-assets/*` is where the docs application's own stylesheets,
-   *   scripts and fonts live. Its markup asks for them at the *root* of
-   *   whatever host served the page, so once the page is served from
-   *   codking.tech those requests arrive here and must be forwarded, or the
-   *   documentation renders as unstyled markup.
-   * - `/_mintlify/*` is the same story for its runtime endpoints (search and
-   *   the API playground), which are fetched from the root for the same
-   *   reason.
+   * These two are the exception, and the reason is worth stating rather than
+   * discovering. `/mintlify-assets/` is the documentation's asset prefix and
+   * `/_mintlify/` holds its search and assistant endpoints, and both are
+   * compiled into its JavaScript as absolute, root-relative strings. The
+   * requests are issued by the bundle at runtime rather than written into the
+   * markup, so no amount of rewriting the HTML moves them — they arrive at the
+   * root of whatever origin is showing the page, and they are forwarded from
+   * there. Without them the documentation renders as unstyled markup and its
+   * search returns nothing.
    *
-   * `beforeFiles` rather than the default `afterFiles`, so the proxy answers
-   * before the filesystem is consulted. It costs nothing today — no page in
-   * this app claims any of these paths — and it is the placement that stays
-   * correct: a future `/documentation` page file added by mistake would
-   * silently shadow the real documentation under `afterFiles`, and cannot
-   * here.
+   * Rewriting the compiled bundles to relocate these would work until the next
+   * upstream build, which is not a thing to depend on.
+   *
+   * `beforeFiles` rather than the default `afterFiles`, so they answer before
+   * the filesystem is consulted. No page in this app claims either path, and
+   * the placement is the one that stays correct if one ever did.
    */
   async rewrites() {
     return {
       beforeFiles: [
-        {
-          source: "/documentation",
-          destination: `${DOCS_UPSTREAM}/`,
-        },
-        {
-          source: "/documentation/:path*",
-          destination: `${DOCS_UPSTREAM}/:path*`,
-        },
         {
           source: "/mintlify-assets/:path*",
           destination: `${DOCS_UPSTREAM}/mintlify-assets/:path*`,
