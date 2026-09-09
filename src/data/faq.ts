@@ -796,9 +796,9 @@ export const faqPageCategories: readonly FaqPageCategory[] = [
       { id: "cart-sequence" },
       { id: "cart-link" },
       /*
-        No link. The answer names the regional providers, and the page that
-        would list them — `/integrations` — is still a placeholder. A link to an
-        empty page is worse than no link at all.
+        No link. The answer names the regional providers, and there is no page
+        on this site that lists them: `/integrations` was removed. A link to a
+        page that does not exist is worse than no link at all.
       */
       { id: "local-sms" },
       { id: "message-billing" },

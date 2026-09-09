@@ -154,7 +154,7 @@ export const otpCheckoutStages: readonly CheckoutStage[] = [
  *
  * ── Where these come from ─────────────────────────────────────────────────
  * Every entry is a setting the COD King documentation describes for OTP
- * verification — https://docs.codking.tech/setting-otp-verification-on-shopify
+ * verification — https://codking.tech/documentation/setting-otp-verification-on-shopify
  * — rather than a capability written to fill a grid. The review asked this
  * section to explain more of what a merchant can actually configure, naming
  * country targeting and blocked numbers specifically; both are here, with the

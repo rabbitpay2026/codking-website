@@ -1,5 +1,37 @@
 import type { NextConfig } from "next";
 
+/**
+ * Where the documentation is actually served from.
+ *
+ * The documentation is a Mintlify deployment, not a folder in this repository,
+ * and it stays that way: the writers publish to it, and re-implementing its
+ * chrome — sidebar, search, versioning, code blocks — inside this app would
+ * fork the content on the day it was copied. What changes is its *address*.
+ * The rewrites below put it behind `codking.tech/documentation`, so the docs
+ * are served by this origin rather than linked away to a subdomain, and the
+ * URL a merchant sees never leaves the main domain.
+ *
+ * A rewrite, deliberately, and never a redirect: a redirect would hand the
+ * browser `docs.codking.tech` and the address bar would follow it, which is
+ * the one outcome this is meant to prevent. The request is proxied instead,
+ * so the response arrives under `/documentation` and stays there.
+ *
+ * The value is an origin *plus whatever base path the docs deployment serves
+ * at* — not an origin alone. Mintlify can be told to serve a deployment under
+ * a subdirectory, and if that is ever switched on for this one, the upstream
+ * address gains the same prefix; keeping the whole base URL in a single value
+ * makes that a one-line environment change here rather than a code edit.
+ *
+ * Read from the environment for the same reason every other external
+ * destination is: the host is owned by the business, not by the codebase, and
+ * a staging deployment points at a different one. The trailing slash is
+ * trimmed so the path templates below can own the separator and a value
+ * pasted with one cannot produce `//`.
+ */
+const DOCS_UPSTREAM = (
+  process.env.DOCS_UPSTREAM_URL ?? "https://docs.codking.tech"
+).replace(/\/+$/, "");
+
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
@@ -59,6 +91,55 @@ const nextConfig: NextConfig = {
         permanent: true,
       },
     ];
+  },
+
+  /**
+   * The documentation, served from this origin at `/documentation` (§7).
+   *
+   * Every entry here proxies to `DOCS_UPSTREAM`. Three of them are not optional
+   * extras — they are what makes the fourth work:
+   *
+   * - `/documentation` and `/documentation/:path*` are the pages themselves.
+   *   The first is the docs home; the second carries every article path.
+   * - `/mintlify-assets/*` is where the docs application's own stylesheets,
+   *   scripts and fonts live. Its markup asks for them at the *root* of
+   *   whatever host served the page, so once the page is served from
+   *   codking.tech those requests arrive here and must be forwarded, or the
+   *   documentation renders as unstyled markup.
+   * - `/_mintlify/*` is the same story for its runtime endpoints (search and
+   *   the API playground), which are fetched from the root for the same
+   *   reason.
+   *
+   * `beforeFiles` rather than the default `afterFiles`, so the proxy answers
+   * before the filesystem is consulted. It costs nothing today — no page in
+   * this app claims any of these paths — and it is the placement that stays
+   * correct: a future `/documentation` page file added by mistake would
+   * silently shadow the real documentation under `afterFiles`, and cannot
+   * here.
+   */
+  async rewrites() {
+    return {
+      beforeFiles: [
+        {
+          source: "/documentation",
+          destination: `${DOCS_UPSTREAM}/`,
+        },
+        {
+          source: "/documentation/:path*",
+          destination: `${DOCS_UPSTREAM}/:path*`,
+        },
+        {
+          source: "/mintlify-assets/:path*",
+          destination: `${DOCS_UPSTREAM}/mintlify-assets/:path*`,
+        },
+        {
+          source: "/_mintlify/:path*",
+          destination: `${DOCS_UPSTREAM}/_mintlify/:path*`,
+        },
+      ],
+      afterFiles: [],
+      fallback: [],
+    };
   },
 };
 

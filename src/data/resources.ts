@@ -23,10 +23,17 @@ export const resourceSections: readonly ResourceSection[] = [
     href: routes.blog,
     purpose: "Product updates and news, newest first.",
   },
+  /*
+    Documentation points at `/documentation`, the address the documentation is
+    actually published at, rather than at the `/resources/docs` placeholder
+    this list used to name. The docs are a real, finished surface now — served
+    from this origin by the rewrite in `next.config.ts` — and the hub's job is
+    to be a door to the real thing.
+  */
   {
     kind: "docs",
     title: "Documentation",
-    href: routes.docs,
+    href: routes.documentation,
     purpose: "How to set up and configure each control.",
   },
   {

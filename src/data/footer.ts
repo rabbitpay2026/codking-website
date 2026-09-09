@@ -56,7 +56,6 @@ export const footerProductColumn: NavGroup = {
     */
     { label: "Customer Reviews", href: routes.customers },
     { label: "COD Calculator", href: routes.codCalculator },
-    { label: "Integrations", href: routes.integrations },
     /*
       The install, in the one column that is a list of everything the product
       is. It is the same destination as the header's primary action and reads

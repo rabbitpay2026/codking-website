@@ -1,13 +1,11 @@
 import { Puzzle } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
 
 import { PaymentGateways } from "@/components/sections/integrations/PaymentGateways";
 import { PageEnvironment } from "@/components/sections/PageEnvironment";
 import { SectionHeading } from "@/components/sections/SectionHeading";
 import { SectionShell } from "@/components/sections/SectionShell";
 import { BlurFade } from "@/components/ui/blur-fade";
-import { routes } from "@/constants/routes";
 import { getFeaturedIntegrations, getPlatformsCopy } from "@/lib/content";
 
 /**
@@ -139,9 +137,13 @@ export function Integrations() {
         ))}
 
         {/*
-          The rest, as one card rather than a second grid of near-empties. It is
-          the only card here that is a link, because it is the only one making a
-          claim the reader might want to check.
+          The rest, as one card rather than a second grid of near-empties.
+
+          It used to be the one card here that was a link, pointing at an
+          `/integrations` listing page. That page has been removed, and this
+          card is now a card like the four beside it rather than a link to
+          nowhere — same box, same type, no destination. A link whose target no
+          longer exists is worse than a plain statement of the same fact.
 
           Its mark is a lucide outline rather than artwork: there is no vendor to
           have supplied one, and a monochrome glyph is the honest way to say so
@@ -149,10 +151,7 @@ export function Integrations() {
         */}
         <li className="h-full">
           <BlurFade delay={0.05 * featured.length} className="h-full">
-            <Link
-              href={routes.integrations}
-              className="group flex h-full surface-card items-start gap-3.5 rounded-[1.15rem] p-5 outline-none focus-visible:ring-2 focus-visible:ring-ring/60"
-            >
+            <div className="group flex h-full surface-card items-start gap-3.5 rounded-[1.15rem] p-5">
               <span className="grid size-11 shrink-0 place-items-center">
                 <Puzzle
                   aria-hidden
@@ -169,7 +168,7 @@ export function Integrations() {
                   Easy to integrate with other tools you use.
                 </p>
               </div>
-            </Link>
+            </div>
           </BlurFade>
         </li>
       </ul>

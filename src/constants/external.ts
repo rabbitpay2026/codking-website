@@ -103,15 +103,21 @@ const DEMO_STORE =
 export const demoStoreDisplayHost = "codking.store";
 
 /**
- * Documentation and the blog are separate properties on their own subdomains,
- * not sections of this site. They are declared here — once — so the header
- * dropdown, the mobile drawer and the footer all read the same destination.
+ * The blog is a separate property on its own subdomain, not a section of this
+ * site. It is declared here — once — so the header dropdown, the mobile drawer
+ * and the footer all read the same destination.
  *
- * The blog is not live yet. It is still a single value rather than a disabled
- * state: the subdomain is decided, and when it publishes, this line is the only
- * edit the site needs.
+ * It is not live yet. It is still a single value rather than a disabled state:
+ * the subdomain is decided, and when it publishes, this line is the only edit
+ * the site needs.
+ *
+ * The documentation used to sit beside it, as `docs.codking.tech`. It no
+ * longer belongs in this file at all: it is served from this origin at
+ * `/documentation` (`next.config.ts` proxies the path to the deployment that
+ * holds the content), so it is an internal route and lives in the route
+ * registry with every other page. Anything that needs to link to it reads
+ * `routes.documentation`.
  */
-const DOCS_SITE = "https://docs.codking.tech/";
 const BLOG_SITE = "https://codking-blogs.mintlify.site/blog";
 
 export const externalLinks = {
@@ -140,8 +146,6 @@ export const externalLinks = {
    */
   demoStore: externalUrl(process.env.NEXT_PUBLIC_DEMO_STORE_URL, DEMO_STORE),
 
-  /** Setup and configuration reference, on its own subdomain (§7). */
-  docs: externalUrl(process.env.NEXT_PUBLIC_DOCS_URL, DOCS_SITE),
   /** Product updates and news, on its own subdomain (§7). */
   blog: externalUrl(process.env.NEXT_PUBLIC_BLOG_URL, BLOG_SITE),
 

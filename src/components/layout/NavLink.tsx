@@ -64,6 +64,29 @@ export function NavLink({ item, children, className, ...props }: NavLinkProps) {
     );
   }
 
+  /*
+    An internal address this application does not render itself — today, the
+    documentation at `/documentation`, which `next.config.ts` proxies to the
+    deployment that holds it.
+
+    A plain anchor rather than `<Link>`, because the client router would fetch
+    a flight payload for the route before navigating and the proxied
+    application answers that request with a payload of its own, which is not
+    this app's tree. A browser page load is what actually gets the merchant
+    there, and it also stops the router prefetching a whole documentation page
+    on hover.
+
+    Nothing else changes: same tab, no `rel`, and none of the announcements an
+    off-site link owes its reader — because this destination is not off-site.
+  */
+  if (item.hardNavigation) {
+    return (
+      <a {...props} className={className} href={item.href}>
+        {children}
+      </a>
+    );
+  }
+
   return (
     <Link {...props} className={className} href={item.href}>
       {children}
