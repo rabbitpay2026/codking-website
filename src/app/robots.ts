@@ -35,14 +35,14 @@ const AI_CRAWLERS = [
  * today, and the point is that the first one added does not have to remember
  * to come back here.
  *
- * What is *not* listed here matters more. The placeholder routes — Customers,
- * Integrations, the Resources hub and its four children, the legal documents
- * while they are in review, and the controls still on the generic template —
- * are all `noIndex`, and `noIndex` is a directive a crawler can only obey if
- * it is allowed to fetch the page and read the tag. Disallowing them here
- * would hide the very instruction that keeps them out of the index, and a URL
- * blocked in `robots.txt` can still be indexed from inbound links alone. So
- * they stay crawlable on purpose.
+ * What is *not* listed here matters more. The placeholder routes — the
+ * Resources hub and its four children, the legal documents while they are in
+ * review, and the controls still on the generic template — are all `noIndex`,
+ * and `noIndex` is a directive a crawler can only obey if it is allowed to
+ * fetch the page and read the tag. Disallowing them here would hide the very
+ * instruction that keeps them out of the index, and a URL blocked in
+ * `robots.txt` can still be indexed from inbound links alone. So they stay
+ * crawlable on purpose.
  */
 const DISALLOWED = ["/api/"];
 

@@ -26,6 +26,24 @@ export interface NavItem {
    * is deleting this line.
    */
   readonly comingSoon?: boolean;
+  /**
+   * Leave this destination to the browser rather than to the client router.
+   *
+   * `/documentation` is an address of this site but not a page of this
+   * application: `next.config.ts` proxies it to the deployment that holds the
+   * documentation, so what answers it is another application's HTML. Next's
+   * client router cannot navigate to that. It asks a route for a flight
+   * payload before it renders one, the proxied application answers that
+   * request with a payload of its own, and the router would try to render
+   * another app's tree inside this one.
+   *
+   * So the item stays internal — same tab, no `rel`, no "opens in a new tab"
+   * note, and its href is still a checked `Route` — and only the navigation
+   * mechanism changes: `NavLink` emits a plain anchor and the browser performs
+   * an ordinary page load. This is not the `external` flag wearing a different
+   * name; an external link goes somewhere else, and this one does not.
+   */
+  readonly hardNavigation?: boolean;
 }
 
 /**

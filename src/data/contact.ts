@@ -1,4 +1,5 @@
 import { externalLinks } from "@/constants/external";
+import { routes } from "@/constants/routes";
 
 import type { CompanySectionCopy, ContactChannel, ContactField } from "@/types";
 
@@ -55,9 +56,9 @@ export const contactChannels: readonly ContactChannel[] = [
     id: "docs",
     title: "Documentation",
     body: "Setup and configuration for every control — usually faster than waiting for a reply.",
-    href: externalLinks.docs,
+    href: routes.documentation,
     actionLabel: "Read the docs",
-    external: true,
+    external: false,
   },
 ];
 

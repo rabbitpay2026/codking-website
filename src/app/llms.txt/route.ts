@@ -99,8 +99,8 @@ import type { Route } from "next";
  * included, because those are terms rather than performance claims.
  *
  * Placeholder routes are absent for the same reason they are absent from the
- * sitemap: Customers, Integrations, the Resources hub and its children, and
- * the legal documents in review are all `noIndex`. The four controls without a
+ * sitemap: Customers, the Resources hub and its children, and the legal
+ * documents in review are all `noIndex`. The four controls without a
  * dedicated page are named where the product names them — in the ecosystem
  * list and on the plans — but never linked, because they have no canonical
  * page to link to. The redirected paths `/features/prepaid-nudge` and
@@ -231,7 +231,7 @@ function overview(): readonly string[] {
       `COD Calculator — ${url(routes.codCalculator)}`,
       `Pricing — ${url(routes.pricing)}`,
       `FAQ — ${url(routes.faq)}`,
-      ...(externalLinks.docs ? [`Documentation — ${externalLinks.docs}`] : []),
+      `Documentation — ${url(routes.documentation)}`,
       ...(externalLinks.install
         ? [`Shopify App Store listing — ${externalLinks.install}`]
         : []),
@@ -342,8 +342,8 @@ function mechanism(): readonly string[] {
  *
  * The messaging providers close the section, because "which SMS provider can I
  * use" is a real merchant question and the integrations repository is the only
- * place this site answers it. `/integrations` is still a placeholder, so the
- * providers are named without a link to it.
+ * place this site answers it. There is no `/integrations` page — the route was
+ * removed — so the providers are named without a link to one.
  */
 function ecosystem(): readonly string[] {
   const published = new Set(
@@ -856,12 +856,10 @@ function faq(): readonly string[] {
 function documentation(): readonly string[] {
   const scope = getDocumentationScope();
 
-  if (!externalLinks.docs) return [];
-
   return [
     heading(2, "Documentation"),
     "",
-    `Canonical URL: ${externalLinks.docs}`,
+    `Canonical URL: ${url(routes.documentation)}`,
     "",
     scope.summary,
     "",
@@ -1003,9 +1001,7 @@ function questionMap(): readonly string[] {
       case "about":
         return { label: "About", href: url(routes.about) };
       case "docs":
-        return externalLinks.docs
-          ? { label: "Documentation", href: externalLinks.docs }
-          : null;
+        return { label: "Documentation", href: url(routes.documentation) };
       case "install":
         return externalLinks.install
           ? { label: "Shopify App Store listing", href: externalLinks.install }

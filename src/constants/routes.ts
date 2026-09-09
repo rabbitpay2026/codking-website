@@ -35,7 +35,22 @@ export const routes = {
 
   pricing: "/pricing",
   customers: "/customers",
-  integrations: "/integrations",
+
+  /**
+   * The documentation, served from this origin rather than linked away (§7).
+   *
+   * The content itself is still the Mintlify deployment the writers publish
+   * to — `next.config.ts` proxies this path straight to it — but the address
+   * is ours, which is why the route belongs in this registry beside every
+   * other page rather than in `constants/external.ts` beside the destinations
+   * that leave the site. A link to it is an internal link: no `external` flag,
+   * no new tab, no `rel="noopener"`.
+   *
+   * `Route` accepts it because Next derives its route types from the rewrites
+   * in `next.config.ts` as well as from the app directory, so this path is
+   * only assignable here for as long as the rewrite that answers it exists.
+   */
+  documentation: "/documentation",
 
   /**
    * Every question the site answers, on one page (§3).

@@ -46,9 +46,10 @@ export const primaryNav: readonly PrimaryNavItem[] = [
  * is `routes.faq` from the route registry rather than a literal.
  *
  * Order is by how deep the question is: the quick answer, the configuration
- * reference, then what changed. Docs and Blog keep reading their URLs from
- * `externalLinks`, so pointing the blog at its real home when it launches stays
- * a one-line change in `constants/external.ts`.
+ * reference, then what changed. The Blog keeps reading its URL from
+ * `externalLinks`, so pointing it at its real home when it launches stays a
+ * one-line change in `constants/external.ts`; Docs reads the route registry,
+ * because the documentation is a page of this site rather than a subdomain.
  */
 export const resourcesNav: readonly ResourceNavItem[] = [
   {
@@ -57,12 +58,27 @@ export const resourcesNav: readonly ResourceNavItem[] = [
     description: "The questions merchants ask most, answered.",
     icon: "faq",
   },
+  /*
+    Docs is an internal destination now, not an off-site one.
+
+    The documentation used to open `docs.codking.tech` in a new tab. It is
+    served from this origin at `/documentation` instead — the content is the
+    same deployment, proxied by the rewrite in `next.config.ts` — so the entry
+    reads `routes.documentation` like every other page on the site and drops
+    the `external` flag, so nothing announces a new tab any more and the href
+    is a checked `Route` like every other internal one.
+
+    `hardNavigation` is the one concession to how the page is served. The
+    documentation is proxied rather than rendered by this app, so there is no
+    flight payload for the client router to fetch and `NavLink` hands the
+    address to the browser instead. See `NavItem.hardNavigation`.
+  */
   {
     label: "Docs",
-    href: externalLinks.docs,
+    href: routes.documentation,
     description: "Set up and configure every control.",
     icon: "docs",
-    external: true,
+    hardNavigation: true,
   },
   /*
     The blog is announced rather than offered, until it publishes.
