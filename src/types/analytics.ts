@@ -34,6 +34,8 @@ export const ANALYTICS_EVENTS = [
   "whatsapp_click",
   /** Try Live Demo Store — the public storefront running the product. */
   "demo_store_click",
+  /** Partner With Us — the referral programme's sign-up in the app (§4.2). */
+  "partner_click",
 
   /** First interaction with the contact form, and a delivered submission. */
   "contact_form_start",

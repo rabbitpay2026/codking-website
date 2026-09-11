@@ -4,6 +4,7 @@ import { Hero } from "@/components/sections/Hero";
 import { Integrations } from "@/components/sections/Integrations";
 import { Metrics } from "@/components/sections/Metrics";
 import { PainPoints } from "@/components/sections/PainPoints";
+import { PartnerCta } from "@/components/sections/PartnerCta";
 import { Results } from "@/components/sections/Results";
 import { Testimonials } from "@/components/sections/Testimonials";
 import { TrustBar } from "@/components/sections/TrustBar";
@@ -132,6 +133,17 @@ export default function HomePage() {
         at the moment the last objection resolves.
       */}
       <Faq />
+      {/*
+        The partner offer closes the page, after the questions rather than
+        among the argument.
+
+        Everything above this band is addressed to a merchant deciding whether
+        to install, and interrupting that to talk to agencies would cost the
+        reader the page is for. Underneath the questions it costs them one
+        band they can scroll past, and it is the first answer the *other*
+        reader who got this far has been offered — see `PartnerCta`.
+      */}
+      <PartnerCta />
     </>
   );
 }

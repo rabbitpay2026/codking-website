@@ -6,6 +6,7 @@ export * from "./HowItWorks";
 export * from "./Integrations";
 export * from "./Metrics";
 export * from "./PainPoints";
+export * from "./PartnerCta";
 export * from "./PricingPreview";
 export * from "./Results";
 export * from "./SectionHeading";

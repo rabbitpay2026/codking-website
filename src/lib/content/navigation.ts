@@ -9,6 +9,7 @@ import {
   demoStoreAction,
   megaMenuFooterLinks,
   mobileActions,
+  partnerAction,
   primaryNav,
   resourcesNav,
   utilityActions,
@@ -48,6 +49,17 @@ export function getUtilityActions(): readonly UtilityAction[] {
 
 export function getMobileActions(): readonly UtilityAction[] {
   return mobileActions;
+}
+
+/**
+ * The partner programme's sign-up (§4.2).
+ *
+ * Read through the repository like every other destination, so the header
+ * button, the mobile drawer row, the footer link and the homepage band are one
+ * action with one label and one URL rather than four that can drift.
+ */
+export function getPartnerAction(): UtilityAction {
+  return partnerAction;
 }
 
 /**

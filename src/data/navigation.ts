@@ -162,6 +162,35 @@ export const demoStoreAction: UtilityAction = {
 };
 
 /**
+ * The partner programme (§4.2).
+ *
+ * Deliberately outside `utilityActions`, for the reason `demoStoreAction` is:
+ * that list is rendered whole by the header, the mobile drawer, every feature
+ * page's closing band, the About page's hero and both pricing surfaces, so a
+ * third entry in it would put this button in a dozen places it does not
+ * belong. It is declared once here instead, and the four surfaces that do want
+ * it ask for it by name.
+ *
+ * The destination is the application's own sign-up on `app.codking.tech`, read
+ * from `constants/external.ts` like every other off-site action — so the
+ * header button, the drawer row, the footer link and the homepage band cannot
+ * point at four different URLs, and `ActionLink` gives it the same new-tab,
+ * `rel` and "(opens in a new tab)" contract every outbound action on the site
+ * honours.
+ *
+ * `secondary`, not `primary`. Install Free is the only filled action on any
+ * screen by contract (§4.2), and partnering is an errand a different visitor
+ * arrives with — an agency or a creator rather than a merchant — so it sits
+ * beside the install rather than competing with it.
+ */
+export const partnerAction: UtilityAction = {
+  id: "partner",
+  label: "Partner With Us",
+  href: externalLinks.partner,
+  variant: "secondary",
+};
+
+/**
  * The persistent mobile bottom bar (§4.4).
  *
  * Mobile is the primary experience in COD-heavy markets, so these two actions

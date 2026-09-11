@@ -26,6 +26,8 @@ interface MobileNavProps {
   readonly features: readonly NavItem[];
   readonly resources: readonly ResourceNavItem[];
   readonly utilityActions: readonly UtilityAction[];
+  /** The partner programme's sign-up — see `SiteHeaderProps.partnerAction`. */
+  readonly partnerAction: UtilityAction;
 }
 
 const rowClass = cn(
@@ -52,6 +54,7 @@ export function MobileNav({
   features,
   resources,
   utilityActions,
+  partnerAction,
 }: MobileNavProps) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
@@ -238,6 +241,29 @@ export function MobileNav({
                 className="mt-2"
               />
             ) : null}
+
+            {/*
+              Partner With Us, under the two product actions.
+
+              The drawer's footer is where every action a merchant can take
+              already lives, so the row joins it rather than being given a
+              section of its own — same block, same width, same spacing as the
+              demo action above it. Last of the three because the two above are
+              what a merchant came for; this one is addressed to an agency or a
+              creator, and putting it over the install would reorder the
+              hierarchy §4.2 fixes.
+
+              It is an ordinary link and closes nothing on the way out: the
+              drawer is unmounted by the page load that follows, and this
+              destination opens in a new tab in any case.
+            */}
+            <ActionLink
+              action={partnerAction}
+              size="md"
+              location="mobile-nav"
+              block
+              className="mt-2"
+            />
           </div>
         </Dialog.Content>
       </Dialog.Portal>
