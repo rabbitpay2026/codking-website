@@ -46,6 +46,7 @@ const eventForAction: Record<UtilityActionId, AnalyticsEventName> = {
   "book-demo": "book_demo_click",
   whatsapp: "whatsapp_click",
   "demo-store": "demo_store_click",
+  partner: "partner_click",
 };
 
 interface ActionLinkProps {

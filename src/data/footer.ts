@@ -129,6 +129,28 @@ export const footerCompanyColumn: NavGroup = {
     { label: "About Us", href: routes.about },
     { label: "Contact Us", href: routes.contact },
     /*
+      The partner programme, in the column a visitor who is not a merchant
+      actually reads.
+
+      An agency, a developer or a creator scanning this site is not looking
+      for a control that hides cash on delivery — they are looking for who is
+      behind it and whether there is a way to work together, and Company is
+      where both of those answers already live. It is also the place the
+      convention puts it: a partner or affiliate link sits in the footer on
+      every comparable site, which is where someone goes looking for it rather
+      than expecting it in a product menu.
+
+      The destination is the header button's, read from the same place, so a
+      footer link can never point at a different sign-up from the button above
+      it. `external: true` earns it the outbound glyph, the new tab and the
+      announcement every off-site link in this footer carries.
+    */
+    {
+      label: "Partner With Us",
+      href: externalLinks.partner,
+      external: true,
+    } satisfies ExternalNavItem,
+    /*
       The support thread, as a destination rather than as an icon. It is
       already one tap from the row of social profiles and from the mobile
       action bar, but neither of those reads as a *link to support* in a column

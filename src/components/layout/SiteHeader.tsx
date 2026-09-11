@@ -20,6 +20,14 @@ interface SiteHeaderProps {
   readonly megaMenu: FeaturesMegaMenu;
   readonly resources: readonly ResourceNavItem[];
   readonly utilityActions: readonly UtilityAction[];
+  /**
+   * The partner programme's sign-up, passed separately from `utilityActions`.
+   *
+   * It is not one of them by design — see `partnerAction` in
+   * `data/navigation.ts` — so the header asks for it by name rather than
+   * having it appear in every other surface that renders that list.
+   */
+  readonly partnerAction: UtilityAction;
 }
 
 /**
@@ -45,6 +53,7 @@ export function SiteHeader({
   megaMenu,
   resources,
   utilityActions,
+  partnerAction,
 }: SiteHeaderProps) {
   const scrolled = useScrolled();
 
@@ -74,6 +83,55 @@ export function SiteHeader({
               — and with it gone the pair are peers, so the size is a constant
               rather than a decision made per action.
             */}
+            {/*
+              Partner With Us, ahead of the two product actions.
+
+              First in the row because it is the least expected of the three
+              and the only one addressed to someone who is not installing
+              anything — an agency, a developer or a creator — and a merchant
+              reading left to right still lands on Install Free last, which is
+              where §4.2 wants the eye to stop.
+
+              Secondary weight and one size with its neighbours, so the row
+              reads as three peers with the filled action closing it. The
+              tighter padding below `xl` is the navbar's own established
+              technique rather than a new one — `DesktopNav` takes four pixels
+              off each item below `xl` for exactly this reason, and this is the
+              longest label in the utility row.
+
+              ── On the 1120px floor ──────────────────────────────────────
+              The bar is full at the width the desktop nav first appears at.
+              `DesktopNav` already documents that five items and the utility
+              row clear a 1024px container by a margin measured in tens of
+              pixels; this button is 134 of them, so below roughly 1092 the
+              left group is compressed and "Contact" runs under it. That is
+              measured rather than assumed — at 1024 the nav needs 616px and
+              is given 548.
+
+              The alternatives were all worse than a floor. Shrinking the
+              existing two actions, or taking more padding off the five nav
+              items, buys back about sixty of the sixty-seven pixels needed
+              and visibly tightens a bar this brief says not to touch; letting
+              it overflow puts a nav link under a button. So the button is
+              withheld where it does not fit, at a floor set a little above the
+              measured one so the gap between "Contact" and this button is the
+              same 24px it is at `xl` rather than the 16px minimum.
+
+              An arbitrary value rather than `xl`, because `xl` is 1280 and
+              would withhold it from every viewport between 1092 and 1280 that
+              has room for it — a quarter of the desktop range, and where a
+              tablet in landscape sits. Below the floor the action is still on
+              every page twice over: the drawer carries it under `lg`, and the
+              footer and the homepage band carry it at every width.
+              ─────────────────────────────────────────────────────────────
+            */}
+            <ActionLink
+              action={partnerAction}
+              size="md"
+              location="header"
+              className="hidden px-3 min-[1120px]:inline-flex xl:px-4"
+            />
+
             {utilityActions.map((action) => (
               <ActionLink
                 key={action.label}
@@ -89,6 +147,7 @@ export function SiteHeader({
             features={megaMenu.items}
             resources={resources}
             utilityActions={utilityActions}
+            partnerAction={partnerAction}
           />
         </div>
       </Container>

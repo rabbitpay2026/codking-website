@@ -190,7 +190,7 @@ export type UtilityActionVariant = "primary" | "secondary";
  * measure and nobody would notice.
  */
 export type UtilityActionId =
-  "install" | "book-demo" | "whatsapp" | "demo-store";
+  "install" | "book-demo" | "whatsapp" | "demo-store" | "partner";
 
 /**
  * An action that leaves this site — the App Store, the app itself, the demo

@@ -7,6 +7,7 @@ import {
   getAnnouncement,
   getFeaturesMegaMenu,
   getMobileActions,
+  getPartnerAction,
   getPrimaryNav,
   getResourcesNav,
   getUtilityActions,
@@ -60,6 +61,7 @@ export default function SiteLayout({ children }: WithChildren) {
         megaMenu={getFeaturesMegaMenu()}
         resources={getResourcesNav()}
         utilityActions={getUtilityActions()}
+        partnerAction={getPartnerAction()}
       />
 
       <main id="main" className="flex-1">

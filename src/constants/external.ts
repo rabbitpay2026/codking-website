@@ -120,6 +120,23 @@ export const demoStoreDisplayHost = "codking.store";
  */
 const BLOG_SITE = "https://codking-blogs.mintlify.site/blog";
 
+/**
+ * The partner programme's sign-up, which lives in the application rather than
+ * on this site.
+ *
+ * `app.codking.tech` is the product itself — a separate deployment on its own
+ * subdomain — so this is an off-site destination in exactly the sense the App
+ * Store listing is, and it is declared here for the same reason every other
+ * one is: the header, the mobile drawer, the footer and the homepage band all
+ * read one value, and moving the sign-up is a one-line edit rather than four.
+ *
+ * It is deliberately *not* a route of this site. There is no
+ * `/partner-with-us` page and no rewrite pointing at this URL — the address a
+ * merchant lands on is the application's own, which is where the sign-up runs
+ * and where its session belongs.
+ */
+const PARTNER_SIGNUP = "https://app.codking.tech/referral/signup";
+
 export const externalLinks = {
   /** Primary conversion target — the Shopify App Store listing (§1, §4.2). */
   install: externalUrl(
@@ -148,6 +165,12 @@ export const externalLinks = {
 
   /** Product updates and news, on its own subdomain (§7). */
   blog: externalUrl(process.env.NEXT_PUBLIC_BLOG_URL, BLOG_SITE),
+
+  /** Where an agency, developer or creator joins the partner programme. */
+  partner: externalUrl(
+    process.env.NEXT_PUBLIC_PARTNER_SIGNUP_URL,
+    PARTNER_SIGNUP,
+  ),
 
   /** Where the product demonstrates itself — setup walkthroughs and features. */
   youtube: externalUrl(process.env.NEXT_PUBLIC_YOUTUBE_URL, YOUTUBE_CHANNEL),
